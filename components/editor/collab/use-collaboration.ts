@@ -1,0 +1,71 @@
+"use client"
+
+import type {
+  ExcalidrawImperativeAPI,
+  OnUserFollowedPayload,
+  UserToFollow,
+} from "@excalidraw/excalidraw/types"
+import { useEffect, useState } from "react"
+
+import {
+  Collaboration,
+  type ConnectionStatus,
+} from "@/components/editor/collab/collaboration"
+
+// Everyone with access to a drawing is connected to its room while it's open.
+// Spread `editorProps` onto <Excalidraw> and call `onChange` from its onChange.
+function useCollaboration({
+  drawingId,
+  canEdit,
+  realtimeUrl,
+}: {
+  drawingId: string
+  canEdit: boolean
+  realtimeUrl: string
+}) {
+  const [status, setStatus] = useState<ConnectionStatus>("connecting")
+  const [userToFollow, setUserToFollow] = useState<UserToFollow | null>(null)
+  const [collaboration] = useState(
+    () =>
+      new Collaboration(drawingId, canEdit, realtimeUrl, {
+        onStatus: setStatus,
+        onFollowEnded: () => setUserToFollow(null),
+      })
+  )
+
+  useEffect(() => () => collaboration.stop(), [collaboration])
+
+  function followUser(user: UserToFollow | null) {
+    setUserToFollow(user)
+    collaboration.follow(user?.socketId ?? null)
+  }
+
+  return {
+    status,
+    onChange: collaboration.onChange,
+    editorProps: {
+      isCollaborating: status === "live",
+      onExcalidrawAPI: (api: ExcalidrawImperativeAPI | null) => {
+        if (api) {
+          collaboration.start(api)
+        } else {
+          collaboration.stop()
+        }
+      },
+      onPointerUpdate: collaboration.onPointerUpdate,
+      onScrollChange: collaboration.onScrollChange,
+      onUserFollow: ({ userToFollow, action }: OnUserFollowedPayload) =>
+        followUser(action === "FOLLOW" ? userToFollow : null),
+      userToFollow,
+      viewportStatusFrame: userToFollow && {
+        border: "var(--color-primary-hover)",
+        label: {
+          label: `Following ${userToFollow.username}`,
+          onClose: () => followUser(null),
+        },
+      },
+    },
+  }
+}
+
+export { useCollaboration }

@@ -40,6 +40,12 @@ There is no test framework set up yet.
   - `proxy.ts` only checks that the cookie exists. The real check is `getCurrentUser` / `requireUser` in `lib/dal.ts`: server-only, cached per render, calling `/auth/me` with the cookie.
   - Server components read backend data through the other `lib/dal.ts` getters. These forward the cookie, send a 401 to `/login`, and turn a 404 into `notFound()`. The backend answers 404, not 403, for things in workspaces you aren't a member of.
   - Pages under `app/(auth)` are for logged-out users; pages under `app/(app)` require a session.
+- **Live collaboration:**
+  - `components/editor/collab/collaboration.ts` is a trimmed port of Excalidraw's own `excalidraw-app/collab` client. Each open editor holds a plain WebSocket to the backend's relay (`../backend/function/realtime.py`), with automatic reconnects.
+  - The socket goes through the `/api` rewrite (`/api/drawings/{id}/live`); Next.js forwards WebSocket upgrades on rewrites, so the backend never has to be public. `REALTIME_URL` (`lib/backend.ts`) is only an override for setups that can't carry WebSockets through Next.
+  - Updates carry only elements whose `version` changed. Incoming elements go through `restoreElements` → `reconcileElements` → `updateScene` with `CaptureUpdateAction.NEVER`.
+  - Every client still autosaves through REST; the server merge makes the duplicate saves harmless.
+  - Follow mode is host-controlled: the `userToFollow` prop is set from `onUserFollow`.
 - **Workspaces and roles:**
   - `app/(app)/w/[workspaceId]/layout.tsx` wraps workspace pages in the sidebar (workspace switcher, navigation, user menu). The editor (`/d/[id]`) and the invite page (`/invite/[token]`) sit outside it.
   - Roles rank owner > admin > editor > viewer. The backend enforces them; `lib/roles.ts` mirrors the rules only to hide controls that would fail, so change both together.

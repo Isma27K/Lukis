@@ -8,18 +8,30 @@ import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { ConnectionIndicator } from "@/components/editor/collab/connection-indicator"
+import { useCollaboration } from "@/components/editor/collab/use-collaboration"
 import { DrawingTitle } from "@/components/editor/drawing-title"
 import { SaveIndicator } from "@/components/editor/save-indicator"
 import { useAutosave } from "@/components/editor/use-autosave"
 import type { Drawing, Scene } from "@/lib/types"
 
-type DrawingEditorProps = { drawing: Drawing; scene: Scene }
+type DrawingEditorProps = {
+  drawing: Drawing
+  scene: Scene
+  // Where to open the realtime socket; "" means this origin.
+  realtimeUrl: string
+}
 
-function DrawingEditor({ drawing, scene }: DrawingEditorProps) {
+function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
   const router = useRouter()
   const { theme, resolvedTheme, setTheme } = useTheme()
   const readOnly = drawing.role === "viewer"
   const autosave = useAutosave(drawing.id, scene.elements, !readOnly)
+  const collaboration = useCollaboration({
+    drawingId: drawing.id,
+    canEdit: !readOnly,
+    realtimeUrl,
+  })
   const [title, setTitle] = useState(drawing.title)
   // Excalidraw only reads initialData when it mounts.
   const [initialData] = useState(() => ({
@@ -40,8 +52,12 @@ function DrawingEditor({ drawing, scene }: DrawingEditorProps) {
 
   return (
     <Excalidraw
+      {...collaboration.editorProps}
       initialData={initialData}
-      onChange={autosave.onChange}
+      onChange={(elements, appState) => {
+        autosave.onChange?.(elements, appState)
+        collaboration.onChange(elements)
+      }}
       theme={resolvedTheme === "dark" ? THEME.DARK : THEME.LIGHT}
       onThemeChange={setTheme}
       viewModeEnabled={readOnly}
@@ -62,6 +78,7 @@ function DrawingEditor({ drawing, scene }: DrawingEditorProps) {
               <SaveIndicator status={autosave.status} />
             </>
           )}
+          <ConnectionIndicator status={collaboration.status} />
         </div>
       )}
     >

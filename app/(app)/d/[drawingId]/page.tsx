@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { Editor } from "@/components/editor/editor"
+import { realtimeUrl } from "@/lib/backend"
 import { getDrawing, getScene } from "@/lib/dal"
 
 type Props = { params: Promise<{ drawingId: string }> }
@@ -19,7 +20,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <div className="h-svh">
-      <Editor drawing={drawing} scene={scene} />
+      <Editor drawing={drawing} scene={scene} realtimeUrl={realtimeUrl} />
     </div>
   )
 }
