@@ -55,6 +55,14 @@ function ThemeHotkey() {
         return
       }
 
+      // "d" is also the editor's diamond tool shortcut.
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".excalidraw")
+      ) {
+        return
+      }
+
       setTheme(resolvedTheme === "dark" ? "light" : "dark")
     }
 

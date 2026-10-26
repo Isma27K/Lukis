@@ -37,3 +37,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# excalidraw built from ../excalidraw (npm run excalidraw:build)
+/vendor/excalidraw/
+/public/fonts/
