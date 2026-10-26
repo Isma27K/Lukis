@@ -47,7 +47,8 @@ function ThemeHotkey() {
         return
       }
 
-      if (event.key.toLowerCase() !== "d") {
+      // `key` can be missing, e.g. on the keydown Chrome fires when autofilling.
+      if (event.key?.toLowerCase() !== "d") {
         return
       }
 

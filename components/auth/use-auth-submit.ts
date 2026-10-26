@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useActionState } from "react"
 
-import { ApiError, apiFetch } from "@/lib/api"
+import { ApiError, apiFetch, errorMessage } from "@/lib/api"
 
 type AuthFormState = {
   // Either a form-wide error or per-field ones, never both.
@@ -29,12 +29,13 @@ function useAuthSubmit(path: "/auth/login" | "/auth/register", next: string) {
       } catch (error) {
         const values = { ...body }
         delete values.password
-        if (error instanceof ApiError) {
-          return Object.keys(error.fieldErrors).length > 0
-            ? { fieldErrors: error.fieldErrors, values }
-            : { error: error.message, values }
+        if (
+          error instanceof ApiError &&
+          Object.keys(error.fieldErrors).length > 0
+        ) {
+          return { fieldErrors: error.fieldErrors, values }
         }
-        return { error: "Couldn't reach the server. Please try again.", values }
+        return { error: errorMessage(error), values }
       }
       router.replace(next)
       router.refresh()

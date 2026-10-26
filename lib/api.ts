@@ -11,6 +11,9 @@ class ApiError extends Error {
 
 type FastApiValidationError = { loc: (string | number)[]; msg: string }
 
+// Browsers refuse keepalive requests whose bodies add up to more than 64 KB.
+const KEEPALIVE_BODY_LIMIT = 60_000
+
 async function toApiError(response: Response) {
   const body = await response.json().catch(() => null)
   const detail: unknown = body?.detail
@@ -34,14 +37,25 @@ async function toApiError(response: Response) {
 // Browser-side calls to the backend, through the /api rewrite.
 async function apiFetch<T = void>(
   path: string,
-  { method = "GET", body }: { method?: string; body?: unknown } = {}
+  {
+    method = "GET",
+    body,
+    keepalive = false,
+  }: {
+    method?: string
+    body?: unknown
+    // Lets the request finish after the page is closed (small bodies only).
+    keepalive?: boolean
+  } = {}
 ): Promise<T> {
+  const json = body === undefined ? undefined : JSON.stringify(body)
   const response = await fetch(`/api${path}`, {
     method,
     // The backend refuses non-JSON mutations as a CSRF guard, even bodyless ones.
     headers:
       method === "GET" ? undefined : { "Content-Type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: json,
+    keepalive: keepalive && (json?.length ?? 0) < KEEPALIVE_BODY_LIMIT,
   })
   if (!response.ok) {
     throw await toApiError(response)
@@ -49,4 +63,11 @@ async function apiFetch<T = void>(
   return response.status === 204 ? (undefined as T) : response.json()
 }
 
-export { ApiError, apiFetch }
+// Something to show the user for any error apiFetch can throw.
+function errorMessage(error: unknown) {
+  return error instanceof ApiError
+    ? error.message
+    : "Couldn't reach the server. Please try again."
+}
+
+export { ApiError, apiFetch, errorMessage }
