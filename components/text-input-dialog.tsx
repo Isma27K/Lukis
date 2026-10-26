@@ -1,7 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
+import { useId, useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,35 +11,42 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Field, FieldError } from "@/components/ui/field"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { apiFetch, errorMessage } from "@/lib/api"
-import type { DrawingSummary } from "@/lib/types"
+import { errorMessage } from "@/lib/api"
 
-function RenameDrawingDialog({
-  drawing,
+// A dialog that asks for one line of text, e.g. a name.
+function TextInputDialog({
   open,
   onOpenChange,
+  title,
+  label,
+  defaultValue,
+  maxLength,
+  submitLabel,
+  onSubmit,
 }: {
-  drawing: DrawingSummary
   open: boolean
   onOpenChange: (open: boolean) => void
+  title: string
+  label: string
+  defaultValue?: string
+  maxLength?: number
+  submitLabel: string
+  // Closes the dialog when it resolves; a thrown error shows under the field.
+  onSubmit: (value: string) => Promise<void>
 }) {
-  const router = useRouter()
+  const inputId = useId()
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
 
-  function rename(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const title = new FormData(event.currentTarget).get("title")
+    const value = String(new FormData(event.currentTarget).get("value"))
     startTransition(async () => {
       try {
-        await apiFetch(`/drawings/${drawing.id}`, {
-          method: "PATCH",
-          body: { title },
-        })
+        await onSubmit(value)
         onOpenChange(false)
-        router.refresh()
       } catch (error) {
         setError(errorMessage(error))
       }
@@ -56,17 +62,18 @@ function RenameDrawingDialog({
       }}
     >
       <DialogContent>
-        <form onSubmit={rename} className="flex flex-col gap-4">
+        <form onSubmit={submit} className="flex flex-col gap-4">
           <DialogHeader>
-            <DialogTitle>Rename drawing</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
           <Field data-invalid={!!error}>
+            <FieldLabel htmlFor={inputId}>{label}</FieldLabel>
             <Input
-              name="title"
-              aria-label="Title"
-              defaultValue={drawing.title}
+              id={inputId}
+              name="value"
+              defaultValue={defaultValue}
               required
-              maxLength={120}
+              maxLength={maxLength}
               autoFocus
               aria-invalid={!!error}
             />
@@ -77,7 +84,7 @@ function RenameDrawingDialog({
               Cancel
             </DialogClose>
             <Button type="submit" disabled={pending}>
-              Save
+              {submitLabel}
             </Button>
           </DialogFooter>
         </form>
@@ -86,4 +93,4 @@ function RenameDrawingDialog({
   )
 }
 
-export { RenameDrawingDialog }
+export { TextInputDialog }

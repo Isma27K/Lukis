@@ -31,4 +31,41 @@ type Scene = {
   rev: number
 }
 
-export type { Drawing, DrawingSummary, Role, Scene, Workspace }
+type Member = {
+  user_id: string
+  name: string
+  email: string
+  role: Role
+  joined_at: string
+}
+
+type Invite = {
+  id: string
+  email: string
+  role: Role
+  created_at: string
+  expires_at: string
+}
+
+// Only returned when the invite is created; the backend keeps just a hash.
+type CreatedInvite = Invite & { token: string }
+
+type InvitePreview = {
+  workspace_name: string
+  role: Role
+  email: string
+  invited_by: string
+  expires_at: string
+}
+
+export type {
+  CreatedInvite,
+  Drawing,
+  DrawingSummary,
+  Invite,
+  InvitePreview,
+  Member,
+  Role,
+  Scene,
+  Workspace,
+}

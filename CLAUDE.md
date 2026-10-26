@@ -40,6 +40,10 @@ There is no test framework set up yet.
   - `proxy.ts` only checks that the cookie exists. The real check is `getCurrentUser` / `requireUser` in `lib/dal.ts`: server-only, cached per render, calling `/auth/me` with the cookie.
   - Server components read backend data through the other `lib/dal.ts` getters. These forward the cookie, send a 401 to `/login`, and turn a 404 into `notFound()`. The backend answers 404, not 403, for things in workspaces you aren't a member of.
   - Pages under `app/(auth)` are for logged-out users; pages under `app/(app)` require a session.
+- **Workspaces and roles:**
+  - `app/(app)/w/[workspaceId]/layout.tsx` wraps workspace pages in the sidebar (workspace switcher, navigation, user menu). The editor (`/d/[id]`) and the invite page (`/invite/[token]`) sit outside it.
+  - Roles rank owner > admin > editor > viewer. The backend enforces them; `lib/roles.ts` mirrors the rules only to hide controls that would fail, so change both together.
+  - Personal workspaces can't be shared or deleted; to collaborate you create a workspace and move drawings into it.
 - **Typecheck:** `tsc` reads generated route types from `.next/types`. After adding or removing pages, run `npm run build` (or `next dev`) first, or typecheck reports errors about stale routes.
 - **Fonts:** `app/layout.tsx` loads Inter as `--font-sans` and Geist Mono as `--font-mono` via `next/font/google`.
 

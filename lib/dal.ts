@@ -6,7 +6,15 @@ import { cache } from "react"
 
 import { SESSION_COOKIE, type User } from "@/lib/auth"
 import { backendUrl } from "@/lib/backend"
-import type { Drawing, DrawingSummary, Scene, Workspace } from "@/lib/types"
+import type {
+  Drawing,
+  DrawingSummary,
+  Invite,
+  InvitePreview,
+  Member,
+  Scene,
+  Workspace,
+} from "@/lib/types"
 
 async function sessionHeaders(): Promise<HeadersInit | undefined> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value
@@ -44,8 +52,14 @@ const requireUser = cache(async (): Promise<User> => {
 })
 
 // Reads from the backend as the current user. A lost session goes to /login;
-// anything the user can't see renders the not-found page.
-async function backendGet<T>(path: string): Promise<T> {
+// with `orNull`, a 404 comes back as null instead of rendering the not-found
+// page.
+async function backendGet<T>(path: string): Promise<T>
+async function backendGet<T>(
+  path: string,
+  options: { orNull: true }
+): Promise<T | null>
+async function backendGet<T>(path: string, { orNull = false } = {}) {
   const response = await fetch(`${backendUrl}${path}`, {
     headers: await sessionHeaders(),
     cache: "no-store",
@@ -54,15 +68,42 @@ async function backendGet<T>(path: string): Promise<T> {
     redirect("/login")
   }
   if (response.status === 404) {
-    notFound()
+    return orNull ? null : notFound()
   }
   if (!response.ok) {
     throw new Error(`GET ${path} failed with ${response.status}`)
   }
-  return response.json()
+  return (await response.json()) as T
 }
 
 const getWorkspaces = cache(() => backendGet<Workspace[]>("/workspaces"))
+
+// One of the current user's workspaces, or the not-found page.
+const getWorkspace = cache(async (workspaceId: string) => {
+  const workspace = (await getWorkspaces()).find(({ id }) => id === workspaceId)
+  if (!workspace) {
+    notFound()
+  }
+  return workspace
+})
+
+const getMembers = cache((workspaceId: string) =>
+  backendGet<Member[]>(`/workspaces/${encodeURIComponent(workspaceId)}/members`)
+)
+
+// Admins and owners only; anyone else gets a 403.
+function getInvites(workspaceId: string) {
+  return backendGet<Invite[]>(
+    `/workspaces/${encodeURIComponent(workspaceId)}/invites`
+  )
+}
+
+// Null when the link is invalid, used up or expired.
+function getInvitePreview(token: string) {
+  return backendGet<InvitePreview>(`/invites/${encodeURIComponent(token)}`, {
+    orNull: true,
+  })
+}
 
 const getDrawings = cache((workspaceId: string) =>
   backendGet<DrawingSummary[]>(
@@ -82,7 +123,11 @@ export {
   getCurrentUser,
   getDrawing,
   getDrawings,
+  getInvitePreview,
+  getInvites,
+  getMembers,
   getScene,
+  getWorkspace,
   getWorkspaces,
   requireUser,
 }

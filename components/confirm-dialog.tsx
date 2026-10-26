@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
 
@@ -14,27 +13,32 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { apiFetch, errorMessage } from "@/lib/api"
-import type { DrawingSummary } from "@/lib/types"
+import { errorMessage } from "@/lib/api"
 
-function DeleteDrawingDialog({
-  drawing,
+// Asks before doing something destructive. Stays open until onConfirm
+// resolves; a thrown error shows as a toast.
+function ConfirmDialog({
   open,
   onOpenChange,
+  title,
+  description,
+  confirmLabel,
+  onConfirm,
 }: {
-  drawing: DrawingSummary
   open: boolean
   onOpenChange: (open: boolean) => void
+  title: string
+  description: string
+  confirmLabel: string
+  onConfirm: () => Promise<void>
 }) {
-  const router = useRouter()
   const [pending, startTransition] = useTransition()
 
-  function remove() {
+  function confirm() {
     startTransition(async () => {
       try {
-        await apiFetch(`/drawings/${drawing.id}`, { method: "DELETE" })
+        await onConfirm()
         onOpenChange(false)
-        router.refresh()
       } catch (error) {
         toast.error(errorMessage(error))
       }
@@ -45,19 +49,17 @@ function DeleteDrawingDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete “{drawing.title}”?</AlertDialogTitle>
-          <AlertDialogDescription>
-            It will be removed from this workspace for everyone.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={remove}
+            onClick={confirm}
             disabled={pending}
           >
-            Delete
+            {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -65,4 +67,4 @@ function DeleteDrawingDialog({
   )
 }
 
-export { DeleteDrawingDialog }
+export { ConfirmDialog }

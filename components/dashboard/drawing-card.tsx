@@ -3,6 +3,7 @@
 import {
   CopyIcon,
   EllipsisIcon,
+  FolderInputIcon,
   PencilIcon,
   ShapesIcon,
   Trash2Icon,
@@ -12,35 +13,44 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 
-import { DeleteDrawingDialog } from "@/components/dashboard/delete-drawing-dialog"
-import { RenameDrawingDialog } from "@/components/dashboard/rename-drawing-dialog"
+import { ConfirmDialog } from "@/components/confirm-dialog"
+import { TextInputDialog } from "@/components/text-input-dialog"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { apiFetch, errorMessage } from "@/lib/api"
-import type { DrawingSummary } from "@/lib/types"
+import type { DrawingSummary, Workspace } from "@/lib/types"
 
 function DrawingCard({
   drawing,
   editedLabel,
   canEdit,
+  moveTargets,
 }: {
   drawing: DrawingSummary
   // Preformatted on the server, e.g. "5 minutes ago".
   editedLabel: string
   canEdit: boolean
+  // Other workspaces the user can add drawings to.
+  moveTargets: Workspace[]
 }) {
   const router = useRouter()
   const [dialog, setDialog] = useState<"rename" | "delete" | null>(null)
 
-  async function duplicate() {
+  async function run(action: () => Promise<unknown>, success?: string) {
     try {
-      await apiFetch(`/drawings/${drawing.id}/duplicate`, { method: "POST" })
+      await action()
+      if (success) {
+        toast.success(success)
+      }
       router.refresh()
     } catch (error) {
       toast.error(errorMessage(error))
@@ -85,10 +95,45 @@ function DrawingCard({
                 <PencilIcon />
                 Rename
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={duplicate}>
+              <DropdownMenuItem
+                onClick={() =>
+                  run(() =>
+                    apiFetch(`/drawings/${drawing.id}/duplicate`, {
+                      method: "POST",
+                    })
+                  )
+                }
+              >
                 <CopyIcon />
                 Duplicate
               </DropdownMenuItem>
+              {moveTargets.length > 0 && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <FolderInputIcon />
+                    Move to
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {moveTargets.map((workspace) => (
+                      <DropdownMenuItem
+                        key={workspace.id}
+                        onClick={() =>
+                          run(
+                            () =>
+                              apiFetch(`/drawings/${drawing.id}/move`, {
+                                method: "POST",
+                                body: { workspace_id: workspace.id },
+                              }),
+                            `Moved to ${workspace.name}`
+                          )
+                        }
+                      >
+                        {workspace.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
@@ -99,15 +144,32 @@ function DrawingCard({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <RenameDrawingDialog
-            drawing={drawing}
+          <TextInputDialog
             open={dialog === "rename"}
             onOpenChange={setDialogOpen("rename")}
+            title="Rename drawing"
+            label="Title"
+            defaultValue={drawing.title}
+            maxLength={120}
+            submitLabel="Save"
+            onSubmit={async (title) => {
+              await apiFetch(`/drawings/${drawing.id}`, {
+                method: "PATCH",
+                body: { title },
+              })
+              router.refresh()
+            }}
           />
-          <DeleteDrawingDialog
-            drawing={drawing}
+          <ConfirmDialog
             open={dialog === "delete"}
             onOpenChange={setDialogOpen("delete")}
+            title={`Delete “${drawing.title}”?`}
+            description="It will be removed from this workspace for everyone."
+            confirmLabel="Delete"
+            onConfirm={async () => {
+              await apiFetch(`/drawings/${drawing.id}`, { method: "DELETE" })
+              router.refresh()
+            }}
           />
         </>
       )}

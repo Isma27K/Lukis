@@ -21,4 +21,14 @@ function timeAgo(iso: string, now = Date.now()) {
   return "just now"
 }
 
-export { timeAgo }
+// "Ada Lovelace" -> "AL", for avatars.
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join("")
+}
+
+export { initials, timeAgo }
