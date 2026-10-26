@@ -28,7 +28,13 @@ There is no test framework set up yet.
 - **Theming:** `components/theme-provider.tsx` wraps `next-themes` with `attribute="class"`, so dark mode is the `.dark` class (`@custom-variant dark`). It also registers a global `d` hotkey that toggles light/dark. The hotkey is ignored while typing in inputs and for key events from inside `.excalidraw`, where `d` is the diamond tool. The root layout sets `suppressHydrationWarning` on `<html>` for this.
 - **Excalidraw editor comes from the local clone at `../excalidraw`, not npm.** `scripts/build-excalidraw.sh` builds its packages, packs them into `vendor/excalidraw/*.tgz`, copies the editor fonts into `public/fonts/`, and installs the tarballs. Both output folders are gitignored, so a fresh checkout needs `npm run excalidraw:build` before `npm install` will work. The `@excalidraw/*` deps point at those tarballs, and the `overrides` in `package.json` make the editor's pinned internal versions (which aren't published on npm) resolve to them. Don't switch to `file:` directory links: the clone ships its own React and you'd get two copies. Make editor changes in `../excalidraw`, then rerun the script.
 - **Editor embedding:** `components/editor/editor.tsx` loads `excalidraw-editor.tsx` through `next/dynamic` with `ssr: false`, because Excalidraw touches `window` on import. It sets `window.EXCALIDRAW_ASSET_PATH = "/"` first so fonts come from `public/fonts/`. The editor's theme follows `next-themes`.
-- **Backend:** FastAPI lives in `../backend`. `next.config.ts` rewrites `/api/*` to `BACKEND_URL` (default `http://localhost:8000`), so browser code calls `/api/...` on the same origin.
+- **Backend:** FastAPI lives in `../backend`. `next.config.ts` rewrites `/api/*` to `BACKEND_URL` (default `http://localhost:8000`), so browser code calls `/api/...` on the same origin. Rewrites are baked in at build time, so set `BACKEND_URL` for `next build` as well as `next start`.
+- **Auth:**
+  - The backend owns accounts and sets an httpOnly `lukis_session` cookie.
+  - Browser code calls the backend through `apiFetch` (`lib/api.ts`). It always sends a JSON content type, because the backend rejects non-JSON mutations as a CSRF guard.
+  - `proxy.ts` only checks that the cookie exists. The real check is `getCurrentUser` / `requireUser` in `lib/dal.ts`: server-only, cached per render, calling `/auth/me` with the cookie.
+  - Pages under `app/(auth)` are for logged-out users; pages under `app/(app)` require a session.
+- **Typecheck:** `tsc` reads generated route types from `.next/types`. After adding or removing pages, run `npm run build` (or `next dev`) first, or typecheck reports errors about stale routes.
 - **Fonts:** `app/layout.tsx` loads Inter as `--font-sans` and Geist Mono as `--font-mono` via `next/font/google`.
 
 ## Code style

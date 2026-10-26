@@ -1,6 +1,6 @@
 import type { NextConfig } from "next"
 
-const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8000"
+import { backendUrl } from "./lib/backend"
 
 const nextConfig: NextConfig = {
   // The browser only ever talks to this origin, so the backend's session
