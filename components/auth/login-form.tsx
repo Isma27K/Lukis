@@ -15,7 +15,14 @@ import {
 } from "@/components/ui/card"
 import { FieldError, FieldGroup } from "@/components/ui/field"
 
-function LoginForm({ next }: { next: string }) {
+function LoginForm({
+  next,
+  canResetPassword,
+}: {
+  next: string
+  // Resetting needs email, which the server may not have set up.
+  canResetPassword: boolean
+}) {
   const [state, formAction, pending] = useAuthSubmit("/auth/login", next)
   const registerHref =
     next === "/" ? "/register" : `/register?next=${encodeURIComponent(next)}`
@@ -46,12 +53,14 @@ function LoginForm({ next }: { next: string }) {
               required
               error={state.fieldErrors?.password}
             />
-            <Link
-              href="/forgot-password"
-              className="-mt-3 self-end text-xs text-muted-foreground underline"
-            >
-              Forgot your password?
-            </Link>
+            {canResetPassword && (
+              <Link
+                href="/forgot-password"
+                className="-mt-3 self-end text-xs text-muted-foreground underline"
+              >
+                Forgot your password?
+              </Link>
+            )}
             {state.error && <FieldError>{state.error}</FieldError>}
             <Button type="submit" size="lg" disabled={pending}>
               {pending ? "Logging in…" : "Log in"}

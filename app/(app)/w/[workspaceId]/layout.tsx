@@ -3,7 +3,12 @@ import { cookies } from "next/headers"
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/workspace/app-sidebar"
-import { getWorkspace, getWorkspaces, requireUser } from "@/lib/dal"
+import {
+  getFeatures,
+  getWorkspace,
+  getWorkspaces,
+  requireUser,
+} from "@/lib/dal"
 
 export default async function WorkspaceLayout({
   children,
@@ -13,10 +18,11 @@ export default async function WorkspaceLayout({
   params: Promise<{ workspaceId: string }>
 }) {
   const { workspaceId } = await params
-  const [user, workspaces, workspace] = await Promise.all([
+  const [user, workspaces, workspace, features] = await Promise.all([
     requireUser(),
     getWorkspaces(),
     getWorkspace(workspaceId),
+    getFeatures(),
   ])
   // The sidebar remembers being collapsed in this cookie.
   const sidebarOpen = (await cookies()).get("sidebar_state")?.value !== "false"
@@ -25,7 +31,9 @@ export default async function WorkspaceLayout({
     <SidebarProvider defaultOpen={sidebarOpen}>
       <AppSidebar user={user} workspaces={workspaces} current={workspace} />
       <SidebarInset>
-        {!user.email_verified && <VerifyEmailBanner email={user.email} />}
+        {features.email && !user.email_verified && (
+          <VerifyEmailBanner email={user.email} />
+        )}
         {children}
       </SidebarInset>
     </SidebarProvider>

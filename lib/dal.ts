@@ -9,6 +9,7 @@ import { backendUrl } from "@/lib/backend"
 import type {
   Drawing,
   DrawingSummary,
+  Features,
   Invite,
   InvitePreview,
   Member,
@@ -16,6 +17,16 @@ import type {
   TrashedDrawing,
   Workspace,
 } from "@/lib/types"
+
+// What this server has switched on. Public, so pages for logged-out visitors
+// can use it too.
+const getFeatures = cache(async (): Promise<Features> => {
+  const response = await fetch(`${backendUrl}/features`, { cache: "no-store" })
+  if (!response.ok) {
+    throw new Error(`GET /features failed with ${response.status}`)
+  }
+  return response.json()
+})
 
 async function sessionHeaders(): Promise<HeadersInit | undefined> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value
@@ -130,6 +141,7 @@ export {
   getCurrentUser,
   getDrawing,
   getDrawings,
+  getFeatures,
   getInvitePreview,
   getInvites,
   getMembers,

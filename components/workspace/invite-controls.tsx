@@ -22,14 +22,21 @@ import type { CreatedInvite, Role } from "@/lib/types"
 function InviteForm({
   workspaceId,
   roles,
+  emailed,
 }: {
   workspaceId: string
   // The roles the current user may hand out.
   roles: Role[]
+  // Whether the server emails invites; otherwise the link is the only way.
+  emailed: boolean
 }) {
   const router = useRouter()
   const [role, setRole] = useState<Role>("editor")
-  const [created, setCreated] = useState<{ email: string; link: string }>()
+  const [created, setCreated] = useState<{
+    email: string
+    link: string
+    emailed: boolean
+  }>()
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
 
@@ -46,6 +53,7 @@ function InviteForm({
         setCreated({
           email: invite.email,
           link: `${window.location.origin}/invite/${invite.token}`,
+          emailed,
         })
         setError(undefined)
         form.reset()
@@ -90,7 +98,7 @@ function InviteForm({
           </SelectContent>
         </Select>
         <Button type="submit" disabled={pending}>
-          Send invite
+          {emailed ? "Send invite" : "Create invite link"}
         </Button>
       </form>
       {created && <InviteLink {...created} />}
@@ -98,8 +106,16 @@ function InviteForm({
   )
 }
 
-// The invite is emailed; the link is shown too, for passing it on another way.
-function InviteLink({ email, link }: { email: string; link: string }) {
+// The link to pass on, also when it was emailed, for sending it another way.
+function InviteLink({
+  email,
+  link,
+  emailed,
+}: {
+  email: string
+  link: string
+  emailed: boolean
+}) {
   const [copied, setCopied] = useState(false)
 
   async function copy() {
@@ -114,9 +130,10 @@ function InviteLink({ email, link }: { email: string; link: string }) {
   return (
     <div className="flex flex-col gap-2 rounded-md bg-muted p-3">
       <p className="text-xs">
-        We emailed this link to <span className="font-medium">{email}</span>.
-        You can also send it yourself. It works once, for that email only, and
-        expires in 7 days.
+        {emailed ? "We emailed this link to " : "Send this link to "}
+        <span className="font-medium">{email}</span>
+        {emailed ? ". You can also send it yourself." : "."} It works once, for
+        that email only, and expires in 7 days.
       </p>
       <div className="flex gap-2">
         <Input

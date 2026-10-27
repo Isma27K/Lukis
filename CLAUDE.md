@@ -40,10 +40,13 @@ There is no test framework set up yet.
   - `proxy.ts` only checks that the cookie exists. The real check is `getCurrentUser` / `requireUser` in `lib/dal.ts`: server-only, cached per render, calling `/auth/me` with the cookie.
   - Server components read backend data through the other `lib/dal.ts` getters. These forward the cookie, send a 401 to `/login`, and turn a 404 into `notFound()`. The backend answers 404, not 403, for things in workspaces you aren't a member of.
   - Pages under `app/(auth)` are for logged-out users; pages under `app/(app)` require a session. `/verify-email` is outside both groups because it's opened from an email, logged in or not. Pages that work without a session must also be listed in `PUBLIC_PATHS` in `proxy.ts`.
-  - Email verification:
+  - Email is optional. The backend has it only when `SMTP_HOST` is set, and reports that through the public `GET /features` endpoint, read with `getFeatures()` in `lib/dal.ts`.
+    - Without email, the features below are hidden and their endpoints answer 404. Invites are shared as links only.
+    - Gate any new email-dependent UI on `getFeatures()` the same way.
+  - Email verification (only with email):
     - Signing up emails a single-use link to `/verify-email`. It carries an optional `next` path, so an invitee lands back on their invite.
     - Accepting an invite requires a verified email. Until then the workspace layout shows `VerifyEmailBanner`.
-  - Password reset runs `/forgot-password` → emailed link → `/reset-password`. Resetting ends every session of the account.
+  - Password reset (only with email) runs `/forgot-password` → emailed link → `/reset-password`. Resetting ends every session of the account.
   - The backend rate-limits logins, sign-ups and every action that sends email, answering 429 with a readable `detail`. `apiFetch` shows it like any other error.
 - **Live collaboration:**
   - `components/editor/collab/collaboration.ts` is a trimmed port of Excalidraw's own `excalidraw-app/collab` client. Each open editor holds a plain WebSocket to the backend's relay (`../backend/function/realtime.py`), with automatic reconnects.

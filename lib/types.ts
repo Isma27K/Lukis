@@ -5,6 +5,10 @@ import type { AppState } from "@excalidraw/excalidraw/types"
 
 type Role = "owner" | "admin" | "editor" | "viewer"
 
+// What the server has switched on. Without email there's no verification,
+// password reset or invite emails; invites are shared as links.
+type Features = { email: boolean }
+
 type Workspace = {
   id: string
   name: string
@@ -70,6 +74,7 @@ export type {
   CreatedInvite,
   Drawing,
   DrawingSummary,
+  Features,
   Invite,
   InvitePreview,
   Member,

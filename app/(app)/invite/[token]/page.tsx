@@ -13,7 +13,7 @@ import {
   AcceptInviteButton,
   SwitchAccountButton,
 } from "@/components/workspace/invite-response"
-import { getInvitePreview, requireUser } from "@/lib/dal"
+import { getFeatures, getInvitePreview, requireUser } from "@/lib/dal"
 import { ROLE_LABELS } from "@/lib/roles"
 
 export const metadata: Metadata = { title: "Invitation" }
@@ -24,10 +24,13 @@ export default async function Page({
   params: Promise<{ token: string }>
 }) {
   const { token } = await params
-  const [user, invite] = await Promise.all([
+  const [user, invite, features] = await Promise.all([
     requireUser(),
     getInvitePreview(token),
+    getFeatures(),
   ])
+  // Joining takes a confirmed address, but only where email is set up.
+  const mustConfirmEmail = features.email && !user.email_verified
 
   return (
     <main className="flex min-h-svh items-center justify-center p-6">
@@ -60,7 +63,7 @@ export default async function Page({
               <SwitchAccountButton token={token} />
             </CardFooter>
           </>
-        ) : !user.email_verified ? (
+        ) : mustConfirmEmail ? (
           <>
             <CardHeader>
               <CardTitle>Confirm your email to join</CardTitle>

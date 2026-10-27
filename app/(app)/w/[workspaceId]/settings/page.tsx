@@ -20,7 +20,13 @@ import {
 } from "@/components/workspace/member-controls"
 import { PageHeader } from "@/components/workspace/page-header"
 import { WorkspaceNameForm } from "@/components/workspace/workspace-name-form"
-import { getInvites, getMembers, getWorkspace, requireUser } from "@/lib/dal"
+import {
+  getFeatures,
+  getInvites,
+  getMembers,
+  getWorkspace,
+  requireUser,
+} from "@/lib/dal"
 import { initials, timeAgo } from "@/lib/format"
 import { ROLE_LABELS, assignableRoles, atLeast, canManage } from "@/lib/roles"
 
@@ -33,9 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { workspaceId } = await params
-  const [user, workspace] = await Promise.all([
+  const [user, workspace, features] = await Promise.all([
     requireUser(),
     getWorkspace(workspaceId),
+    getFeatures(),
   ])
   const isAdmin = atLeast(workspace.role, "admin")
   const shared = !workspace.personal
@@ -139,7 +146,11 @@ export default async function Page({ params }: Props) {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <InviteForm workspaceId={workspace.id} roles={roles} />
+              <InviteForm
+                workspaceId={workspace.id}
+                roles={roles}
+                emailed={features.email}
+              />
               {invites.length > 0 && (
                 <div className="flex flex-col gap-1">
                   <h3 className="text-xs font-medium">Pending invites</h3>
