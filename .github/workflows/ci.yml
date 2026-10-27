@@ -7,6 +7,14 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      # On main, once every check below passed, the image is built from the
+      # editor packages built here and pushed to GitHub's container registry
+      # as ghcr.io/<owner>/lukis-frontend, private like this repo.
+      PUBLISH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,3 +52,47 @@ jobs:
       - name: Typecheck
         working-directory: frontend
         run: npm run typecheck
+
+      # Image names must be lowercase; the owner (Isma27K) isn't.
+      - name: Image name
+        if: env.PUBLISH == 'true'
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/lukis-frontend" >> "$GITHUB_OUTPUT"
+      - if: env.PUBLISH == 'true'
+        uses: docker/setup-buildx-action@v3
+      - if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # "latest", plus "sha-<short commit>" to pin or roll back to.
+      - if: env.PUBLISH == 'true'
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+      # A path context, so the build sees vendor/ and public/fonts, which are
+      # gitignored but were built above. (Without one it builds from git.)
+      - if: env.PUBLISH == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      # Private packages get little free storage, so keep only recent ones.
+      # Never fails the run: deleting needs the repo to have admin access to
+      # the package (package settings -> Manage Actions access).
+      - if: env.PUBLISH == 'true'
+        uses: actions/delete-package-versions@v5
+        continue-on-error: true
+        with:
+          package-name: lukis-frontend
+          package-type: container
+          min-versions-to-keep: 10

@@ -77,6 +77,7 @@ There is no test framework set up yet.
 - **CI** (`.github/workflows/ci.yml`):
   - It checks out `excalidraw/excalidraw` at the commit in `.excalidraw-ref` and builds the editor.
   - Then it runs lint, prettier, build and typecheck.
+  - On pushes to `main` that pass, the same job builds the Docker image and pushes it to `ghcr.io/isma27k/lukis-frontend` (private, tagged `latest` and `sha-<commit>`), which `../backend/deploy/compose.yaml` pulls. The backend repo publishes `lukis-backend` the same way.
   - `scripts/build-excalidraw.sh` rewrites `.excalidraw-ref` on every run, so commit it together with `package-lock.json`.
 - **Typecheck:** `tsc` reads generated route types from `.next/types`. After adding or removing pages, run `npm run build` (or `next dev`) first, or typecheck reports errors about stale routes.
 - **Fonts:** `app/layout.tsx` loads Inter as `--font-sans` and Geist Mono as `--font-mono` via `next/font/google`.
