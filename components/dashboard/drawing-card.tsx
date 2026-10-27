@@ -5,7 +5,6 @@ import {
   EllipsisIcon,
   FolderInputIcon,
   PencilIcon,
-  ShapesIcon,
   Trash2Icon,
 } from "lucide-react"
 import Link from "next/link"
@@ -14,6 +13,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { DrawingThumbnail } from "@/components/dashboard/drawing-thumbnail"
 import { TextInputDialog } from "@/components/text-input-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -33,12 +33,15 @@ function DrawingCard({
   drawing,
   editedLabel,
   canEdit,
+  canDelete,
   moveTargets,
 }: {
   drawing: DrawingSummary
   // Preformatted on the server, e.g. "5 minutes ago".
   editedLabel: string
   canEdit: boolean
+  // Moving to the trash takes an admin; see canDeleteDrawings.
+  canDelete: boolean
   // Other workspaces the user can add drawings to.
   moveTargets: Workspace[]
 }) {
@@ -64,9 +67,7 @@ function DrawingCard({
   return (
     <li className="group/drawing relative overflow-hidden rounded-lg ring-1 ring-foreground/10 transition-shadow hover:ring-foreground/25">
       <Link href={`/d/${drawing.id}`} className="flex flex-col">
-        <div className="flex aspect-video items-center justify-center bg-muted text-muted-foreground">
-          <ShapesIcon className="size-6" />
-        </div>
+        <DrawingThumbnail drawing={drawing} />
         <div className="flex flex-col gap-0.5 p-3">
           <span className="truncate text-xs font-medium">{drawing.title}</span>
           <span className="text-xs text-muted-foreground">
@@ -134,14 +135,18 @@ function DrawingCard({
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => setDialog("delete")}
-              >
-                <Trash2Icon />
-                Delete
-              </DropdownMenuItem>
+              {canDelete && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={() => setDialog("delete")}
+                  >
+                    <Trash2Icon />
+                    Move to trash
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           <TextInputDialog
@@ -163,9 +168,9 @@ function DrawingCard({
           <ConfirmDialog
             open={dialog === "delete"}
             onOpenChange={setDialogOpen("delete")}
-            title={`Delete “${drawing.title}”?`}
-            description="It will be removed from this workspace for everyone."
-            confirmLabel="Delete"
+            title={`Move “${drawing.title}” to the trash?`}
+            description="It will be hidden from this workspace for everyone. You can restore it from the trash."
+            confirmLabel="Move to trash"
             onConfirm={async () => {
               await apiFetch(`/drawings/${drawing.id}`, { method: "DELETE" })
               router.refresh()

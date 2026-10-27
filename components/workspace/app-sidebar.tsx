@@ -1,6 +1,6 @@
 "use client"
 
-import { SettingsIcon, ShapesIcon } from "lucide-react"
+import { SettingsIcon, ShapesIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -32,6 +32,7 @@ function AppSidebar({
   const base = `/w/${current.id}`
   const links = [
     { href: base, label: "Drawings", icon: ShapesIcon },
+    { href: `${base}/trash`, label: "Trash", icon: Trash2Icon },
     {
       href: `${base}/settings`,
       label: current.personal ? "Settings" : "Members & settings",

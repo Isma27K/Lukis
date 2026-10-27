@@ -18,11 +18,19 @@ type DrawingSummary = {
   title: string
   created_at: string
   updated_at: string
+  // Changes with every new thumbnail; null until the editor has made one.
+  thumbnail_version: number | null
 }
 
 type Drawing = DrawingSummary & {
   workspace_id: string
   role: Role
+}
+
+type TrashedDrawing = DrawingSummary & {
+  deleted_at: string
+  // Who moved it to the trash; null if their account is gone.
+  deleted_by: string | null
 }
 
 type Scene = {
@@ -67,5 +75,6 @@ export type {
   Member,
   Role,
   Scene,
+  TrashedDrawing,
   Workspace,
 }

@@ -13,7 +13,8 @@ import {
 } from "@/components/editor/collab/collaboration"
 
 // Everyone with access to a drawing is connected to its room while it's open.
-// Spread `editorProps` onto <Excalidraw> and call `onChange` from its onChange.
+// Spread `editorProps` onto <Excalidraw>, call `attach` from its
+// onExcalidrawAPI and `onChange` from its onChange.
 function useCollaboration({
   drawingId,
   canEdit,
@@ -43,15 +44,15 @@ function useCollaboration({
   return {
     status,
     onChange: collaboration.onChange,
+    attach(api: ExcalidrawImperativeAPI | null) {
+      if (api) {
+        collaboration.start(api)
+      } else {
+        collaboration.stop()
+      }
+    },
     editorProps: {
       isCollaborating: status === "live",
-      onExcalidrawAPI: (api: ExcalidrawImperativeAPI | null) => {
-        if (api) {
-          collaboration.start(api)
-        } else {
-          collaboration.stop()
-        }
-      },
       onPointerUpdate: collaboration.onPointerUpdate,
       onScrollChange: collaboration.onScrollChange,
       onUserFollow: ({ userToFollow, action }: OnUserFollowedPayload) =>

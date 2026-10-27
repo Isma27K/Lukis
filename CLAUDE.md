@@ -33,7 +33,7 @@ There is no test framework set up yet.
   - It saves 1 s after the last change (at most every 5 s while drawing), and also on tab hide, page close and unmount.
   - The backend merges the sent elements into the stored scene using Excalidraw's own reconcile rule, so partial or concurrent saves never drop elements.
   - Deletions are sent as `isDeleted` tombstones; don't filter deleted elements out of saves.
-- **Backend:** FastAPI lives in `../backend`. `next.config.ts` rewrites `/api/*` to `BACKEND_URL` (default `http://localhost:8000`), so browser code calls `/api/...` on the same origin. Rewrites are baked in at build time, so set `BACKEND_URL` for `next build` as well as `next start`.
+- **Backend:** FastAPI lives in `../backend`. `next.config.ts` rewrites `/api/*` to `BACKEND_URL` (default `http://localhost:8000`), so browser code calls `/api/...` on the same origin. Rewrites are baked in at build time, while server components read `BACKEND_URL` at runtime, so set it for `next build` as well as `next start`.
 - **Auth:**
   - The backend owns accounts and sets an httpOnly `lukis_session` cookie.
   - Browser code calls the backend through `apiFetch` (`lib/api.ts`). It always sends a JSON content type, because the backend rejects non-JSON mutations as a CSRF guard.
@@ -46,6 +46,17 @@ There is no test framework set up yet.
   - Updates carry only elements whose `version` changed. Incoming elements go through `restoreElements` → `reconcileElements` → `updateScene` with `CaptureUpdateAction.NEVER`.
   - Every client still autosaves through REST; the server merge makes the duplicate saves harmless.
   - Follow mode is host-controlled: the `userToFollow` prop is set from `onUserFollow`.
+  - `drawing-editor.tsx` hands the editor API to each helper from `onExcalidrawAPI` (`collaboration.attach`, `images.attach`), and fans `onChange` out to all of them.
+- **Images:**
+  - Image bytes live in S3-compatible storage (RustFS) behind the backend (`../backend/utils/storage.py`), keyed `drawings/{id}/files/{fileId}`. Scene elements only carry the `fileId`, which Excalidraw makes a SHA-1 of the file, so the first upload of an id wins.
+  - The browser never talks to the storage server: uploads are JSON data URLs to `PUT /drawings/{id}/files/{fileId}`, downloads come from `GET` on the same path.
+  - `components/editor/image-files.ts` ports Excalidraw's `FileManager`, driven entirely by `onChange` (which also fires for remote changes). Editors upload files the server lacks, then flip the image's `status` from `"pending"` to `"saved"`. That edit tells everyone else to download it. Failed transfers are retried with backoff.
+  - The editor's 4 MB `imageOptions.maxFileSizeBytes` matches the backend's `MAX_FILE_BYTES`; change both together.
+- **Thumbnails:** `components/editor/use-thumbnail.ts` renders the scene with `exportScene` (640×360, `fit: "contain"`) in both the light and dark themes. It runs after saves (at most every 15 s), on leaving the editor, and once for older drawings that lack one. The dashboard (`drawing-thumbnail.tsx`) shows the version matching the page theme from `/api/drawings/{id}/thumbnail/{theme}?v={thumbnail_version}`, as a plain `<img>`: the image optimizer can't send the session cookie. Lazy loading means the hidden theme's thumbnail is never fetched.
+- **Trash:**
+  - Deleting a drawing only sets `deleted_at`, and `/w/[id]/trash` lists trashed drawings.
+  - Only admins and owners can do anything that removes a drawing from its workspace: trash it, restore it, delete it forever, or move it out. Editors only change content. This is `REMOVE_ROLE` in the backend and `canDeleteDrawings` in the UI.
+  - Deleting forever (`DELETE /drawings/{id}/permanent`) also clears the drawing's storage prefix.
 - **Workspaces and roles:**
   - `app/(app)/w/[workspaceId]/layout.tsx` wraps workspace pages in the sidebar (workspace switcher, navigation, user menu). The editor (`/d/[id]`) and the invite page (`/invite/[token]`) sit outside it.
   - Roles rank owner > admin > editor > viewer. The backend enforces them; `lib/roles.ts` mirrors the rules only to hide controls that would fail, so change both together.

@@ -34,7 +34,8 @@ function persistedAppState(appState: AppState) {
 function createAutosaver(
   drawingId: string,
   storedElements: readonly ExcalidrawElement[],
-  onStatus: (status: SaveStatus) => void
+  onStatus: (status: SaveStatus) => void,
+  onSaved: () => void
 ) {
   // Element versions the server already has, so a save only sends what
   // changed; the server merges it into the stored scene.
@@ -106,6 +107,7 @@ function createAutosaver(
           savedAppState = changes.appState
         }
         onStatus("saved")
+        onSaved()
       } catch (error) {
         // Losing a race with another save (409) or the network is worth
         // retrying; anything else (deleted, access revoked) won't fix itself.
@@ -148,14 +150,16 @@ function createAutosaver(
 }
 
 // Saves the scene as it changes, plus on tab hide, page close and unmount.
+// `onSaved` runs after each successful save; only its first value is used.
 function useAutosave(
   drawingId: string,
   storedElements: readonly ExcalidrawElement[],
-  enabled: boolean
+  enabled: boolean,
+  onSaved: () => void
 ) {
   const [status, setStatus] = useState<SaveStatus>("saved")
   const [autosaver] = useState(() =>
-    createAutosaver(drawingId, storedElements, setStatus)
+    createAutosaver(drawingId, storedElements, setStatus, onSaved)
   )
 
   useEffect(() => {

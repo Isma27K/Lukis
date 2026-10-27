@@ -13,6 +13,7 @@ import type {
   InvitePreview,
   Member,
   Scene,
+  TrashedDrawing,
   Workspace,
 } from "@/lib/types"
 
@@ -111,6 +112,12 @@ const getDrawings = cache((workspaceId: string) =>
   )
 )
 
+function getTrash(workspaceId: string) {
+  return backendGet<TrashedDrawing[]>(
+    `/workspaces/${encodeURIComponent(workspaceId)}/trash`
+  )
+}
+
 const getDrawing = cache((drawingId: string) =>
   backendGet<Drawing>(`/drawings/${encodeURIComponent(drawingId)}`)
 )
@@ -127,6 +134,7 @@ export {
   getInvites,
   getMembers,
   getScene,
+  getTrash,
   getWorkspace,
   getWorkspaces,
   requireUser,

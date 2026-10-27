@@ -36,4 +36,11 @@ function assignableRoles(actor: Role): Role[] {
   return actor === "admin" ? ["admin", "editor", "viewer"] : []
 }
 
-export { ROLE_LABELS, assignableRoles, atLeast, canManage }
+// Moving drawings to the trash, restoring them, deleting them forever and
+// moving them out to another workspace. Editors change what's in a drawing but
+// can't remove it (REMOVE_ROLE in routes/drawings.py).
+function canDeleteDrawings(role: Role) {
+  return atLeast(role, "admin")
+}
+
+export { ROLE_LABELS, assignableRoles, atLeast, canDeleteDrawings, canManage }
