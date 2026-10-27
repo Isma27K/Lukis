@@ -46,6 +46,12 @@ function LoginForm({ next }: { next: string }) {
               required
               error={state.fieldErrors?.password}
             />
+            <Link
+              href="/forgot-password"
+              className="-mt-3 self-end text-xs text-muted-foreground underline"
+            >
+              Forgot your password?
+            </Link>
             {state.error && <FieldError>{state.error}</FieldError>}
             <Button type="submit" size="lg" disabled={pending}>
               {pending ? "Logging in…" : "Log in"}

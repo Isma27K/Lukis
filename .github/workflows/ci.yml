@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: frontend
+
+      # The editor is built from excalidraw/excalidraw at the commit the
+      # tarballs were last built from (scripts/build-excalidraw.sh records it).
+      - name: Read the Excalidraw commit
+        id: excalidraw
+        run: echo "ref=$(cat frontend/.excalidraw-ref)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: excalidraw/excalidraw
+          ref: ${{ steps.excalidraw.outputs.ref }}
+          path: excalidraw
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install -g yarn@1.22.22
+
+      - name: Build the editor and install dependencies
+        working-directory: frontend
+        run: npm run excalidraw:build
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+      - name: Check formatting
+        working-directory: frontend
+        run: npx prettier --check "**/*.{ts,tsx}"
+      # Before typecheck, which reads the route types the build generates.
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck

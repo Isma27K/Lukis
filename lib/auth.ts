@@ -6,6 +6,9 @@ type User = {
   id: string
   email: string
   name: string
+  // Whether they followed the link emailed at signup; joining workspaces
+  // needs it.
+  email_verified: boolean
 }
 
 // Only allows paths on this site, so a crafted ?next= can't send people

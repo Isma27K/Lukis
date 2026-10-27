@@ -90,7 +90,7 @@ function InviteForm({
           </SelectContent>
         </Select>
         <Button type="submit" disabled={pending}>
-          Create invite link
+          Send invite
         </Button>
       </form>
       {created && <InviteLink {...created} />}
@@ -98,7 +98,7 @@ function InviteForm({
   )
 }
 
-// Email delivery doesn't exist yet, so the inviter passes the link on.
+// The invite is emailed; the link is shown too, for passing it on another way.
 function InviteLink({ email, link }: { email: string; link: string }) {
   const [copied, setCopied] = useState(false)
 
@@ -114,8 +114,9 @@ function InviteLink({ email, link }: { email: string; link: string }) {
   return (
     <div className="flex flex-col gap-2 rounded-md bg-muted p-3">
       <p className="text-xs">
-        Send this link to <span className="font-medium">{email}</span>. It works
-        once, for that email only, and expires in 7 days.
+        We emailed this link to <span className="font-medium">{email}</span>.
+        You can also send it yourself. It works once, for that email only, and
+        expires in 7 days.
       </p>
       <div className="flex gap-2">
         <Input

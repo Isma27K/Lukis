@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+import { ResendVerificationButton } from "@/components/auth/verify-email"
 import {
   Card,
   CardDescription,
@@ -57,6 +58,23 @@ export default async function Page({
             </CardHeader>
             <CardFooter>
               <SwitchAccountButton token={token} />
+            </CardFooter>
+          </>
+        ) : !user.email_verified ? (
+          <>
+            <CardHeader>
+              <CardTitle>Confirm your email to join</CardTitle>
+              <CardDescription>
+                {invite.invited_by} invited you to {invite.workspace_name}.
+                First open the link we emailed to {user.email}; it brings you
+                back here.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <ResendVerificationButton
+                next={`/invite/${token}`}
+                className="w-full"
+              />
             </CardFooter>
           </>
         ) : (

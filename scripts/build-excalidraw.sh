@@ -29,6 +29,13 @@ for pkg in "${PACKAGES[@]}"; do
   tarballs+=("./vendor/excalidraw/$tarball")
 done
 
+echo "› Recording the commit in .excalidraw-ref"
+# CI checks out excalidraw/excalidraw at this commit to build the same editor.
+git -C "$EXCALIDRAW_DIR" rev-parse HEAD > "$FRONTEND_DIR/.excalidraw-ref"
+if [ -n "$(git -C "$EXCALIDRAW_DIR" status --porcelain -- packages)" ]; then
+  echo "! The clone has uncommitted changes in packages/; CI won't see them."
+fi
+
 echo "› Copying fonts to $FONTS_DIR"
 rm -rf "$FONTS_DIR"
 cp -r "$EXCALIDRAW_DIR/packages/excalidraw/dist/prod/fonts" "$FONTS_DIR"

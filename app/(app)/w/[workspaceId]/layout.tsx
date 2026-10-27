@@ -1,5 +1,6 @@
 import { cookies } from "next/headers"
 
+import { VerifyEmailBanner } from "@/components/auth/verify-email-banner"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/workspace/app-sidebar"
 import { getWorkspace, getWorkspaces, requireUser } from "@/lib/dal"
@@ -23,7 +24,10 @@ export default async function WorkspaceLayout({
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
       <AppSidebar user={user} workspaces={workspaces} current={workspace} />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        {!user.email_verified && <VerifyEmailBanner email={user.email} />}
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   )
 }

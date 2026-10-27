@@ -1,0 +1,11 @@
+.git
+.github
+.next
+node_modules
+.env*
+*.log
+*.tsbuildinfo
+next-env.d.ts
+Dockerfile
+.dockerignore
+# vendor/ and public/fonts/ are gitignored but needed: keep them in.

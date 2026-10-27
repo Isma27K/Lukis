@@ -2,7 +2,14 @@ import { NextResponse, type NextRequest } from "next/server"
 
 import { SESSION_COOKIE } from "@/lib/auth"
 
-const PUBLIC_PATHS = ["/login", "/register"]
+// Pages that work without a session, including links opened from emails.
+const PUBLIC_PATHS = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+]
 
 // A cheap first pass: sends visitors with no session cookie to /login before
 // anything renders. Whether the session is valid is checked by getCurrentUser

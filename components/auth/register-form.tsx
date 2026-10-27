@@ -28,6 +28,8 @@ function RegisterForm({ next }: { next: string }) {
       </CardHeader>
       <CardContent>
         <form action={formAction}>
+          {/* The confirmation email links back here, e.g. to an invite. */}
+          {next !== "/" && <input type="hidden" name="next" value={next} />}
           <FieldGroup>
             <TextField
               label="Name"
