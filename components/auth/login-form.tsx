@@ -18,10 +18,13 @@ import { FieldError, FieldGroup } from "@/components/ui/field"
 function LoginForm({
   next,
   canResetPassword,
+  canRegister,
 }: {
   next: string
   // Resetting needs email, which the server may not have set up.
   canResetPassword: boolean
+  // False while sign-up is invite-only, unless an invite brought them here.
+  canRegister: boolean
 }) {
   const [state, formAction, pending] = useAuthSubmit("/auth/login", next)
   const registerHref =
@@ -68,12 +71,14 @@ function LoginForm({
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="text-muted-foreground">
-        No account yet?&nbsp;
-        <Link href={registerHref} className="text-foreground underline">
-          Create one
-        </Link>
-      </CardFooter>
+      {canRegister && (
+        <CardFooter className="text-muted-foreground">
+          No account yet?&nbsp;
+          <Link href={registerHref} className="text-foreground underline">
+            Create one
+          </Link>
+        </CardFooter>
+      )}
     </Card>
   )
 }

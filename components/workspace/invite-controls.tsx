@@ -185,4 +185,4 @@ function RevokeInviteButton({
   )
 }
 
-export { InviteForm, RevokeInviteButton }
+export { InviteForm, InviteLink, RevokeInviteButton }

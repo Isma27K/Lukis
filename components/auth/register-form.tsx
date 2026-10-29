@@ -15,7 +15,18 @@ import {
 } from "@/components/ui/card"
 import { FieldError, FieldGroup } from "@/components/ui/field"
 
-function RegisterForm({ next }: { next: string }) {
+function RegisterForm({
+  next,
+  setupRequired,
+  invite,
+}: {
+  next: string
+  // A fresh install: the first account needs the code from the server logs,
+  // and becomes the site owner.
+  setupRequired: boolean
+  // The invite link being signed up through, which fixes the email.
+  invite?: { token: string; email: string }
+}) {
   const [state, formAction, pending] = useAuthSubmit("/auth/register", next)
   const loginHref =
     next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`
@@ -23,13 +34,22 @@ function RegisterForm({ next }: { next: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create your account</CardTitle>
-        <CardDescription>Start drawing in Lukis.</CardDescription>
+        <CardTitle>
+          {setupRequired ? "Set up Lukis" : "Create your account"}
+        </CardTitle>
+        <CardDescription>
+          {setupRequired
+            ? "Create the first account. It becomes the site owner, who decides who else can sign up."
+            : "Start drawing in Lukis."}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction}>
           {/* The confirmation email links back here, e.g. to an invite. */}
           {next !== "/" && <input type="hidden" name="next" value={next} />}
+          {invite && (
+            <input type="hidden" name="invite_token" value={invite.token} />
+          )}
           <FieldGroup>
             <TextField
               label="Name"
@@ -46,7 +66,9 @@ function RegisterForm({ next }: { next: string }) {
               type="email"
               autoComplete="email"
               required
-              defaultValue={state.values?.email}
+              readOnly={!!invite}
+              defaultValue={invite?.email ?? state.values?.email}
+              description={invite && "The invite is for this address only."}
               error={state.fieldErrors?.email}
             />
             <TextField
@@ -60,6 +82,19 @@ function RegisterForm({ next }: { next: string }) {
               description="At least 8 characters."
               error={state.fieldErrors?.password}
             />
+            {setupRequired && (
+              <TextField
+                label="Setup code"
+                name="setup_code"
+                autoComplete="off"
+                spellCheck={false}
+                required
+                maxLength={64}
+                defaultValue={state.values?.setup_code}
+                description="Printed in the server logs when it starts. Run: docker compose logs backend"
+                error={state.fieldErrors?.setup_code}
+              />
+            )}
             {state.error && <FieldError>{state.error}</FieldError>}
             <Button type="submit" size="lg" disabled={pending}>
               {pending ? "Creating account…" : "Create account"}

@@ -39,6 +39,11 @@ There is no test framework set up yet.
   - Browser code calls the backend through `apiFetch` (`lib/api.ts`). It always sends a JSON content type, because the backend rejects non-JSON mutations as a CSRF guard.
   - `proxy.ts` only checks that the cookie exists. The real check is `getCurrentUser` / `requireUser` in `lib/dal.ts`: server-only, cached per render, calling `/auth/me` with the cookie.
   - Server components read backend data through the other `lib/dal.ts` getters. These forward the cookie, send a 401 to `/login`, and turn a 404 into `notFound()`. The backend answers 404, not 403, for things in workspaces you aren't a member of.
+  - The first account is the **site owner** (`user.site_owner`), which is separate from a workspace's `owner` role.
+    - On a fresh install it needs a one-time setup code from the backend's logs (`registration: "setup"` in `getFeatures()`).
+    - Only the owner sees `/admin` (Site settings), which switches open sign-up on or off and makes sign-up invites.
+    - While sign-up is off (`registration: "invite_only"`), `/register` needs an invite link: `?invite=<token>` from a sign-up invite, or a workspace invite from the site owner, which arrives as `next=/invite/<token>` (`inviteToken` in `lib/auth.ts`).
+    - The backend enforces all of it; the pages only hide what would fail.
   - Pages under `app/(auth)` are for logged-out users; pages under `app/(app)` require a session. `/verify-email` is outside both groups because it's opened from an email, logged in or not. Pages that work without a session must also be listed in `PUBLIC_PATHS` in `proxy.ts`.
   - Email is optional. The backend has it only when `SMTP_HOST` is set, and reports that through the public `GET /features` endpoint, read with `getFeatures()` in `lib/dal.ts`.
     - Without email, the features below are hidden and their endpoints answer 404. Invites are shared as links only.

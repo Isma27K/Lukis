@@ -1,7 +1,8 @@
 "use client"
 
-import { ChevronsUpDownIcon, LogOutIcon } from "lucide-react"
+import { ChevronsUpDownIcon, LogOutIcon, ShieldIcon } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
 
 import { useLogOut } from "@/components/auth/use-log-out"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -25,6 +26,7 @@ import type { User } from "@/lib/auth"
 import { initials } from "@/lib/format"
 
 function UserMenu({ user }: { user: User }) {
+  const router = useRouter()
   const { theme, setTheme } = useTheme()
   const { logOut, pending } = useLogOut()
 
@@ -61,6 +63,12 @@ function UserMenu({ user }: { user: User }) {
               </DropdownMenuRadioGroup>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+            {user.site_owner && (
+              <DropdownMenuItem onClick={() => router.push("/admin")}>
+                <ShieldIcon />
+                Site settings
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={logOut} disabled={pending}>
               <LogOutIcon />
               Log out

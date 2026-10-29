@@ -5,9 +5,30 @@ import type { AppState } from "@excalidraw/excalidraw/types"
 
 type Role = "owner" | "admin" | "editor" | "viewer"
 
+// Who may sign up: the first account with the setup code from the server
+// logs, anyone, or only people with an invite from the site owner.
+type RegistrationMode = "setup" | "open" | "invite_only"
+
 // What the server has switched on. Without email there's no verification,
 // password reset or invite emails; invites are shared as links.
-type Features = { email: boolean }
+type Features = { email: boolean; registration: RegistrationMode }
+
+// Settings for the whole site, which only its owner can see.
+type SiteSettings = { registration_open: boolean }
+
+// Lets one email address sign up while sign-up is invite-only.
+type SignupInvite = {
+  id: string
+  email: string
+  created_at: string
+  expires_at: string
+}
+
+// Only returned when the invite is created; the backend keeps just a hash.
+type CreatedSignupInvite = SignupInvite & { token: string }
+
+// What the sign-up page learns from an invite link.
+type SignupInvitePreview = { email: string }
 
 type Workspace = {
   id: string
@@ -72,14 +93,19 @@ type InvitePreview = {
 
 export type {
   CreatedInvite,
+  CreatedSignupInvite,
   Drawing,
   DrawingSummary,
   Features,
   Invite,
   InvitePreview,
   Member,
+  RegistrationMode,
   Role,
   Scene,
+  SignupInvite,
+  SignupInvitePreview,
+  SiteSettings,
   TrashedDrawing,
   Workspace,
 }

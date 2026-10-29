@@ -14,6 +14,9 @@ import type {
   InvitePreview,
   Member,
   Scene,
+  SignupInvite,
+  SignupInvitePreview,
+  SiteSettings,
   TrashedDrawing,
   Workspace,
 } from "@/lib/types"
@@ -117,6 +120,25 @@ function getInvitePreview(token: string) {
   })
 }
 
+// Null when the link can't be used to sign up: invalid, used up, expired, or
+// a workspace invite from someone other than the site owner. Works logged out.
+function getSignupInvitePreview(token: string) {
+  return backendGet<SignupInvitePreview>(
+    `/auth/signup-invites/${encodeURIComponent(token)}`,
+    { orNull: true }
+  )
+}
+
+// The site owner only; anyone else gets a 403.
+function getSiteSettings() {
+  return backendGet<SiteSettings>("/site/settings")
+}
+
+// The site owner only, likewise.
+function getSignupInvites() {
+  return backendGet<SignupInvite[]>("/site/invites")
+}
+
 const getDrawings = cache((workspaceId: string) =>
   backendGet<DrawingSummary[]>(
     `/workspaces/${encodeURIComponent(workspaceId)}/drawings`
@@ -146,6 +168,9 @@ export {
   getInvites,
   getMembers,
   getScene,
+  getSignupInvitePreview,
+  getSignupInvites,
+  getSiteSettings,
   getTrash,
   getWorkspace,
   getWorkspaces,
