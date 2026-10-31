@@ -129,7 +129,7 @@ function InviteLink({
 
   return (
     <div className="flex flex-col gap-2 rounded-md bg-muted p-3">
-      <p className="text-xs">
+      <p className="text-sm">
         {emailed ? "We emailed this link to " : "Send this link to "}
         <span className="font-medium">{email}</span>
         {emailed ? ". You can also send it yourself." : "."} It works once, for

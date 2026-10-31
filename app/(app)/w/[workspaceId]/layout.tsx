@@ -30,7 +30,7 @@ export default async function WorkspaceLayout({
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
       <AppSidebar user={user} workspaces={workspaces} current={workspace} />
-      <SidebarInset>
+      <SidebarInset className="bg-dot-grid">
         {features.email && !user.email_verified && (
           <VerifyEmailBanner email={user.email} />
         )}

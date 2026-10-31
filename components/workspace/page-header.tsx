@@ -10,10 +10,10 @@ function PageHeader({
   children?: React.ReactNode
 }) {
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+    <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
       <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="my-3 mr-1" />
-      <h1 className="truncate text-sm font-medium">{title}</h1>
+      <Separator orientation="vertical" className="my-4 mr-1" />
+      <h1 className="truncate font-hand text-2xl">{title}</h1>
       <div className="ml-auto flex items-center gap-2">{children}</div>
     </header>
   )

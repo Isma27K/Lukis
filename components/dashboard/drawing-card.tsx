@@ -65,11 +65,13 @@ function DrawingCard({
   }
 
   return (
-    <li className="group/drawing relative overflow-hidden rounded-lg ring-1 ring-foreground/10 transition-shadow hover:ring-foreground/25">
-      <Link href={`/d/${drawing.id}`} className="flex flex-col">
+    <li className="group/drawing relative overflow-hidden rounded-xl border bg-card shadow-paper transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-paper-lg has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50">
+      <Link href={`/d/${drawing.id}`} className="flex flex-col outline-none">
         <DrawingThumbnail drawing={drawing} />
-        <div className="flex flex-col gap-0.5 p-3">
-          <span className="truncate text-xs font-medium">{drawing.title}</span>
+        <div className="flex flex-col gap-0.5 px-4 py-3">
+          <span className="truncate text-sm font-semibold">
+            {drawing.title}
+          </span>
           <span className="text-xs text-muted-foreground">
             Edited {editedLabel}
           </span>
@@ -91,7 +93,7 @@ function DrawingCard({
             >
               <EllipsisIcon />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-auto min-w-44">
               <DropdownMenuItem onClick={() => setDialog("rename")}>
                 <PencilIcon />
                 Rename

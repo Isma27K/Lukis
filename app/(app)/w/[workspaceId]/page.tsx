@@ -37,6 +37,7 @@ export default async function Page({ params }: Props) {
       </PageHeader>
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-6">
         <DrawingGrid
+          workspaceId={workspace.id}
           drawings={drawings.map((drawing) => ({
             ...drawing,
             editedLabel: timeAgo(drawing.updated_at),

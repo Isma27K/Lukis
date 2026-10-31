@@ -4,6 +4,8 @@ import { SettingsIcon, ShapesIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { Logo } from "@/components/brand/logo"
+import { Scribble } from "@/components/brand/scribble"
 import {
   Sidebar,
   SidebarContent,
@@ -43,22 +45,34 @@ function AppSidebar({
   return (
     <Sidebar>
       <SidebarHeader>
+        <Link href="/" aria-label="Lukis home" className="w-fit px-2 pt-2 pb-1">
+          <Logo />
+        </Link>
         <WorkspaceSwitcher workspaces={workspaces} current={current} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {links.map(({ href, label, icon: Icon }) => (
-              <SidebarMenuItem key={href}>
-                <SidebarMenuButton
-                  isActive={pathname === href}
-                  render={<Link href={href} />}
-                >
-                  <Icon />
-                  <span>{label}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {links.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href
+              return (
+                <SidebarMenuItem key={href}>
+                  <SidebarMenuButton
+                    isActive={active}
+                    render={<Link href={href} />}
+                  >
+                    <Icon />
+                    <span className="relative pb-1">
+                      {label}
+                      {active && (
+                        // The button sizes every icon inside it; the stroke opts out.
+                        <Scribble className="absolute bottom-0 left-0 h-1.5! w-full!" />
+                      )}
+                    </span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

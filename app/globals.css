@@ -7,6 +7,11 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
+    --font-hand: var(--font-hand);
+    --shadow-paper: 2px 3px 0 0 var(--paper-shadow);
+    --shadow-paper-lg: 3px 5px 0 0 var(--paper-shadow);
+    --color-dot: var(--dot);
+    --color-highlight: var(--highlight);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,73 +52,94 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * "Sketchbook": warm paper, graphite ink and one vermilion marker. Dark mode is
+ * a chalkboard. Every text/background pair here is at least 4.5:1.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.147 0.004 49.25);
+    --background: oklch(0.977 0.007 80.72); /* paper #FAF7F2 */
+    --foreground: oklch(0.216 0.006 56.04); /* ink #1C1917 */
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.147 0.004 49.25);
+    --card-foreground: oklch(0.216 0.006 56.04);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.147 0.004 49.25);
-    --primary: oklch(0.216 0.006 56.043);
-    --primary-foreground: oklch(0.985 0.001 106.423);
-    --secondary: oklch(0.97 0.001 106.424);
-    --secondary-foreground: oklch(0.216 0.006 56.043);
-    --muted: oklch(0.97 0.001 106.424);
-    --muted-foreground: oklch(0.553 0.013 58.071);
-    --accent: oklch(0.97 0.001 106.424);
-    --accent-foreground: oklch(0.216 0.006 56.043);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.923 0.003 48.717);
-    --input: oklch(0.923 0.003 48.717);
-    --ring: oklch(0.709 0.01 56.259);
-    --chart-1: oklch(0.869 0.005 56.366);
-    --chart-2: oklch(0.553 0.013 58.071);
-    --chart-3: oklch(0.444 0.011 73.639);
-    --chart-4: oklch(0.374 0.01 67.558);
-    --chart-5: oklch(0.268 0.007 34.298);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0.001 106.423);
-    --sidebar-foreground: oklch(0.147 0.004 49.25);
-    --sidebar-primary: oklch(0.216 0.006 56.043);
-    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
-    --sidebar-accent: oklch(0.97 0.001 106.424);
-    --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
-    --sidebar-border: oklch(0.923 0.003 48.717);
-    --sidebar-ring: oklch(0.709 0.01 56.259);
+    --popover-foreground: oklch(0.216 0.006 56.04);
+    --primary: oklch(0.564 0.18 37.43); /* marker #C8410F */
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.945 0.013 82.4);
+    --secondary-foreground: oklch(0.216 0.006 56.04);
+    --muted: oklch(0.945 0.013 82.4);
+    --muted-foreground: oklch(0.505 0.015 63.7);
+    --accent: oklch(0.945 0.013 82.4);
+    --accent-foreground: oklch(0.216 0.006 56.04);
+    /* Crimson, kept away from the orange marker. */
+    --destructive: oklch(0.506 0.179 16.58);
+    --border: oklch(0.906 0.018 81.33);
+    --input: oklch(0.876 0.021 81.78);
+    --ring: oklch(0.564 0.18 37.43);
+    --chart-1: oklch(0.564 0.18 37.43);
+    --chart-2: oklch(0.543 0.149 251.67);
+    --chart-3: oklch(0.617 0.162 146.43);
+    --chart-4: oklch(0.683 0.169 54.96);
+    --chart-5: oklch(0.533 0.203 319);
+    --radius: 0.75rem;
+    --sidebar: oklch(0.954 0.013 82.4);
+    --sidebar-foreground: oklch(0.216 0.006 56.04);
+    --sidebar-primary: oklch(0.564 0.18 37.43);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.918 0.019 83.06);
+    --sidebar-accent-foreground: oklch(0.216 0.006 56.04);
+    --sidebar-border: oklch(0.906 0.018 81.33);
+    --sidebar-ring: oklch(0.564 0.18 37.43);
+    --dot: oklch(0.216 0.006 56.04 / 10%);
+    --paper-shadow: oklch(0.216 0.006 56.04 / 8%);
+    --highlight: oklch(0.934 0.03 49.45); /* marker tint #FBE4D8 */
 }
 
 .dark {
-    --background: oklch(0.147 0.004 49.25);
-    --foreground: oklch(0.985 0.001 106.423);
-    --card: oklch(0.216 0.006 56.043);
-    --card-foreground: oklch(0.985 0.001 106.423);
-    --popover: oklch(0.216 0.006 56.043);
-    --popover-foreground: oklch(0.985 0.001 106.423);
-    --primary: oklch(0.923 0.003 48.717);
-    --primary-foreground: oklch(0.216 0.006 56.043);
-    --secondary: oklch(0.268 0.007 34.298);
-    --secondary-foreground: oklch(0.985 0.001 106.423);
-    --muted: oklch(0.268 0.007 34.298);
-    --muted-foreground: oklch(0.709 0.01 56.259);
-    --accent: oklch(0.268 0.007 34.298);
-    --accent-foreground: oklch(0.985 0.001 106.423);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.553 0.013 58.071);
-    --chart-1: oklch(0.869 0.005 56.366);
-    --chart-2: oklch(0.553 0.013 58.071);
-    --chart-3: oklch(0.444 0.011 73.639);
-    --chart-4: oklch(0.374 0.01 67.558);
-    --chart-5: oklch(0.268 0.007 34.298);
-    --sidebar: oklch(0.216 0.006 56.043);
-    --sidebar-foreground: oklch(0.985 0.001 106.423);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
-    --sidebar-accent: oklch(0.268 0.007 34.298);
-    --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.553 0.013 58.071);
+    --background: oklch(0.238 0.008 169.59); /* chalkboard #1B201E */
+    --foreground: oklch(0.932 0.01 81.79); /* chalk #ECE8E1 */
+    --card: oklch(0.274 0.01 164.13);
+    --card-foreground: oklch(0.932 0.01 81.79);
+    --popover: oklch(0.286 0.01 164.19);
+    --popover-foreground: oklch(0.932 0.01 81.79);
+    --primary: oklch(0.753 0.155 42); /* marker #FF8A5B */
+    --primary-foreground: oklch(0.238 0.008 169.59);
+    --secondary: oklch(0.309 0.011 167.96);
+    --secondary-foreground: oklch(0.932 0.01 81.79);
+    --muted: oklch(0.309 0.011 167.96);
+    --muted-foreground: oklch(0.735 0.013 133.41);
+    --accent: oklch(0.309 0.011 167.96);
+    --accent-foreground: oklch(0.932 0.01 81.79);
+    --destructive: oklch(0.71 0.154 19.34);
+    --border: oklch(0.932 0.01 81.79 / 12%);
+    --input: oklch(0.932 0.01 81.79 / 16%);
+    --ring: oklch(0.753 0.155 42);
+    --chart-1: oklch(0.753 0.155 42);
+    --chart-2: oklch(0.718 0.142 246.06);
+    --chart-3: oklch(0.802 0.168 147.32);
+    --chart-4: oklch(0.883 0.165 92.22);
+    --chart-5: oklch(0.725 0.196 319.53);
+    --sidebar: oklch(0.217 0.007 164.25);
+    --sidebar-foreground: oklch(0.932 0.01 81.79);
+    --sidebar-primary: oklch(0.753 0.155 42);
+    --sidebar-primary-foreground: oklch(0.238 0.008 169.59);
+    --sidebar-accent: oklch(0.309 0.011 167.96);
+    --sidebar-accent-foreground: oklch(0.932 0.01 81.79);
+    --sidebar-border: oklch(0.932 0.01 81.79 / 10%);
+    --sidebar-ring: oklch(0.753 0.155 42);
+    --dot: oklch(0.932 0.01 81.79 / 8%);
+    --paper-shadow: oklch(0 0 0 / 45%);
+    --highlight: oklch(0.345 0.038 46.55); /* #4A3328 */
+}
+
+/* Dotted paper, like the editor's grid. */
+@utility bg-dot-grid {
+    background-image: radial-gradient(
+        circle,
+        var(--dot) 1px,
+        transparent 1.5px
+    );
+    background-size: 20px 20px;
 }
 
 @layer base {
@@ -126,4 +152,58 @@
   html {
     @apply font-sans;
     }
+  ::selection {
+    @apply bg-highlight;
+    }
+}
+
+/*
+ * The editor in the same colors. Excalidraw sets these on `.excalidraw` and
+ * `.excalidraw.theme--dark` in a stylesheet that loads after this one, so the
+ * `:root` prefix is what lets these win. The canvas background stays each
+ * drawing's own.
+ */
+:root .excalidraw {
+    --color-primary: #c8410f;
+    --color-primary-darker: #b33a0d;
+    --color-primary-darkest: #9a320b;
+    --color-primary-hover: #b83c0e;
+    --color-primary-light: #fbe4d8;
+    --color-primary-light-darker: #f8d5c3;
+    --color-brand-hover: #b83c0e;
+    --color-brand-active: #9a320b;
+    --color-surface-primary-container: #fbe4d8;
+    --color-on-primary-container: #5a1e07;
+    --color-logo-icon: #c8410f;
+    /* Read by the canvas renderer, so this colors selection outlines too. */
+    --color-selection: #c8410f;
+    --color-slider-track: #f8d5c3;
+    --color-surface-high: #f4efe6;
+    --color-surface-mid: #f6f3ee;
+    --color-surface-low: #eee8de;
+    --color-surface-lowest: #ffffff;
+    --color-on-surface: #1c1917;
+}
+
+:root .excalidraw.theme--dark {
+    --color-primary: #ff8a5b;
+    --color-primary-darker: #ff9a70;
+    --color-primary-darkest: #ffab87;
+    --color-primary-hover: #ffa07a;
+    --color-primary-light: #4a3328;
+    --color-primary-light-darker: #5a3b2d;
+    --color-brand-hover: #ffa07a;
+    --color-brand-active: #ffab87;
+    --color-surface-primary-container: #4a3328;
+    --color-on-primary-container: #fbe4d8;
+    --color-logo-icon: #ff8a5b;
+    --color-selection: #ff8a5b;
+    --color-slider-track: #7a4a35;
+    --island-bg-color: #232926;
+    --island-bg-color-alt: #1f2421;
+    --color-surface-high: #2e3632;
+    --color-surface-mid: #1f2421;
+    --color-surface-low: #262c29;
+    --color-surface-lowest: #171b19;
+    --color-on-surface: #ece8e1;
 }

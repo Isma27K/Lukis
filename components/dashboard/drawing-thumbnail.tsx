@@ -1,5 +1,4 @@
-import { ShapesIcon } from "lucide-react"
-
+import { Doodle } from "@/components/brand/doodle"
 import type { DrawingSummary } from "@/lib/types"
 
 function thumbnailUrl(drawing: DrawingSummary, theme: "light" | "dark") {
@@ -13,8 +12,8 @@ function thumbnailUrl(drawing: DrawingSummary, theme: "light" | "dark") {
 function DrawingThumbnail({ drawing }: { drawing: DrawingSummary }) {
   if (drawing.thumbnail_version === null) {
     return (
-      <div className="flex aspect-video items-center justify-center bg-muted text-muted-foreground">
-        <ShapesIcon className="size-6" />
+      <div className="flex aspect-video items-center justify-center border-b bg-muted">
+        <Doodle className="w-20 opacity-70" />
       </div>
     )
   }
@@ -22,7 +21,7 @@ function DrawingThumbnail({ drawing }: { drawing: DrawingSummary }) {
   // Plain <img>: next/image's optimizer fetches from the server, without the
   // session cookie these need.
   return (
-    <div className="aspect-video bg-muted">
+    <div className="aspect-video border-b bg-muted">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={thumbnailUrl(drawing, "light")}

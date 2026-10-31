@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { VerifyEmail } from "@/components/auth/verify-email"
+import { PaperPage } from "@/components/brand/paper-page"
 import { safeRedirectPath } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/dal"
 
@@ -20,15 +21,13 @@ export default async function Page({
   const user = await getCurrentUser()
 
   return (
-    <main className="flex min-h-svh items-center justify-center p-6">
-      <div className="w-full max-w-sm">
-        <VerifyEmail
-          token={typeof token === "string" && token ? token : null}
-          continueTo={safeRedirectPath(next)}
-          loggedIn={user !== null}
-          alreadyVerified={user?.email_verified ?? false}
-        />
-      </div>
-    </main>
+    <PaperPage>
+      <VerifyEmail
+        token={typeof token === "string" && token ? token : null}
+        continueTo={safeRedirectPath(next)}
+        loggedIn={user !== null}
+        alreadyVerified={user?.email_verified ?? false}
+      />
+    </PaperPage>
   )
 }

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 
+import { PaperPage } from "@/components/brand/paper-page"
 import { getCurrentUser } from "@/lib/dal"
 
 export default async function AuthLayout({
@@ -11,9 +12,5 @@ export default async function AuthLayout({
     redirect("/")
   }
 
-  return (
-    <main className="flex min-h-svh items-center justify-center p-6">
-      <div className="w-full max-w-sm">{children}</div>
-    </main>
-  )
+  return <PaperPage>{children}</PaperPage>
 }

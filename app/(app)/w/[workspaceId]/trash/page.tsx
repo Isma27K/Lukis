@@ -4,6 +4,7 @@ import {
   DeleteForeverButton,
   RestoreDrawingButton,
 } from "@/components/dashboard/trash-controls"
+import { EmptyState } from "@/components/empty-state"
 import { PageHeader } from "@/components/workspace/page-header"
 import { getTrash, getWorkspace } from "@/lib/dal"
 import { timeAgo } from "@/lib/format"
@@ -28,25 +29,23 @@ export default async function Page({ params }: Props) {
     <>
       <PageHeader title="Trash" />
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-6">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Drawings moved to the trash are hidden from everyone in{" "}
           {workspace.name}. Restoring one brings it back as it was.
           {!canManage &&
             " Only owners and admins can delete drawings or restore them."}
         </p>
         {drawings.length === 0 ? (
-          <p className="py-16 text-center text-xs text-muted-foreground">
-            The trash is empty.
-          </p>
+          <EmptyState title="The trash is empty" />
         ) : (
-          <ul className="flex flex-col divide-y rounded-lg ring-1 ring-foreground/10">
+          <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card shadow-paper">
             {drawings.map((drawing) => (
               <li
                 key={drawing.id}
                 className="flex items-center gap-3 px-4 py-3"
               >
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate text-xs font-medium">
+                  <span className="truncate text-sm font-semibold">
                     {drawing.title}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">

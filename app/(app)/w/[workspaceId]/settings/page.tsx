@@ -101,7 +101,7 @@ export default async function Page({ params }: Props) {
                         <AvatarFallback>{initials(member.name)}</AvatarFallback>
                       </Avatar>
                       <div className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate text-xs font-medium">
+                        <span className="truncate text-sm font-medium">
                           {member.name}
                           {isSelf && " (you)"}
                         </span>
@@ -153,7 +153,7 @@ export default async function Page({ params }: Props) {
               />
               {invites.length > 0 && (
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-xs font-medium">Pending invites</h3>
+                  <h3 className="text-sm font-medium">Pending invites</h3>
                   <ul className="flex flex-col divide-y">
                     {invites.map((invite) => (
                       <li
@@ -161,7 +161,7 @@ export default async function Page({ params }: Props) {
                         className="flex items-center gap-3 py-2"
                       >
                         <div className="flex min-w-0 flex-1 flex-col">
-                          <span className="truncate text-xs">
+                          <span className="truncate text-sm">
                             {invite.email}
                           </span>
                           <span className="text-xs text-muted-foreground">

@@ -23,7 +23,7 @@ const Editor = dynamic<DrawingEditorProps>(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+      <div className="flex h-full items-center justify-center bg-dot-grid font-hand text-2xl text-muted-foreground">
         Loading editor…
       </div>
     ),

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { ResendVerificationButton } from "@/components/auth/verify-email"
+import { PaperPage } from "@/components/brand/paper-page"
 import {
   Card,
   CardDescription,
@@ -33,8 +34,8 @@ export default async function Page({
   const mustConfirmEmail = features.email && !user.email_verified
 
   return (
-    <main className="flex min-h-svh items-center justify-center p-6">
-      <Card className="w-full max-w-sm">
+    <PaperPage>
+      <Card>
         {!invite ? (
           <>
             <CardHeader>
@@ -45,7 +46,7 @@ export default async function Page({
               </CardDescription>
             </CardHeader>
             <CardFooter>
-              <Link href="/" className="text-xs underline">
+              <Link href="/" className="text-sm underline">
                 Go to your drawings
               </Link>
             </CardFooter>
@@ -95,6 +96,6 @@ export default async function Page({
           </>
         )}
       </Card>
-    </main>
+    </PaperPage>
   )
 }
