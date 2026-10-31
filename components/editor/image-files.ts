@@ -325,4 +325,4 @@ class ImageFiles {
   }
 }
 
-export { ImageFiles }
+export { ImageFiles, downloadFile }

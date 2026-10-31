@@ -43,4 +43,16 @@ function canDeleteDrawings(role: Role) {
   return atLeast(role, "admin")
 }
 
-export { ROLE_LABELS, assignableRoles, atLeast, canDeleteDrawings, canManage }
+// Erasing a version from a drawing's history follows the same rule
+// (remove_version in routes/versions.py). Saving, naming and restoring
+// versions only takes an editor.
+const canDeleteVersions = canDeleteDrawings
+
+export {
+  ROLE_LABELS,
+  assignableRoles,
+  atLeast,
+  canDeleteDrawings,
+  canDeleteVersions,
+  canManage,
+}

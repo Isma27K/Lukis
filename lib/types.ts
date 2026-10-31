@@ -73,6 +73,25 @@ type Scene = {
   rev: number
 }
 
+// An entry in a drawing's version history.
+type VersionSummary = {
+  id: string
+  // null for automatic snapshots and checkpoints.
+  name: string | null
+  // When the drawing looked like this.
+  created_at: string
+  // Who made the change that led to it; null if their account is gone.
+  created_by: Editor | null
+  element_count: number
+  // When an unnamed version will be deleted; null for named ones.
+  expires_at: string | null
+}
+
+type Version = VersionSummary & {
+  elements: ExcalidrawElement[]
+  app_state: Partial<AppState>
+}
+
 type Member = {
   user_id: string
   name: string
@@ -118,5 +137,7 @@ export type {
   SignupInvitePreview,
   SiteSettings,
   TrashedDrawing,
+  Version,
+  VersionSummary,
   Workspace,
 }

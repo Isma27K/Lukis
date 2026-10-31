@@ -8,7 +8,8 @@ import {
   THEME,
   WelcomeScreen,
 } from "@excalidraw/excalidraw"
-import { ArrowLeftIcon } from "lucide-react"
+import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types"
+import { ArrowLeftIcon, HistoryIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -21,6 +22,10 @@ import { SaveIndicator } from "@/components/editor/save-indicator"
 import { useAutosave } from "@/components/editor/use-autosave"
 import { useImageFiles } from "@/components/editor/use-image-files"
 import { useThumbnail } from "@/components/editor/use-thumbnail"
+import {
+  HISTORY_SIDEBAR,
+  VersionHistory,
+} from "@/components/editor/version-history"
 import type { Drawing, Scene } from "@/lib/types"
 
 // Matches the backend's max_file_bytes. The editor downscales images to fit
@@ -55,6 +60,7 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
     canEdit: !readOnly,
     realtimeUrl,
   })
+  const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null)
   const [title, setTitle] = useState(drawing.title)
   // Excalidraw only reads initialData when it mounts.
   const [initialData] = useState(() => ({
@@ -78,6 +84,7 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
     <Excalidraw
       {...collaboration.editorProps}
       onExcalidrawAPI={(api) => {
+        setApi(api)
         collaboration.attach(api)
         images.attach(api)
       }}
@@ -120,6 +127,18 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
               <SaveIndicator status={autosave.status} />
             </>
           )}
+          <button
+            type="button"
+            onClick={() => api?.toggleSidebar({ name: HISTORY_SIDEBAR })}
+            aria-label="Version history"
+            title="Version history"
+            // Otherwise the sidebar closes on pointerdown, and this click
+            // reopens it.
+            data-prevent-outside-click
+            className="flex size-7 items-center justify-center rounded-(--border-radius-md) text-(--text-primary-color) hover:bg-(--button-hover-bg) [&_svg]:size-4"
+          >
+            <HistoryIcon />
+          </button>
           <ConnectionIndicator status={collaboration.status} />
         </div>
       )}
@@ -129,6 +148,14 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
           Back to drawings
         </MainMenu.Item>
         <MainMenu.Separator />
+        <MainMenu.Item
+          icon={<HistoryIcon />}
+          onSelect={() =>
+            api?.toggleSidebar({ name: HISTORY_SIDEBAR, force: true })
+          }
+        >
+          Version history
+        </MainMenu.Item>
         <MainMenu.DefaultItems.CommandPalette />
         <MainMenu.DefaultItems.SearchMenu />
         <MainMenu.DefaultItems.Export />
@@ -142,6 +169,13 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
         />
         <MainMenu.DefaultItems.ChangeCanvasBackground />
       </MainMenu>
+      <VersionHistory
+        drawingId={drawing.id}
+        role={drawing.role}
+        api={api}
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
+        flush={autosave.save}
+      />
       {/* No menu hint: its arrow would point at the back button. */}
       <WelcomeScreen>
         <WelcomeScreen.Center>

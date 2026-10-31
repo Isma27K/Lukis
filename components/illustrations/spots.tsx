@@ -426,4 +426,116 @@ function Solo({ name, className }: { name: string; className?: string }) {
   )
 }
 
-export { BlankCanvas, EmptyTrash, Envelope, Erased, NoMatches, Smudge, Solo }
+// A drawing's version history before it has any: a stack of pages, a clock,
+// and an arrow winding back.
+function Rewind({ className }: { className?: string }) {
+  const pages = [
+    { x: 74, y: 30, angle: -7, seed: 111 },
+    { x: 64, y: 40, angle: 3, seed: 113 },
+    { x: 54, y: 50, angle: -2, seed: 115 },
+  ]
+  return (
+    <Spot className={className}>
+      {pages.map(({ x, y, angle, seed }, index) => (
+        <g key={seed} transform={`rotate(${angle} ${x + 55} ${y + 40})`}>
+          <Strokes
+            paths={sketch.rect(x, y, 110, 80, {
+              seed,
+              fill: "currentColor",
+              stroke: "none",
+              roughness: 0.6,
+            })}
+            className="text-card"
+            animate
+            delay={index * 0.15}
+          />
+          <Strokes
+            paths={sketch.rect(x, y, 110, 80, {
+              seed: seed + 1,
+              strokeWidth: 1.6,
+            })}
+            className="text-muted-foreground"
+            animate
+            delay={index * 0.15}
+          />
+        </g>
+      ))}
+      <Strokes
+        paths={sketch.curve(
+          [
+            [72, 104],
+            [88, 84],
+            [104, 98],
+            [124, 76],
+            [142, 88],
+          ],
+          { seed: 117, strokeWidth: 1.8, disableMultiStroke: true }
+        )}
+        className="text-muted-foreground"
+        animate
+        delay={0.5}
+      />
+      <Strokes
+        paths={sketch.ellipse(184, 112, 52, 52, {
+          seed: 118,
+          fill: "currentColor",
+          stroke: "none",
+          roughness: 0.6,
+        })}
+        className="text-card"
+        animate
+        delay={0.6}
+      />
+      <Strokes
+        paths={sketch.ellipse(184, 112, 52, 52, {
+          seed: 119,
+          strokeWidth: 1.8,
+        })}
+        className="text-foreground/80"
+        animate
+        delay={0.6}
+      />
+      <Strokes
+        paths={[
+          ...sketch.line([184, 112], [184, 96], {
+            seed: 120,
+            strokeWidth: 2.2,
+          }),
+          ...sketch.line([184, 112], [195, 119], {
+            seed: 121,
+            strokeWidth: 2.2,
+          }),
+        ]}
+        className="text-primary"
+        animate
+        delay={0.9}
+      />
+      <Strokes
+        paths={sketch.arrow(
+          [
+            [212, 80],
+            [214, 44],
+            [190, 22],
+            [154, 20],
+          ],
+          { seed: 122, strokeWidth: 2.2, head: 10, disableMultiStroke: true }
+        )}
+        className="text-primary"
+        animate
+        delay={1.1}
+        step={0.2}
+      />
+    </Spot>
+  )
+}
+
+export {
+  BlankCanvas,
+  EmptyTrash,
+  Envelope,
+  Erased,
+  NoMatches,
+  Rewind,
+  Smudge,
+  Solo,
+}

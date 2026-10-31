@@ -13,6 +13,12 @@ type Snapshot = {
   files: BinaryFiles
 }
 
+type PreviewScene = {
+  elements: readonly ExcalidrawElement[]
+  appState: Partial<AppState>
+  files: BinaryFiles
+}
+
 // The dashboard shows these in 16:9 cards, at up to about 320px wide.
 const WIDTH = 640
 const HEIGHT = 360
@@ -33,27 +39,34 @@ function blobToDataUrl(blob: Blob) {
   })
 }
 
-async function render({ elements, appState, files }: Snapshot) {
+// A PNG of the scene fitted into a 16:9 card, as the dashboard and the
+// version history show drawings.
+function renderPreview(
+  { elements, appState, files }: PreviewScene,
+  theme: "light" | "dark"
+) {
+  return exportScene({
+    type: "png",
+    data: {
+      elements: getNonDeletedElements(elements),
+      appState: { viewBackgroundColor: appState.viewBackgroundColor },
+      files,
+    },
+    config: {
+      theme,
+      width: WIDTH,
+      height: HEIGHT,
+      fit: "contain",
+      position: "center",
+      padding: 24,
+    },
+  })
+}
+
+async function render(snapshot: Snapshot) {
   const [light, dark] = await Promise.all(
     (["light", "dark"] as const).map(async (theme) =>
-      blobToDataUrl(
-        await exportScene({
-          type: "png",
-          data: {
-            elements: getNonDeletedElements(elements),
-            appState: { viewBackgroundColor: appState.viewBackgroundColor },
-            files,
-          },
-          config: {
-            theme,
-            width: WIDTH,
-            height: HEIGHT,
-            fit: "contain",
-            position: "center",
-            padding: 24,
-          },
-        })
-      )
+      blobToDataUrl(await renderPreview(snapshot, theme))
     )
   )
   return { light, dark }
@@ -157,4 +170,4 @@ function useThumbnail(
   }
 }
 
-export { useThumbnail }
+export { renderPreview, useThumbnail }
