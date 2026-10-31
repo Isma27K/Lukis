@@ -86,7 +86,7 @@ function versionLabel(version: VersionSummary) {
 // The images a version shows, including ones no longer on the canvas and
 // so never loaded this session.
 async function filesFor(
-  drawingId: string,
+  apiBase: string,
   version: Version,
   loaded: BinaryFiles
 ): Promise<BinaryFiles> {
@@ -97,7 +97,7 @@ async function filesFor(
     }
   }
   const downloaded = await Promise.allSettled(
-    [...missing].map((id) => downloadFile(drawingId, id))
+    [...missing].map((id) => downloadFile(apiBase, id))
   )
   const files = { ...loaded }
   for (const result of downloaded) {
@@ -141,7 +141,8 @@ function VersionHistory({
   const [deleting, setDeleting] = useState<VersionSummary | null>(null)
   const canEdit = atLeast(role, "editor")
   const canDelete = canDeleteVersions(role)
-  const base = `/drawings/${encodeURIComponent(drawingId)}/versions`
+  const drawingBase = `/drawings/${encodeURIComponent(drawingId)}`
+  const base = `${drawingBase}/versions`
 
   async function load() {
     try {
@@ -161,7 +162,7 @@ function VersionHistory({
     void (async () => {
       try {
         const version = await apiFetch<Version>(`${base}/${selectedId}`)
-        const files = await filesFor(drawingId, version, api.getFiles())
+        const files = await filesFor(drawingBase, version, api.getFiles())
         const blob = await renderPreview(
           { elements: version.elements, appState: version.app_state, files },
           theme
@@ -182,7 +183,7 @@ function VersionHistory({
         URL.revokeObjectURL(previewUrl)
       }
     }
-  }, [api, base, drawingId, selectedId, theme])
+  }, [api, base, drawingBase, selectedId, theme])
 
   async function restore(version: Version) {
     if (!api) {

@@ -72,7 +72,7 @@ async function render(snapshot: Snapshot) {
   return { light, dark }
 }
 
-function createThumbnailer(drawingId: string, hasThumbnail: boolean) {
+function createThumbnailer(apiBase: string, hasThumbnail: boolean) {
   let latest: Snapshot | null = null
   // Whether the saved drawing has changed since the last thumbnail.
   let stale = false
@@ -100,7 +100,7 @@ function createThumbnailer(drawingId: string, hasThumbnail: boolean) {
     lastRenderAt = Date.now()
     running = (async () => {
       try {
-        const path = `/drawings/${encodeURIComponent(drawingId)}/thumbnail`
+        const path = `${apiBase}/thumbnail`
         if (getNonDeletedElements(snapshot.elements).length === 0) {
           await apiFetch(path, { method: "DELETE" })
         } else {
@@ -137,15 +137,13 @@ function createThumbnailer(drawingId: string, hasThumbnail: boolean) {
 }
 
 // Keeps the dashboard thumbnail up to date while an editor works on the
-// drawing. Viewers never render one.
+// drawing, through `apiBase` (see useAutosave). Viewers never render one.
 function useThumbnail(
-  drawingId: string,
+  apiBase: string,
   enabled: boolean,
   hasThumbnail: boolean
 ) {
-  const [thumbnailer] = useState(() =>
-    createThumbnailer(drawingId, hasThumbnail)
-  )
+  const [thumbnailer] = useState(() => createThumbnailer(apiBase, hasThumbnail))
 
   useEffect(() => {
     if (!enabled) {

@@ -5,12 +5,13 @@ import { toast } from "sonner"
 
 import { ImageFiles } from "@/components/editor/image-files"
 
-// Uploads and downloads the drawing's images. Call `attach` from
-// onExcalidrawAPI and `onChange` from the editor's onChange.
-function useImageFiles(drawingId: string, canEdit: boolean) {
+// Uploads and downloads the drawing's images through `apiBase` (see
+// useAutosave). Call `attach` from onExcalidrawAPI and `onChange` from the
+// editor's onChange.
+function useImageFiles(apiBase: string, canEdit: boolean) {
   const [images] = useState(
     () =>
-      new ImageFiles(drawingId, canEdit, (message) =>
+      new ImageFiles(apiBase, canEdit, (message) =>
         toast.error(`Couldn't upload image: ${message}`)
       )
   )

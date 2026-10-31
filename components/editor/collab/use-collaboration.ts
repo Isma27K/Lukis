@@ -16,19 +16,22 @@ import {
 // Spread `editorProps` onto <Excalidraw>, call `attach` from its
 // onExcalidrawAPI and `onChange` from its onChange.
 function useCollaboration({
-  drawingId,
+  apiBase,
   canEdit,
   realtimeUrl,
+  guestName = null,
 }: {
-  drawingId: string
+  // /drawings/{id}, or /share/{token} for a guest on a public link.
+  apiBase: string
   canEdit: boolean
   realtimeUrl: string
+  guestName?: string | null
 }) {
   const [status, setStatus] = useState<ConnectionStatus>("connecting")
   const [userToFollow, setUserToFollow] = useState<UserToFollow | null>(null)
   const [collaboration] = useState(
     () =>
-      new Collaboration(drawingId, canEdit, realtimeUrl, {
+      new Collaboration(apiBase, canEdit, realtimeUrl, guestName, {
         onStatus: setStatus,
         onFollowEnded: () => setUserToFollow(null),
       })

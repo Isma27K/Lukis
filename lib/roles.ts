@@ -43,6 +43,12 @@ function canDeleteDrawings(role: Role) {
   return atLeast(role, "admin")
 }
 
+// Turning a drawing's public link on and changing it. Viewers never see the
+// link: an edit link would let them edit (SHARE_ROLE in routes/share.py).
+function canShare(role: Role) {
+  return atLeast(role, "editor")
+}
+
 // Erasing a version from a drawing's history follows the same rule
 // (remove_version in routes/versions.py). Saving, naming and restoring
 // versions only takes an editor.
@@ -55,4 +61,5 @@ export {
   canDeleteDrawings,
   canDeleteVersions,
   canManage,
+  canShare,
 }

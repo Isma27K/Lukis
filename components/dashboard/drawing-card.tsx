@@ -16,6 +16,7 @@ type DrawingItemProps = {
   canEdit: boolean
   canDelete: boolean
   moveTargets: Workspace[]
+  publicLinks: boolean
 }
 
 // A drawing as a sheet taped to the page, in a hand-drawn frame. One link
@@ -29,6 +30,7 @@ function DrawingCard({
   canEdit,
   canDelete,
   moveTargets,
+  publicLinks,
 }: DrawingItemProps & { index: number }) {
   const even = index % 2 === 0
   return (
@@ -55,6 +57,7 @@ function DrawingCard({
             drawing={drawing}
             canDelete={canDelete}
             moveTargets={moveTargets}
+            publicLinks={publicLinks}
             className="pointer-events-auto absolute top-3.5 right-3.5 opacity-0 group-hover/drawing:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100"
           />
         )}
@@ -80,6 +83,7 @@ function DrawingRow({
   canEdit,
   canDelete,
   moveTargets,
+  publicLinks,
 }: DrawingItemProps) {
   return (
     <li className="group/drawing relative flex items-center gap-4 px-3 py-2.5 transition-colors hover:bg-muted/60 has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50 has-[a:focus-visible]:ring-inset">
@@ -104,6 +108,7 @@ function DrawingRow({
           drawing={drawing}
           canDelete={canDelete}
           moveTargets={moveTargets}
+          publicLinks={publicLinks}
           className="relative"
         />
       )}

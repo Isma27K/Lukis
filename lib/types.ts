@@ -11,10 +11,15 @@ type RegistrationMode = "setup" | "open" | "invite_only"
 
 // What the server has switched on. Without email there's no verification,
 // password reset or invite emails; invites are shared as links.
-type Features = { email: boolean; registration: RegistrationMode }
+// `public_links`: whether the site owner allows sharing drawings publicly.
+type Features = {
+  email: boolean
+  registration: RegistrationMode
+  public_links: boolean
+}
 
 // Settings for the whole site, which only its owner can see.
-type SiteSettings = { registration_open: boolean }
+type SiteSettings = { registration_open: boolean; public_links: boolean }
 
 // Lets one email address sign up while sign-up is invite-only.
 type SignupInvite = {
@@ -71,6 +76,34 @@ type Scene = {
   elements: ExcalidrawElement[]
   app_state: Partial<AppState>
   rev: number
+}
+
+// What anyone with a drawing's public link can do with it.
+type ShareAccess = "view" | "edit"
+
+// A drawing's public link, as the people who can share it see it.
+type ShareLink = {
+  enabled: boolean
+  // The link is /s/<token>.
+  token: string
+  access: ShareAccess
+  has_password: boolean
+  expires_at: string | null
+}
+
+// What the shared page learns about a link before opening the drawing.
+type ShareInfo = {
+  access: ShareAccess
+  password_required: boolean
+  // No password, or this browser has entered it.
+  unlocked: boolean
+  // Hidden until unlocked.
+  title: string | null
+  has_thumbnail: boolean
+  // Set for members, who get the full editor instead.
+  member_drawing_id: string | null
+  // The logged-in visitor's name, if any.
+  viewer_name: string | null
 }
 
 // An entry in a drawing's version history.
@@ -133,6 +166,9 @@ export type {
   RegistrationMode,
   Role,
   Scene,
+  ShareAccess,
+  ShareInfo,
+  ShareLink,
   SignupInvite,
   SignupInvitePreview,
   SiteSettings,

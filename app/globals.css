@@ -285,3 +285,16 @@
     --color-surface-lowest: #171b19;
     --color-on-surface: #ece8e1;
 }
+
+/*
+ * Lukis turns off web embeds and Mermaid conversion (`validateEmbeddable` and
+ * `aiEnabled` in drawing-editor.tsx), but the editor's "more tools" menu, on
+ * desktop and mobile, lists both regardless. Upstream gives the Mermaid item
+ * the same test id as the embed one, so this hides both, and the "Generate"
+ * heading that's left empty above Mermaid. `!important` beats the editor's
+ * own, deeper `.dropdown-menu-item` rules. Recheck after updating the editor.
+ */
+[data-testid="toolbar-embeddable"],
+div:has(+ [data-testid="toolbar-embeddable"]) {
+    display: none !important;
+}

@@ -10,13 +10,19 @@ const PUBLIC_PATHS = [
   "/reset-password",
   "/verify-email",
 ]
+// Public links to drawings: /s/<token>.
+const PUBLIC_PREFIXES = ["/s/"]
 
 // A cheap first pass: sends visitors with no session cookie to /login before
 // anything renders. Whether the session is valid is checked by getCurrentUser
 // in lib/dal.ts.
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
-  if (PUBLIC_PATHS.includes(pathname) || request.cookies.has(SESSION_COOKIE)) {
+  if (
+    PUBLIC_PATHS.includes(pathname) ||
+    PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix)) ||
+    request.cookies.has(SESSION_COOKIE)
+  ) {
     return NextResponse.next()
   }
 

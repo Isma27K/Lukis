@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/workspace/page-header"
 import { PageHero } from "@/components/workspace/page-hero"
 import {
   getDrawings,
+  getFeatures,
   getMembers,
   getWorkspace,
   getWorkspaces,
@@ -38,11 +39,12 @@ function count(n: number, one: string, many: string) {
 export default async function Page({ params, searchParams }: Props) {
   const { workspaceId } = await params
   const { sort, view } = await searchParams
-  const [user, workspaces, workspace, drawings] = await Promise.all([
+  const [user, workspaces, workspace, drawings, features] = await Promise.all([
     requireUser(),
     getWorkspaces(),
     getWorkspace(workspaceId),
     getDrawings(workspaceId),
+    getFeatures(),
   ])
   const members = workspace.personal ? [] : await getMembers(workspaceId)
   const canEdit = atLeast(workspace.role, "editor")
@@ -97,6 +99,7 @@ export default async function Page({ params, searchParams }: Props) {
           canEdit={canEdit}
           canDelete={canDelete}
           moveTargets={moveTargets}
+          publicLinks={features.public_links}
           initialSort={
             sort === "name" || sort === "created"
               ? sort

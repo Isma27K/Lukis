@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 import { Editor } from "@/components/editor/editor"
 import { realtimeUrl } from "@/lib/backend"
-import { getDrawing, getScene } from "@/lib/dal"
+import { getDrawing, getFeatures, getScene } from "@/lib/dal"
 
 type Props = { params: Promise<{ drawingId: string }> }
 
@@ -13,14 +13,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { drawingId } = await params
-  const [drawing, scene] = await Promise.all([
+  const [drawing, scene, features] = await Promise.all([
     getDrawing(drawingId),
     getScene(drawingId),
+    getFeatures(),
   ])
 
   return (
     <div className="h-svh">
-      <Editor drawing={drawing} scene={scene} realtimeUrl={realtimeUrl} />
+      <Editor
+        source={{
+          kind: "member",
+          drawing,
+          publicLinks: features.public_links,
+        }}
+        scene={scene}
+        realtimeUrl={realtimeUrl}
+      />
     </div>
   )
 }

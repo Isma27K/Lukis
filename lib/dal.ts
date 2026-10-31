@@ -14,6 +14,7 @@ import type {
   ListedDrawing,
   Member,
   Scene,
+  ShareInfo,
   SignupInvite,
   SignupInvitePreview,
   SiteSettings,
@@ -159,6 +160,52 @@ function getScene(drawingId: string) {
   return backendGet<Scene>(`/drawings/${encodeURIComponent(drawingId)}/scene`)
 }
 
+// The cookies that unlock password-protected public links; matches
+// GRANT_COOKIE_PREFIX in the backend's function/share.py.
+const SHARE_GRANT_COOKIE_PREFIX = "lukis_share_"
+
+// Public link pages read as the visitor: their session, if any (so members
+// can be sent to the full editor), plus the cookies that unlock links.
+async function visitorHeaders(): Promise<HeadersInit | undefined> {
+  const forwarded = (await cookies())
+    .getAll()
+    .filter(
+      ({ name }) =>
+        name === SESSION_COOKIE || name.startsWith(SHARE_GRANT_COOKIE_PREFIX)
+    )
+  if (forwarded.length === 0) {
+    return undefined
+  }
+  return {
+    cookie: forwarded.map(({ name, value }) => `${name}=${value}`).join("; "),
+  }
+}
+
+// Like backendGet, but for pages that work logged out: never sends anyone to
+// /login. A link that doesn't work (any more) is the not-found page.
+async function shareGet<T>(path: string): Promise<T> {
+  const response = await fetch(`${backendUrl}${path}`, {
+    headers: await visitorHeaders(),
+    cache: "no-store",
+  })
+  if (response.status === 404) {
+    notFound()
+  }
+  if (!response.ok) {
+    throw new Error(`GET ${path} failed with ${response.status}`)
+  }
+  return (await response.json()) as T
+}
+
+const getShareInfo = cache((token: string) =>
+  shareGet<ShareInfo>(`/share/${encodeURIComponent(token)}`)
+)
+
+// Only once getShareInfo says the link is unlocked.
+function getSharedScene(token: string) {
+  return shareGet<Scene>(`/share/${encodeURIComponent(token)}/scene`)
+}
+
 export {
   getCurrentUser,
   getDrawing,
@@ -168,6 +215,8 @@ export {
   getInvites,
   getMembers,
   getScene,
+  getSharedScene,
+  getShareInfo,
   getSignupInvitePreview,
   getSignupInvites,
   getSiteSettings,

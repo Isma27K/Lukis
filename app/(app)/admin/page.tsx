@@ -4,6 +4,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { Logo } from "@/components/brand/logo"
+import { PublicLinksSwitch } from "@/components/site/public-links-switch"
 import { RegistrationSwitch } from "@/components/site/registration-switch"
 import {
   RevokeSignupInviteButton,
@@ -66,6 +67,15 @@ export default async function Page() {
           </CardHeader>
           <CardContent>
             <RegistrationSwitch open={settings.registration_open} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Sharing</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PublicLinksSwitch on={settings.public_links} />
           </CardContent>
         </Card>
 

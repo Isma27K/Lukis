@@ -53,8 +53,9 @@ const RETRY_DELAYS_MS = [2_000, 5_000, 15_000, 30_000]
 // drawing is reopened. Uploads keep retrying, or the image would be lost.
 const MAX_DOWNLOAD_ATTEMPTS = RETRY_DELAYS_MS.length + 1
 
-function fileUrl(drawingId: string, fileId: string) {
-  return `/drawings/${encodeURIComponent(drawingId)}/files/${encodeURIComponent(fileId)}`
+// `apiBase` is /drawings/{id}, or /share/{token} for a guest on a public link.
+function fileUrl(apiBase: string, fileId: string) {
+  return `${apiBase}/files/${encodeURIComponent(fileId)}`
 }
 
 function readAsDataUrl(blob: Blob) {
@@ -67,10 +68,10 @@ function readAsDataUrl(blob: Blob) {
 }
 
 async function downloadFile(
-  drawingId: string,
+  apiBase: string,
   id: FileId
 ): Promise<BinaryFileData> {
-  const response = await fetch(`/api${fileUrl(drawingId, id)}`)
+  const response = await fetch(`/api${fileUrl(apiBase, id)}`)
   if (!response.ok) {
     throw new ApiError(response.status, `Couldn't load image ${id}`)
   }
@@ -95,7 +96,7 @@ class ImageFiles {
   }
 
   constructor(
-    private readonly drawingId: string,
+    private readonly apiBase: string,
     private readonly canEdit: boolean,
     // An upload the server refused, e.g. because the image is too large.
     private readonly onRejected: (message: string) => void
@@ -243,7 +244,7 @@ class ImageFiles {
     await Promise.all(
       [...uploads.values()].map(async (file) => {
         try {
-          await apiFetch(fileUrl(this.drawingId, file.id), {
+          await apiFetch(fileUrl(this.apiBase, file.id), {
             method: "PUT",
             body: { data_url: file.dataURL },
           })
@@ -284,7 +285,7 @@ class ImageFiles {
     await Promise.all(
       [...downloads].map(async (id) => {
         try {
-          loaded.push(await downloadFile(this.drawingId, id))
+          loaded.push(await downloadFile(this.apiBase, id))
           this.states.set(id, "done")
           this.retries.delete(id)
         } catch {

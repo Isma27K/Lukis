@@ -9,12 +9,14 @@ import {
   WelcomeScreen,
 } from "@excalidraw/excalidraw"
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types"
-import { ArrowLeftIcon, HistoryIcon } from "lucide-react"
+import { ArrowLeftIcon, HistoryIcon, Share2Icon } from "lucide-react"
 import { useTheme } from "next-themes"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Logo } from "@/components/brand/logo"
+import { LogoMark } from "@/components/brand/logo-mark"
 import { ConnectionIndicator } from "@/components/editor/collab/connection-indicator"
 import { useCollaboration } from "@/components/editor/collab/use-collaboration"
 import { DrawingTitle } from "@/components/editor/drawing-title"
@@ -26,58 +28,105 @@ import {
   HISTORY_SIDEBAR,
   VersionHistory,
 } from "@/components/editor/version-history"
-import type { Drawing, Scene } from "@/lib/types"
+import { ShareDialog } from "@/components/share/share-dialog"
+import { canShare } from "@/lib/roles"
+import type { Drawing, Scene, ShareInfo } from "@/lib/types"
 
 // Matches the backend's max_file_bytes. The editor downscales images to fit
 // 1440px first, so few photos come near it.
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024
 
+// The editor's own island look, for what we add around the canvas.
+const ISLAND =
+  "flex h-(--default-button-size) items-center rounded-(--border-radius-lg) bg-(--island-bg-color) text-(--text-primary-color) shadow-(--shadow-island)"
+const ISLAND_ICON_BUTTON =
+  "flex size-7 items-center justify-center rounded-(--border-radius-md) text-(--text-primary-color) hover:bg-(--button-hover-bg) [&_svg]:size-4"
+
+// Who has the drawing open: a workspace member with the full editor, or a
+// guest who came through its public link (/s/<token>).
+type EditorSource =
+  | { kind: "member"; drawing: Drawing; publicLinks: boolean }
+  | {
+      kind: "guest"
+      token: string
+      info: ShareInfo
+      // What others see them as; null for "Guest" or their account name.
+      guestName: string | null
+    }
+
 type DrawingEditorProps = {
-  drawing: Drawing
+  source: EditorSource
   scene: Scene
   // Where to open the realtime socket; "" means this origin.
   realtimeUrl: string
 }
 
-function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
+// Where the editor saves, loads images and connects live, and what it allows.
+function describe(source: EditorSource) {
+  if (source.kind === "member") {
+    const { drawing } = source
+    return {
+      apiBase: `/drawings/${encodeURIComponent(drawing.id)}`,
+      title: drawing.title,
+      canEdit: drawing.role !== "viewer",
+      hasThumbnail: drawing.thumbnail_version !== null,
+      guestName: null,
+    }
+  }
+  return {
+    apiBase: `/share/${encodeURIComponent(source.token)}`,
+    title: source.info.title ?? "Shared drawing",
+    canEdit: source.info.access === "edit",
+    hasThumbnail: source.info.has_thumbnail,
+    guestName: source.guestName,
+  }
+}
+
+function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
   const router = useRouter()
   const { theme, resolvedTheme, setTheme } = useTheme()
-  const readOnly = drawing.role === "viewer"
-  const thumbnail = useThumbnail(
-    drawing.id,
-    !readOnly,
-    drawing.thumbnail_version !== null
+  const [{ apiBase, canEdit, hasThumbnail, guestName, ...initial }] = useState(
+    () => describe(source)
   )
+  const member = source.kind === "member" ? source : null
+  const thumbnail = useThumbnail(apiBase, canEdit, hasThumbnail)
   const autosave = useAutosave(
-    drawing.id,
+    apiBase,
     scene.elements,
-    !readOnly,
+    canEdit,
     thumbnail.onSaved
   )
-  const images = useImageFiles(drawing.id, !readOnly)
+  const images = useImageFiles(apiBase, canEdit)
   const collaboration = useCollaboration({
-    drawingId: drawing.id,
-    canEdit: !readOnly,
+    apiBase,
+    canEdit,
     realtimeUrl,
+    guestName,
   })
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null)
-  const [title, setTitle] = useState(drawing.title)
+  const [title, setTitle] = useState(initial.title)
+  const [sharing, setSharing] = useState(false)
   // Excalidraw only reads initialData when it mounts.
   const [initialData] = useState(() => ({
     elements: scene.elements,
     appState: scene.app_state,
     scrollToContent: true,
   }))
+  const shareable =
+    member !== null && member.publicLinks && canShare(member.drawing.role)
 
   useEffect(() => {
     document.title = `${title} · Lukis`
   }, [title])
 
   async function backToDrawings() {
+    if (!member) {
+      return
+    }
     // So the dashboard shows this drawing as just edited, thumbnail included.
     await autosave.save()
     await thumbnail.flush()
-    router.push(`/w/${drawing.workspace_id}`)
+    router.push(`/w/${member.drawing.workspace_id}`)
   }
 
   return (
@@ -97,70 +146,120 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
       }}
       theme={resolvedTheme === "dark" ? THEME.DARK : THEME.LIGHT}
       onThemeChange={setTheme}
-      viewModeEnabled={readOnly}
+      viewModeEnabled={!canEdit}
       name={title}
       imageOptions={{ maxFileSizeBytes: MAX_IMAGE_BYTES }}
+      // No web embeds: pasted links stay links, and embeds already in a
+      // drawing show a placeholder instead of loading the page.
+      validateEmbeddable={false}
+      // Hides text-to-diagram and Mermaid in the command palette. The menu
+      // items the editor shows anyway are hidden in globals.css.
+      aiEnabled={false}
+      // The way back and the drawing's name, with whether it's saved and
+      // live. The editor puts its menu button after this. The left column is
+      // a quarter of the screen, hence the capped title.
       renderTopLeftUI={(isMobile) => (
-        <button
-          type="button"
-          onClick={backToDrawings}
-          aria-label="Back to drawings"
-          className="flex h-(--default-button-size) items-center gap-1.5 rounded-(--border-radius-lg) bg-(--island-bg-color) px-2.5 text-sm text-(--text-primary-color) shadow-(--shadow-island) hover:bg-(--button-hover-bg) [&_svg]:size-4"
-        >
-          <ArrowLeftIcon />
-          {!isMobile && <span className="font-hand text-lg">Drawings</span>}
-        </button>
-      )}
-      renderTopRightUI={() => (
-        <div className="flex h-(--default-button-size) items-center gap-1 rounded-(--border-radius-lg) bg-(--island-bg-color) pr-2 shadow-(--shadow-island)">
-          {readOnly ? (
-            <span className="max-w-60 truncate px-2 font-hand text-xl">
+        <div className={`${ISLAND} gap-1 pr-2 pl-1`}>
+          {member ? (
+            <button
+              type="button"
+              onClick={backToDrawings}
+              aria-label="Back to drawings"
+              title="Back to drawings"
+              className={ISLAND_ICON_BUTTON}
+            >
+              <ArrowLeftIcon />
+            </button>
+          ) : (
+            // Guests get the product instead of a way back.
+            <Link
+              href="/"
+              aria-label="Lukis"
+              className="flex items-center gap-1 px-1"
+            >
+              <LogoMark className="size-6" />
+              {!isMobile && <span className="font-hand text-xl">lukis</span>}
+            </Link>
+          )}
+          <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
+          {member && canEdit ? (
+            <DrawingTitle
+              drawingId={member.drawing.id}
+              title={title}
+              onRenamed={setTitle}
+              className={isMobile ? "max-w-28" : "max-w-44"}
+            />
+          ) : (
+            <span
+              className={`${isMobile ? "max-w-28" : "max-w-44"} truncate px-2 font-hand text-xl`}
+            >
               {title}
             </span>
-          ) : (
-            <>
-              <DrawingTitle
-                drawingId={drawing.id}
-                title={title}
-                onRenamed={setTitle}
-              />
-              <SaveIndicator status={autosave.status} />
-            </>
           )}
-          <button
-            type="button"
-            onClick={() => api?.toggleSidebar({ name: HISTORY_SIDEBAR })}
-            aria-label="Version history"
-            title="Version history"
-            // Otherwise the sidebar closes on pointerdown, and this click
-            // reopens it.
-            data-prevent-outside-click
-            className="flex size-7 items-center justify-center rounded-(--border-radius-md) text-(--text-primary-color) hover:bg-(--button-hover-bg) [&_svg]:size-4"
-          >
-            <HistoryIcon />
-          </button>
+          {canEdit && (
+            <SaveIndicator status={autosave.status} compact={isMobile} />
+          )}
           <ConnectionIndicator status={collaboration.status} />
         </div>
       )}
+      // History and sharing, for members. Guests have nothing here.
+      renderTopRightUI={(isMobile) =>
+        member && (
+          <div className={`${ISLAND} gap-1 px-1`}>
+            <button
+              type="button"
+              onClick={() => api?.toggleSidebar({ name: HISTORY_SIDEBAR })}
+              aria-label="Version history"
+              title="Version history"
+              // Otherwise the sidebar closes on pointerdown, and this click
+              // reopens it.
+              data-prevent-outside-click
+              className={ISLAND_ICON_BUTTON}
+            >
+              <HistoryIcon />
+            </button>
+            {shareable && (
+              <button
+                type="button"
+                onClick={() => setSharing(true)}
+                aria-label="Share"
+                className="flex h-7 items-center gap-1.5 rounded-(--border-radius-md) bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 [&_svg]:size-3.5"
+              >
+                <Share2Icon />
+                {!isMobile && "Share"}
+              </button>
+            )}
+          </div>
+        )
+      }
     >
       <MainMenu>
-        <MainMenu.Item icon={<ArrowLeftIcon />} onSelect={backToDrawings}>
-          Back to drawings
-        </MainMenu.Item>
-        <MainMenu.Separator />
-        <MainMenu.Item
-          icon={<HistoryIcon />}
-          onSelect={() =>
-            api?.toggleSidebar({ name: HISTORY_SIDEBAR, force: true })
-          }
-        >
-          Version history
-        </MainMenu.Item>
+        {member && (
+          <>
+            <MainMenu.Item
+              icon={<HistoryIcon />}
+              onSelect={() =>
+                api?.toggleSidebar({ name: HISTORY_SIDEBAR, force: true })
+              }
+            >
+              Version history
+            </MainMenu.Item>
+            {shareable && (
+              <MainMenu.Item
+                icon={<Share2Icon />}
+                onSelect={() => setSharing(true)}
+              >
+                Share
+              </MainMenu.Item>
+            )}
+            <MainMenu.Separator />
+          </>
+        )}
         <MainMenu.DefaultItems.CommandPalette />
         <MainMenu.DefaultItems.SearchMenu />
         <MainMenu.DefaultItems.Export />
         <MainMenu.DefaultItems.SaveAsImage />
-        {!readOnly && <MainMenu.DefaultItems.ClearCanvas />}
+        {canEdit && <MainMenu.DefaultItems.ClearCanvas />}
         <MainMenu.DefaultItems.Help />
         <MainMenu.Separator />
         <MainMenu.DefaultItems.ToggleTheme
@@ -169,13 +268,24 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
         />
         <MainMenu.DefaultItems.ChangeCanvasBackground />
       </MainMenu>
-      <VersionHistory
-        drawingId={drawing.id}
-        role={drawing.role}
-        api={api}
-        theme={resolvedTheme === "dark" ? "dark" : "light"}
-        flush={autosave.save}
-      />
+      {member && (
+        <VersionHistory
+          drawingId={member.drawing.id}
+          role={member.drawing.role}
+          api={api}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
+          flush={autosave.save}
+        />
+      )}
+      {shareable && (
+        <ShareDialog
+          drawingId={member.drawing.id}
+          title={title}
+          publicLinks={member.publicLinks}
+          open={sharing}
+          onOpenChange={setSharing}
+        />
+      )}
       {/* No menu hint: its arrow would point at the back button. */}
       <WelcomeScreen>
         <WelcomeScreen.Center>
@@ -197,4 +307,4 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
 }
 
 export { DrawingEditor }
-export type { DrawingEditorProps }
+export type { DrawingEditorProps, EditorSource }

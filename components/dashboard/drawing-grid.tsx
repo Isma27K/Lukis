@@ -85,6 +85,7 @@ function DrawingGrid({
   canEdit,
   canDelete,
   moveTargets,
+  publicLinks,
   initialSort,
   initialView,
 }: {
@@ -95,6 +96,8 @@ function DrawingGrid({
   canEdit: boolean
   canDelete: boolean
   moveTargets: Workspace[]
+  // Whether the site allows public links, so drawings can be shared.
+  publicLinks: boolean
   initialSort: DrawingSort
   initialView: DrawingView
 }) {
@@ -147,7 +150,13 @@ function DrawingGrid({
     )
   }
 
-  const itemProps = { currentUserId, canEdit, canDelete, moveTargets }
+  const itemProps = {
+    currentUserId,
+    canEdit,
+    canDelete,
+    moveTargets,
+    publicLinks,
+  }
 
   return (
     <div className="flex flex-col gap-6">

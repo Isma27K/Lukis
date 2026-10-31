@@ -5,6 +5,7 @@ import {
   EllipsisIcon,
   FolderInputIcon,
   PencilIcon,
+  Share2Icon,
   Trash2Icon,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -12,6 +13,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/confirm-dialog"
+import { ShareDialog } from "@/components/share/share-dialog"
 import { TextInputDialog } from "@/components/text-input-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,12 +29,13 @@ import {
 import { apiFetch, errorMessage } from "@/lib/api"
 import type { DrawingSummary, Workspace } from "@/lib/types"
 
-// The "…" menu for a drawing (rename, duplicate, move, trash) and its
-// dialogs. Only rendered for people who can edit.
+// The "…" menu for a drawing (rename, share, duplicate, move, trash) and its
+// dialogs. Only rendered for people who can edit, who can also share.
 function DrawingActions({
   drawing,
   canDelete,
   moveTargets,
+  publicLinks,
   className,
 }: {
   drawing: DrawingSummary
@@ -40,10 +43,14 @@ function DrawingActions({
   canDelete: boolean
   // Other workspaces the user can add drawings to.
   moveTargets: Workspace[]
+  // Whether the site allows public links.
+  publicLinks: boolean
   className?: string
 }) {
   const router = useRouter()
-  const [dialog, setDialog] = useState<"rename" | "delete" | null>(null)
+  const [dialog, setDialog] = useState<"rename" | "share" | "delete" | null>(
+    null
+  )
 
   async function run(action: () => Promise<unknown>, success?: string) {
     try {
@@ -57,7 +64,7 @@ function DrawingActions({
     }
   }
 
-  function setDialogOpen(name: "rename" | "delete") {
+  function setDialogOpen(name: "rename" | "share" | "delete") {
     return (open: boolean) => setDialog(open ? name : null)
   }
 
@@ -81,6 +88,12 @@ function DrawingActions({
             <PencilIcon />
             Rename
           </DropdownMenuItem>
+          {publicLinks && (
+            <DropdownMenuItem onClick={() => setDialog("share")}>
+              <Share2Icon />
+              Share…
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() =>
               run(() =>
@@ -134,6 +147,15 @@ function DrawingActions({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      {publicLinks && (
+        <ShareDialog
+          drawingId={drawing.id}
+          title={drawing.title}
+          publicLinks={publicLinks}
+          open={dialog === "share"}
+          onOpenChange={setDialogOpen("share")}
+        />
+      )}
       <TextInputDialog
         open={dialog === "rename"}
         onOpenChange={setDialogOpen("rename")}

@@ -24,6 +24,7 @@ function TextInputDialog({
   defaultValue,
   maxLength,
   submitLabel,
+  cancelLabel = "Cancel",
   onSubmit,
 }: {
   open: boolean
@@ -33,6 +34,7 @@ function TextInputDialog({
   defaultValue?: string
   maxLength?: number
   submitLabel: string
+  cancelLabel?: string
   // Closes the dialog when it resolves; a thrown error shows under the field.
   onSubmit: (value: string) => Promise<void>
 }) {
@@ -81,7 +83,7 @@ function TextInputDialog({
           </Field>
           <DialogFooter>
             <DialogClose render={<Button variant="outline" />}>
-              Cancel
+              {cancelLabel}
             </DialogClose>
             <Button type="submit" disabled={pending}>
               {submitLabel}

@@ -1,5 +1,6 @@
 "use client"
 
+import { cn } from "cn"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
@@ -10,10 +11,12 @@ function DrawingTitle({
   drawingId,
   title,
   onRenamed,
+  className,
 }: {
   drawingId: string
   title: string
   onRenamed: (title: string) => void
+  className?: string
 }) {
   const [draft, setDraft] = useState(title)
   const cancelled = useRef(false)
@@ -53,7 +56,10 @@ function DrawingTitle({
           event.currentTarget.blur()
         }
       }}
-      className="field-sizing-content h-full max-w-60 min-w-16 truncate rounded-md bg-transparent px-2 font-hand text-xl outline-none hover:bg-muted focus:bg-muted"
+      className={cn(
+        "field-sizing-content h-full max-w-60 min-w-16 truncate rounded-md bg-transparent px-2 font-hand text-xl outline-none hover:bg-muted focus:bg-muted",
+        className
+      )}
     />
   )
 }

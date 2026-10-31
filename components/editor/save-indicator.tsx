@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import {
   CheckIcon,
   CircleAlertIcon,
@@ -16,16 +17,25 @@ const LABELS: Record<SaveStatus, [React.ReactNode, string]> = {
   failed: [<CircleAlertIcon key="icon" />, "Not saved"],
 }
 
-function SaveIndicator({ status }: { status: SaveStatus }) {
+// `compact` shows only the icon (the label stays for screen readers and as a
+// tooltip), for tight spots like phones.
+function SaveIndicator({
+  status,
+  compact = false,
+}: {
+  status: SaveStatus
+  compact?: boolean
+}) {
   const [icon, label] = LABELS[status]
   return (
     <span
       role="status"
       data-status={status}
+      title={compact ? label : undefined}
       className="flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground data-[status=failed]:text-destructive [&_svg]:size-3.5"
     >
       {icon}
-      {label}
+      <span className={cn(compact && "sr-only")}>{label}</span>
     </span>
   )
 }

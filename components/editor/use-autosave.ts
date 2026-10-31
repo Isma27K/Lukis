@@ -32,7 +32,7 @@ function persistedAppState(appState: AppState) {
 }
 
 function createAutosaver(
-  drawingId: string,
+  apiBase: string,
   storedElements: readonly ExcalidrawElement[],
   onStatus: (status: SaveStatus) => void,
   onSaved: () => void
@@ -92,7 +92,7 @@ function createAutosaver(
     onStatus("saving")
     saving = (async () => {
       try {
-        await apiFetch(`/drawings/${drawingId}/scene`, {
+        await apiFetch(`${apiBase}/scene`, {
           method: "PUT",
           body: {
             elements: changes.elements,
@@ -150,16 +150,17 @@ function createAutosaver(
 }
 
 // Saves the scene as it changes, plus on tab hide, page close and unmount.
+// `apiBase` is /drawings/{id}, or /share/{token} for a guest on a public link.
 // `onSaved` runs after each successful save; only its first value is used.
 function useAutosave(
-  drawingId: string,
+  apiBase: string,
   storedElements: readonly ExcalidrawElement[],
   enabled: boolean,
   onSaved: () => void
 ) {
   const [status, setStatus] = useState<SaveStatus>("saved")
   const [autosaver] = useState(() =>
-    createAutosaver(drawingId, storedElements, setStatus, onSaved)
+    createAutosaver(apiBase, storedElements, setStatus, onSaved)
   )
 
   useEffect(() => {

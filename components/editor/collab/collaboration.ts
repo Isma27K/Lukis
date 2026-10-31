@@ -21,14 +21,16 @@ import { bumpVersion, getVisibleSceneBounds } from "@excalidraw/element"
 // A trimmed-down port of Excalidraw's own collaboration client
 // (../excalidraw/excalidraw-app/collab/Collab.tsx and Portal.tsx), over a plain
 // WebSocket to the relay in the backend's function/realtime.py. No encryption
-// or Firebase: the server controls access and saving stays on
-// PUT /drawings/{id}/scene.
+// or Firebase: the server controls access and saving stays on PUT .../scene.
+// Members connect through /drawings/{id}/live, guests on a public link
+// through /share/{token}/live; both land in the drawing's one room.
 
 // "unavailable": the server refused us (logged out, lost access); retrying
 // won't help.
 type ConnectionStatus = "connecting" | "live" | "offline" | "unavailable"
 
-type Peer = { id: SocketId; userId: string; name: string }
+// `guest`: came in through a public link rather than as a member.
+type Peer = { id: SocketId; userId: string; name: string; guest: boolean }
 
 type SceneBounds = [number, number, number, number]
 
@@ -69,8 +71,15 @@ const MAX_BUFFERED_BYTES = 256 * 1024
 // By default through this site's /api rewrite, so the backend never has to be
 // reachable from the internet. `realtimeUrl` points straight at the backend
 // instead, for setups where that rewrite can't carry WebSockets.
-function liveUrl(realtimeUrl: string, drawingId: string) {
-  const path = `/drawings/${encodeURIComponent(drawingId)}/live`
+// `apiBase` is /drawings/{id}, or /share/{token} for a guest, who also says
+// what to be called.
+function liveUrl(
+  realtimeUrl: string,
+  apiBase: string,
+  guestName: string | null
+) {
+  const query = guestName ? `?${new URLSearchParams({ name: guestName })}` : ""
+  const path = `${apiBase}/live${query}`
   if (realtimeUrl) {
     return realtimeUrl.replace(/^http/, "ws") + path
   }
@@ -129,9 +138,11 @@ class Collaboration {
   private viewportFrame: number | null = null
 
   constructor(
-    private readonly drawingId: string,
+    private readonly apiBase: string,
     private readonly canEdit: boolean,
     private readonly realtimeUrl: string,
+    // What a guest on a public link wants to be called; null for members.
+    private readonly guestName: string | null,
     private readonly callbacks: {
       onStatus: (status: ConnectionStatus) => void
       // The person being followed left or the connection dropped.
@@ -210,7 +221,9 @@ class Collaboration {
 
   private connect() {
     this.callbacks.onStatus(this.reconnectAttempt ? "offline" : "connecting")
-    const socket = new WebSocket(liveUrl(this.realtimeUrl, this.drawingId))
+    const socket = new WebSocket(
+      liveUrl(this.realtimeUrl, this.apiBase, this.guestName)
+    )
     this.socket = socket
 
     socket.onmessage = (event) => {
@@ -299,7 +312,7 @@ class Collaboration {
         ...this.collaborators.get(peer.id),
         socketId: peer.id,
         id: peer.userId,
-        username: peer.name,
+        username: peer.guest ? `${peer.name} (guest)` : peer.name,
         isCurrentUser: peer.id === this.ownId,
       })
     }
