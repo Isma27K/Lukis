@@ -66,7 +66,11 @@ export default async function Page({ params, searchParams }: Props) {
             !workspace.personal && (
               <>
                 <AvatarStack
-                  people={members.map((m) => ({ id: m.user_id, name: m.name }))}
+                  people={members.map((m) => ({
+                    id: m.user_id,
+                    name: m.name,
+                    avatar_version: m.avatar_version,
+                  }))}
                 />
                 {atLeast(workspace.role, "admin") && (
                   <Link

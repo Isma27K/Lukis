@@ -1,15 +1,13 @@
-import { ArrowLeftIcon } from "lucide-react"
 import type { Metadata } from "next"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { Logo } from "@/components/brand/logo"
 import { PublicLinksSwitch } from "@/components/site/public-links-switch"
 import { RegistrationSwitch } from "@/components/site/registration-switch"
 import {
   RevokeSignupInviteButton,
   SignupInviteForm,
 } from "@/components/site/signup-invite-controls"
+import { SiteHeader } from "@/components/site-header"
 import {
   Card,
   CardContent,
@@ -44,18 +42,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-svh bg-dot-grid">
-      <header className="flex h-16 items-center gap-4 border-b bg-background/85 px-6 backdrop-blur-sm">
-        <Link href="/" aria-label="Lukis home">
-          <Logo />
-        </Link>
-        <Link
-          href="/"
-          className="ml-auto flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeftIcon className="size-4" />
-          Back to your drawings
-        </Link>
-      </header>
+      <SiteHeader />
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-8">
         <PageHero title="Site settings">
           <span>Only you see this page, as the person who set Lukis up.</span>

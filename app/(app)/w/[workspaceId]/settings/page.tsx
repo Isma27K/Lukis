@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { Solo } from "@/components/illustrations/spots"
+import { SectionNav } from "@/components/section-nav"
 import { SketchFrame } from "@/components/sketch/sketch-frame"
 import { StickyNote } from "@/components/sketch/sticky-note"
 import {
@@ -32,6 +33,7 @@ import {
   getWorkspace,
   requireUser,
 } from "@/lib/dal"
+import { avatarUrl } from "@/lib/avatar"
 import { timeAgo } from "@/lib/format"
 import { assignableRoles, atLeast, canManage } from "@/lib/roles"
 
@@ -81,20 +83,7 @@ export default async function Page({ params }: Props) {
         </PageHero>
 
         <div className="grid gap-8 lg:grid-cols-[11rem_1fr]">
-          <nav aria-label="Settings sections" className="hidden lg:block">
-            <ul className="sticky top-20 flex flex-col gap-1 text-sm">
-              {sections.map((section) => (
-                <li key={section.id}>
-                  <a
-                    href={`#${section.id}`}
-                    className="block rounded-md px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                  >
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <SectionNav sections={sections} />
 
           <div className="flex min-w-0 flex-col gap-8">
             <Card id="general" className="scroll-mt-20">
@@ -125,7 +114,13 @@ export default async function Page({ params }: Props) {
                           key={member.user_id}
                           className="flex items-center gap-3 py-3"
                         >
-                          <UserAvatar name={member.name} />
+                          <UserAvatar
+                            name={member.name}
+                            picture={avatarUrl(
+                              member.user_id,
+                              member.avatar_version
+                            )}
+                          />
                           <div className="flex min-w-0 flex-1 flex-col">
                             <span className="truncate text-sm font-medium">
                               {member.name}

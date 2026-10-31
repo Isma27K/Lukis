@@ -12,6 +12,8 @@ type User = {
   // Whether they run the whole site (the first account), as opposed to
   // owning a workspace. Only they see /admin.
   site_owner: boolean
+  // Changes with every new profile picture; null without one (see avatarUrl).
+  avatar_version: number | null
 }
 
 // Only allows paths on this site, so a crafted ?next= can't send people

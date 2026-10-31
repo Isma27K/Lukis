@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UserAvatar } from "@/components/user-avatar"
 import { apiFetch, errorMessage } from "@/lib/api"
+import { avatarUrl } from "@/lib/avatar"
 import { atLeast, canDeleteVersions } from "@/lib/roles"
 import type { Role, Version, VersionSummary } from "@/lib/types"
 
@@ -369,7 +370,7 @@ function VersionItem({
   onDelete: () => void
 }) {
   const time = timeFormat.format(new Date(version.created_at))
-  const author = version.created_by?.name
+  const author = version.created_by
 
   return (
     <li>
@@ -383,7 +384,11 @@ function VersionItem({
         )}
       >
         {author ? (
-          <UserAvatar name={author} size="sm" />
+          <UserAvatar
+            name={author.name}
+            picture={avatarUrl(author.id, author.avatar_version)}
+            size="sm"
+          />
         ) : (
           <span className="size-6 shrink-0 rounded-full bg-muted" />
         )}
@@ -396,7 +401,7 @@ function VersionItem({
             )}
           </span>
           <span className="block truncate text-xs text-muted-foreground">
-            {[version.name && time, author ? `by ${author}` : null]
+            {[version.name && time, author ? `by ${author.name}` : null]
               .filter(Boolean)
               .join(" · ")}
           </span>

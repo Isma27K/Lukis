@@ -53,7 +53,7 @@ type DrawingSummary = {
 }
 
 // Someone who changed a drawing.
-type Editor = { id: string; name: string }
+type Editor = { id: string; name: string; avatar_version: number | null }
 
 // A drawing as the workspace list shows it.
 type ListedDrawing = DrawingSummary & {
@@ -131,6 +131,20 @@ type Member = {
   email: string
   role: Role
   joined_at: string
+  avatar_version: number | null
+}
+
+// A device the current user is logged in on.
+type Session = {
+  id: string
+  created_at: string
+  // To within a few minutes.
+  last_used_at: string
+  // Null for sessions started before these were recorded.
+  user_agent: string | null
+  ip: string | null
+  // The session viewing the page.
+  current: boolean
 }
 
 type Invite = {
@@ -166,6 +180,7 @@ export type {
   RegistrationMode,
   Role,
   Scene,
+  Session,
   ShareAccess,
   ShareInfo,
   ShareLink,

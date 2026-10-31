@@ -1,4 +1,5 @@
 import { UserAvatar } from "@/components/user-avatar"
+import { avatarUrl } from "@/lib/avatar"
 import type { ListedDrawing } from "@/lib/types"
 
 // "Ada · 2 hours ago", or "You · …" for your own changes. The backend may
@@ -17,10 +18,17 @@ function editedByLabel(
 }
 
 function EditorAvatar({ drawing }: { drawing: ListedDrawing }) {
-  if (!drawing.updated_by) {
+  const editor = drawing.updated_by
+  if (!editor) {
     return null
   }
-  return <UserAvatar name={drawing.updated_by.name} size="sm" />
+  return (
+    <UserAvatar
+      name={editor.name}
+      picture={avatarUrl(editor.id, editor.avatar_version)}
+      size="sm"
+    />
+  )
 }
 
 export { EditorAvatar, editedByLabel }

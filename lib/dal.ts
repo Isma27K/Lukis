@@ -14,6 +14,7 @@ import type {
   ListedDrawing,
   Member,
   Scene,
+  Session,
   ShareInfo,
   SignupInvite,
   SignupInvitePreview,
@@ -140,6 +141,11 @@ function getSignupInvites() {
   return backendGet<SignupInvite[]>("/site/invites")
 }
 
+// The devices the current user is logged in on, this one first.
+function getSessions() {
+  return backendGet<Session[]>("/account/sessions")
+}
+
 const getDrawings = cache((workspaceId: string) =>
   backendGet<ListedDrawing[]>(
     `/workspaces/${encodeURIComponent(workspaceId)}/drawings`
@@ -215,6 +221,7 @@ export {
   getInvites,
   getMembers,
   getScene,
+  getSessions,
   getSharedScene,
   getShareInfo,
   getSignupInvitePreview,

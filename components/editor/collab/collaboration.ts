@@ -18,6 +18,8 @@ import type {
 } from "@excalidraw/excalidraw/types"
 import { bumpVersion, getVisibleSceneBounds } from "@excalidraw/element"
 
+import { avatarUrl } from "@/lib/avatar"
+
 // A trimmed-down port of Excalidraw's own collaboration client
 // (../excalidraw/excalidraw-app/collab/Collab.tsx and Portal.tsx), over a plain
 // WebSocket to the relay in the backend's function/realtime.py. No encryption
@@ -30,7 +32,14 @@ import { bumpVersion, getVisibleSceneBounds } from "@excalidraw/element"
 type ConnectionStatus = "connecting" | "live" | "offline" | "unavailable"
 
 // `guest`: came in through a public link rather than as a member.
-type Peer = { id: SocketId; userId: string; name: string; guest: boolean }
+// `avatarVersion`: their profile picture, as of connecting (see avatarUrl).
+type Peer = {
+  id: SocketId
+  userId: string
+  name: string
+  avatarVersion: number | null
+  guest: boolean
+}
 
 type SceneBounds = [number, number, number, number]
 
@@ -313,6 +322,8 @@ class Collaboration {
         socketId: peer.id,
         id: peer.userId,
         username: peer.guest ? `${peer.name} (guest)` : peer.name,
+        // The editor shows initials instead while it loads or if it fails.
+        avatarUrl: avatarUrl(peer.userId, peer.avatarVersion),
         isCurrentUser: peer.id === this.ownId,
       })
     }
