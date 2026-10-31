@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
-import { PaperPage } from "@/components/brand/paper-page"
+import { AuthShell } from "@/components/brand/auth-shell"
+import { CollabScene } from "@/components/illustrations/collab-scene"
 import { getCurrentUser } from "@/lib/dal"
 
 export default async function AuthLayout({
@@ -12,5 +13,5 @@ export default async function AuthLayout({
     redirect("/")
   }
 
-  return <PaperPage>{children}</PaperPage>
+  return <AuthShell scene={<CollabScene />}>{children}</AuthShell>
 }

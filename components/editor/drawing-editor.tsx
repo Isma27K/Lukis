@@ -2,12 +2,18 @@
 
 import "@excalidraw/excalidraw/index.css"
 
-import { Excalidraw, MainMenu, THEME } from "@excalidraw/excalidraw"
+import {
+  Excalidraw,
+  MainMenu,
+  THEME,
+  WelcomeScreen,
+} from "@excalidraw/excalidraw"
 import { ArrowLeftIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { Logo } from "@/components/brand/logo"
 import { ConnectionIndicator } from "@/components/editor/collab/connection-indicator"
 import { useCollaboration } from "@/components/editor/collab/use-collaboration"
 import { DrawingTitle } from "@/components/editor/drawing-title"
@@ -87,10 +93,23 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
       viewModeEnabled={readOnly}
       name={title}
       imageOptions={{ maxFileSizeBytes: MAX_IMAGE_BYTES }}
+      renderTopLeftUI={(isMobile) => (
+        <button
+          type="button"
+          onClick={backToDrawings}
+          aria-label="Back to drawings"
+          className="flex h-(--default-button-size) items-center gap-1.5 rounded-(--border-radius-lg) bg-(--island-bg-color) px-2.5 text-sm text-(--text-primary-color) shadow-(--shadow-island) hover:bg-(--button-hover-bg) [&_svg]:size-4"
+        >
+          <ArrowLeftIcon />
+          {!isMobile && <span className="font-hand text-lg">Drawings</span>}
+        </button>
+      )}
       renderTopRightUI={() => (
         <div className="flex h-(--default-button-size) items-center gap-1 rounded-(--border-radius-lg) bg-(--island-bg-color) pr-2 shadow-(--shadow-island)">
           {readOnly ? (
-            <span className="max-w-60 truncate px-2 text-sm">{title}</span>
+            <span className="max-w-60 truncate px-2 font-hand text-xl">
+              {title}
+            </span>
           ) : (
             <>
               <DrawingTitle
@@ -123,6 +142,22 @@ function DrawingEditor({ drawing, scene, realtimeUrl }: DrawingEditorProps) {
         />
         <MainMenu.DefaultItems.ChangeCanvasBackground />
       </MainMenu>
+      {/* No menu hint: its arrow would point at the back button. */}
+      <WelcomeScreen>
+        <WelcomeScreen.Center>
+          <WelcomeScreen.Center.Logo>
+            <Logo size="lg" animate />
+          </WelcomeScreen.Center.Logo>
+          <WelcomeScreen.Center.Heading>
+            Draw anything. Everyone here sees it live.
+          </WelcomeScreen.Center.Heading>
+          <WelcomeScreen.Center.Menu>
+            <WelcomeScreen.Center.MenuItemHelp />
+          </WelcomeScreen.Center.Menu>
+        </WelcomeScreen.Center>
+        <WelcomeScreen.Hints.ToolbarHint />
+        <WelcomeScreen.Hints.HelpHint />
+      </WelcomeScreen>
     </Excalidraw>
   )
 }

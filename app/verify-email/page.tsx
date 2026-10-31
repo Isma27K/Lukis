@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 
 import { VerifyEmail } from "@/components/auth/verify-email"
-import { PaperPage } from "@/components/brand/paper-page"
+import { AuthShell } from "@/components/brand/auth-shell"
+import { Envelope } from "@/components/illustrations/spots"
 import { safeRedirectPath } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/dal"
 
@@ -21,13 +22,17 @@ export default async function Page({
   const user = await getCurrentUser()
 
   return (
-    <PaperPage>
+    <AuthShell
+      scene={<Envelope className="mx-auto w-96" />}
+      heading="Almost there."
+      blurb="One click on the link we emailed you and you're in."
+    >
       <VerifyEmail
         token={typeof token === "string" && token ? token : null}
         continueTo={safeRedirectPath(next)}
         loggedIn={user !== null}
         alreadyVerified={user?.email_verified ?? false}
       />
-    </PaperPage>
+    </AuthShell>
   )
 }

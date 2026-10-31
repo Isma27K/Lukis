@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -15,6 +16,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { UserAvatar } from "@/components/user-avatar"
+import { PageHero } from "@/components/workspace/page-hero"
 import {
   getFeatures,
   getSignupInvites,
@@ -40,16 +43,22 @@ export default async function Page() {
 
   return (
     <div className="min-h-svh bg-dot-grid">
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
-        <header className="flex items-center gap-4">
-          <Link href="/" aria-label="Lukis home">
-            <Logo />
-          </Link>
-          <h1 className="font-hand text-2xl">Site settings</h1>
-          <Link href="/" className="ml-auto text-sm underline">
-            Back to your drawings
-          </Link>
-        </header>
+      <header className="flex h-16 items-center gap-4 border-b bg-background/85 px-6 backdrop-blur-sm">
+        <Link href="/" aria-label="Lukis home">
+          <Logo />
+        </Link>
+        <Link
+          href="/"
+          className="ml-auto flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeftIcon className="size-4" />
+          Back to your drawings
+        </Link>
+      </header>
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-8">
+        <PageHero title="Site settings">
+          <span>Only you see this page, as the person who set Lukis up.</span>
+        </PageHero>
 
         <Card>
           <CardHeader>
@@ -80,8 +89,9 @@ export default async function Page() {
                   {invites.map((invite) => (
                     <li
                       key={invite.id}
-                      className="flex items-center gap-3 py-2"
+                      className="flex items-center gap-3 py-2.5"
                     >
+                      <UserAvatar name={invite.email} size="sm" />
                       <div className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate text-sm">{invite.email}</span>
                         <span className="text-xs text-muted-foreground">

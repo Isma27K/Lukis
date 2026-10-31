@@ -2,7 +2,9 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { ResendVerificationButton } from "@/components/auth/verify-email"
-import { PaperPage } from "@/components/brand/paper-page"
+import { AuthShell } from "@/components/brand/auth-shell"
+import { CollabScene } from "@/components/illustrations/collab-scene"
+import { InviteScene } from "@/components/illustrations/invite-scene"
 import {
   Card,
   CardDescription,
@@ -34,7 +36,24 @@ export default async function Page({
   const mustConfirmEmail = features.email && !user.email_verified
 
   return (
-    <PaperPage>
+    <AuthShell
+      scene={
+        invite ? (
+          <InviteScene
+            workspace={invite.workspace_name}
+            inviter={invite.invited_by}
+          />
+        ) : (
+          <CollabScene />
+        )
+      }
+      heading={invite ? "Come draw with us." : undefined}
+      blurb={
+        invite
+          ? `${invite.invited_by} saved you a seat in ${invite.workspace_name}.`
+          : undefined
+      }
+    >
       <Card>
         {!invite ? (
           <>
@@ -96,6 +115,6 @@ export default async function Page({
           </>
         )}
       </Card>
-    </PaperPage>
+    </AuthShell>
   )
 }

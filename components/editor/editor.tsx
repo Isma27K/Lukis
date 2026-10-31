@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic"
 
 import type { DrawingEditorProps } from "@/components/editor/drawing-editor"
+import { BlankCanvas } from "@/components/illustrations/spots"
 
 declare global {
   interface Window {
@@ -23,8 +24,11 @@ const Editor = dynamic<DrawingEditorProps>(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center bg-dot-grid font-hand text-2xl text-muted-foreground">
-        Loading editor…
+      <div className="flex h-full flex-col items-center justify-center gap-2 bg-dot-grid">
+        <BlankCanvas className="w-64" />
+        <p className="font-hand text-2xl text-muted-foreground">
+          Loading editor…
+        </p>
       </div>
     ),
   }

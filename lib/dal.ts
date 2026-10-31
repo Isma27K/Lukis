@@ -8,10 +8,10 @@ import { SESSION_COOKIE, type User } from "@/lib/auth"
 import { backendUrl } from "@/lib/backend"
 import type {
   Drawing,
-  DrawingSummary,
   Features,
   Invite,
   InvitePreview,
+  ListedDrawing,
   Member,
   Scene,
   SignupInvite,
@@ -140,7 +140,7 @@ function getSignupInvites() {
 }
 
 const getDrawings = cache((workspaceId: string) =>
-  backendGet<DrawingSummary[]>(
+  backendGet<ListedDrawing[]>(
     `/workspaces/${encodeURIComponent(workspaceId)}/drawings`
   )
 )

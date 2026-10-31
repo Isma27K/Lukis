@@ -1,187 +1,115 @@
-"use client"
-
-import {
-  CopyIcon,
-  EllipsisIcon,
-  FolderInputIcon,
-  PencilIcon,
-  Trash2Icon,
-} from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { toast } from "sonner"
 
-import { ConfirmDialog } from "@/components/confirm-dialog"
+import { DrawingActions } from "@/components/dashboard/drawing-actions"
 import { DrawingThumbnail } from "@/components/dashboard/drawing-thumbnail"
-import { TextInputDialog } from "@/components/text-input-dialog"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { apiFetch, errorMessage } from "@/lib/api"
-import type { DrawingSummary, Workspace } from "@/lib/types"
+import { EditorAvatar, editedByLabel } from "@/components/dashboard/edited-by"
+import { SketchFrame } from "@/components/sketch/sketch-frame"
+import { Tape } from "@/components/sketch/tape"
+import { seedFrom } from "@/lib/sketch"
+import type { ListedDrawing, Workspace } from "@/lib/types"
 
+type DrawingItemProps = {
+  drawing: ListedDrawing
+  // Preformatted on the server, e.g. "5 minutes ago".
+  editedLabel: string
+  currentUserId: string
+  canEdit: boolean
+  canDelete: boolean
+  moveTargets: Workspace[]
+}
+
+// A drawing as a sheet taped to the page, in a hand-drawn frame. One link
+// covers the whole card underneath, so the actions button never sits inside
+// it; everything on top ignores the pointer except that button.
 function DrawingCard({
   drawing,
+  index,
   editedLabel,
+  currentUserId,
   canEdit,
   canDelete,
   moveTargets,
-}: {
-  drawing: DrawingSummary
-  // Preformatted on the server, e.g. "5 minutes ago".
-  editedLabel: string
-  canEdit: boolean
-  // Moving to the trash takes an admin; see canDeleteDrawings.
-  canDelete: boolean
-  // Other workspaces the user can add drawings to.
-  moveTargets: Workspace[]
-}) {
-  const router = useRouter()
-  const [dialog, setDialog] = useState<"rename" | "delete" | null>(null)
-
-  async function run(action: () => Promise<unknown>, success?: string) {
-    try {
-      await action()
-      if (success) {
-        toast.success(success)
-      }
-      router.refresh()
-    } catch (error) {
-      toast.error(errorMessage(error))
-    }
-  }
-
-  function setDialogOpen(name: "rename" | "delete") {
-    return (open: boolean) => setDialog(open ? name : null)
-  }
-
+}: DrawingItemProps & { index: number }) {
+  const even = index % 2 === 0
   return (
-    <li className="group/drawing relative overflow-hidden rounded-xl border bg-card shadow-paper transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-paper-lg has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50">
-      <Link href={`/d/${drawing.id}`} className="flex flex-col outline-none">
-        <DrawingThumbnail drawing={drawing} />
-        <div className="flex flex-col gap-0.5 px-4 py-3">
-          <span className="truncate text-sm font-semibold">
-            {drawing.title}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            Edited {editedLabel}
-          </span>
-        </div>
+    <li
+      className="group/drawing relative"
+      style={{ "--tilt": even ? "-1deg" : "1deg" } as React.CSSProperties}
+    >
+      <Link
+        href={`/d/${drawing.id}`}
+        className="peer absolute inset-0 rounded-lg outline-none"
+      >
+        <span className="sr-only">{drawing.title}</span>
       </Link>
+      <div className="pointer-events-none relative rounded-lg bg-card p-2 shadow-paper transition-[translate,rotate,box-shadow] duration-200 group-hover/drawing:-translate-y-1 group-hover/drawing:shadow-paper-lg peer-focus-visible:ring-3 peer-focus-visible:ring-ring/50 motion-safe:group-hover/drawing:rotate-(--tilt)">
+        <DrawingThumbnail drawing={drawing} className="rounded-sm" />
+        <SketchFrame seed={seedFrom(drawing.id)} ratio={1.6} />
+        <Tape
+          className={
+            even ? "-top-2.5 left-6 -rotate-6" : "-top-2.5 right-6 rotate-6"
+          }
+        />
+        {canEdit && (
+          <DrawingActions
+            drawing={drawing}
+            canDelete={canDelete}
+            moveTargets={moveTargets}
+            className="pointer-events-auto absolute top-3.5 right-3.5 opacity-0 group-hover/drawing:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100"
+          />
+        )}
+      </div>
+      <div className="pointer-events-none relative mt-3 flex items-center gap-2.5 px-1">
+        <EditorAvatar drawing={drawing} />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{drawing.title}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {editedByLabel(drawing, currentUserId, editedLabel)}
+          </p>
+        </div>
+      </div>
+    </li>
+  )
+}
 
+// The same drawing as a row, for the list view.
+function DrawingRow({
+  drawing,
+  editedLabel,
+  currentUserId,
+  canEdit,
+  canDelete,
+  moveTargets,
+}: DrawingItemProps) {
+  return (
+    <li className="group/drawing relative flex items-center gap-4 px-3 py-2.5 transition-colors hover:bg-muted/60 has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50 has-[a:focus-visible]:ring-inset">
+      <Link href={`/d/${drawing.id}`} className="absolute inset-0 outline-none">
+        <span className="sr-only">{drawing.title}</span>
+      </Link>
+      <DrawingThumbnail
+        drawing={drawing}
+        className="pointer-events-none relative w-24 shrink-0 rounded-sm border"
+      />
+      <div className="pointer-events-none relative min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold">{drawing.title}</p>
+        <p className="truncate text-xs text-muted-foreground">
+          {editedByLabel(drawing, currentUserId, editedLabel)}
+        </p>
+      </div>
+      <span className="pointer-events-none relative hidden sm:block">
+        <EditorAvatar drawing={drawing} />
+      </span>
       {canEdit && (
-        <>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="secondary"
-                  size="icon-sm"
-                  aria-label={`Actions for ${drawing.title}`}
-                  className="absolute top-2 right-2 opacity-0 group-hover/drawing:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100"
-                />
-              }
-            >
-              <EllipsisIcon />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-auto min-w-44">
-              <DropdownMenuItem onClick={() => setDialog("rename")}>
-                <PencilIcon />
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  run(() =>
-                    apiFetch(`/drawings/${drawing.id}/duplicate`, {
-                      method: "POST",
-                    })
-                  )
-                }
-              >
-                <CopyIcon />
-                Duplicate
-              </DropdownMenuItem>
-              {moveTargets.length > 0 && (
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    <FolderInputIcon />
-                    Move to
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {moveTargets.map((workspace) => (
-                      <DropdownMenuItem
-                        key={workspace.id}
-                        onClick={() =>
-                          run(
-                            () =>
-                              apiFetch(`/drawings/${drawing.id}/move`, {
-                                method: "POST",
-                                body: { workspace_id: workspace.id },
-                              }),
-                            `Moved to ${workspace.name}`
-                          )
-                        }
-                      >
-                        {workspace.name}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-              )}
-              {canDelete && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={() => setDialog("delete")}
-                  >
-                    <Trash2Icon />
-                    Move to trash
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <TextInputDialog
-            open={dialog === "rename"}
-            onOpenChange={setDialogOpen("rename")}
-            title="Rename drawing"
-            label="Title"
-            defaultValue={drawing.title}
-            maxLength={120}
-            submitLabel="Save"
-            onSubmit={async (title) => {
-              await apiFetch(`/drawings/${drawing.id}`, {
-                method: "PATCH",
-                body: { title },
-              })
-              router.refresh()
-            }}
-          />
-          <ConfirmDialog
-            open={dialog === "delete"}
-            onOpenChange={setDialogOpen("delete")}
-            title={`Move “${drawing.title}” to the trash?`}
-            description="It will be hidden from this workspace for everyone. You can restore it from the trash."
-            confirmLabel="Move to trash"
-            onConfirm={async () => {
-              await apiFetch(`/drawings/${drawing.id}`, { method: "DELETE" })
-              router.refresh()
-            }}
-          />
-        </>
+        <DrawingActions
+          drawing={drawing}
+          canDelete={canDelete}
+          moveTargets={moveTargets}
+          className="relative"
+        />
       )}
     </li>
   )
 }
 
-export { DrawingCard }
+export { DrawingCard, DrawingRow }
+export type { DrawingItemProps }

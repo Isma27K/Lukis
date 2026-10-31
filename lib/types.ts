@@ -47,6 +47,15 @@ type DrawingSummary = {
   thumbnail_version: number | null
 }
 
+// Someone who changed a drawing.
+type Editor = { id: string; name: string }
+
+// A drawing as the workspace list shows it.
+type ListedDrawing = DrawingSummary & {
+  // Whoever changed it last; null if their account is gone.
+  updated_by: Editor | null
+}
+
 type Drawing = DrawingSummary & {
   workspace_id: string
   role: Role
@@ -96,9 +105,11 @@ export type {
   CreatedSignupInvite,
   Drawing,
   DrawingSummary,
+  Editor,
   Features,
   Invite,
   InvitePreview,
+  ListedDrawing,
   Member,
   RegistrationMode,
   Role,

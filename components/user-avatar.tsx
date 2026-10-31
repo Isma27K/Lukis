@@ -1,0 +1,58 @@
+import { cn } from "cn"
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+} from "@/components/ui/avatar"
+import { initials } from "@/lib/format"
+import { NOTE_BG, noteColorFor } from "@/lib/notes"
+
+// Someone's initials on their own sticky-note color.
+function UserAvatar({
+  name,
+  size,
+  className,
+}: {
+  name: string
+  size?: "default" | "sm" | "lg"
+  className?: string
+}) {
+  return (
+    <Avatar size={size} className={className}>
+      <AvatarFallback
+        className={cn(
+          "font-semibold text-note-ink",
+          NOTE_BG[noteColorFor(name)]
+        )}
+      >
+        {initials(name)}
+      </AvatarFallback>
+    </Avatar>
+  )
+}
+
+// Overlapping avatars for a few people, then "+n".
+function AvatarStack({
+  people,
+  max = 4,
+  size,
+}: {
+  people: { id: string; name: string }[]
+  max?: number
+  size?: "default" | "sm" | "lg"
+}) {
+  const shown = people.slice(0, max)
+  const extra = people.length - shown.length
+  return (
+    <AvatarGroup>
+      {shown.map((person) => (
+        <UserAvatar key={person.id} name={person.name} size={size} />
+      ))}
+      {extra > 0 && <AvatarGroupCount>+{extra}</AvatarGroupCount>}
+    </AvatarGroup>
+  )
+}
+
+export { AvatarStack, UserAvatar }

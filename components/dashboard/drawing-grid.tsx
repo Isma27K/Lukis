@@ -1,46 +1,143 @@
 "use client"
 
-import { SearchIcon } from "lucide-react"
+import { LayoutGridIcon, ListIcon, SearchIcon } from "lucide-react"
 import { useState } from "react"
 
-import { DrawingCard } from "@/components/dashboard/drawing-card"
+import { BlankCanvasTile } from "@/components/dashboard/blank-canvas-tile"
+import { DrawingCard, DrawingRow } from "@/components/dashboard/drawing-card"
 import { NewDrawingButton } from "@/components/dashboard/new-drawing-button"
 import { EmptyState } from "@/components/empty-state"
+import { BlankCanvas, NoMatches } from "@/components/illustrations/spots"
+import { Strokes } from "@/components/sketch/strokes"
 import { Input } from "@/components/ui/input"
-import type { DrawingSummary, Workspace } from "@/lib/types"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { sketch } from "@/lib/sketch"
+import type { ListedDrawing, Workspace } from "@/lib/types"
+import { cn } from "@/lib/utils"
 
-// The workspace's drawings with a title filter. Every drawing is already
-// loaded, so searching happens right here.
+type DrawingSort = "edited" | "name" | "created"
+type DrawingView = "grid" | "list"
+
+const SORT_LABELS: Record<DrawingSort, string> = {
+  edited: "Last edited",
+  name: "Name",
+  created: "Newest",
+}
+
+function sortDrawings<T extends ListedDrawing>(
+  drawings: T[],
+  sort: DrawingSort
+) {
+  if (sort === "name") {
+    return [...drawings].sort((a, b) => a.title.localeCompare(b.title))
+  }
+  if (sort === "created") {
+    return [...drawings].sort((a, b) =>
+      b.created_at.localeCompare(a.created_at)
+    )
+  }
+  // The server already lists them by last edit.
+  return drawings
+}
+
+// Sort and view go in the URL, so a reload or a shared link looks the same,
+// without asking the server to render again. Defaults stay out of it.
+function rememberInUrl(sort: DrawingSort, view: DrawingView) {
+  const params = new URLSearchParams(window.location.search)
+  params.delete("sort")
+  params.delete("view")
+  if (sort !== "edited") {
+    params.set("sort", sort)
+  }
+  if (view !== "grid") {
+    params.set("view", view)
+  }
+  const search = params.toString()
+  window.history.replaceState(
+    null,
+    "",
+    search ? `?${search}` : window.location.pathname
+  )
+}
+
+// "start here", with an arrow curling toward the button beside it.
+const START_ARROW = sketch.arrow(
+  [
+    [6, 8],
+    [30, 6],
+    [52, 22],
+  ],
+  { seed: 17, strokeWidth: 1.8, head: 9 }
+)
+
+// The workspace's drawings: search, sort, grid or list. Every drawing is
+// already loaded, so all of it happens right here.
 function DrawingGrid({
   workspaceId,
   drawings,
+  currentUserId,
   canEdit,
   canDelete,
   moveTargets,
+  initialSort,
+  initialView,
 }: {
   workspaceId: string
   // With labels preformatted on the server, e.g. "5 minutes ago".
-  drawings: (DrawingSummary & { editedLabel: string })[]
+  drawings: (ListedDrawing & { editedLabel: string })[]
+  currentUserId: string
   canEdit: boolean
   canDelete: boolean
   moveTargets: Workspace[]
+  initialSort: DrawingSort
+  initialView: DrawingView
 }) {
   const [query, setQuery] = useState("")
+  const [sort, setSort] = useState(initialSort)
+  const [view, setView] = useState(initialView)
   const needle = query.trim().toLocaleLowerCase()
-  const shown = needle
-    ? drawings.filter((d) => d.title.toLocaleLowerCase().includes(needle))
-    : drawings
+  const shown = sortDrawings(
+    needle
+      ? drawings.filter((d) => d.title.toLocaleLowerCase().includes(needle))
+      : drawings,
+    sort
+  )
+
+  function change(next: { sort?: DrawingSort; view?: DrawingView }) {
+    const nextSort = next.sort ?? sort
+    const nextView = next.view ?? view
+    setSort(nextSort)
+    setView(nextView)
+    rememberInUrl(nextSort, nextView)
+  }
 
   if (drawings.length === 0) {
     return (
-      <EmptyState title="Nothing drawn yet">
+      <EmptyState
+        illustration={<BlankCanvas className="w-72" />}
+        title={canEdit ? "Draw your first idea" : "Nothing drawn yet"}
+      >
         {canEdit ? (
-          <>
-            <p className="text-sm text-muted-foreground">
-              Start with a blank canvas.
-            </p>
+          <div className="relative mt-2">
+            <span
+              aria-hidden
+              className="absolute top-1/2 right-full mr-3 hidden -translate-y-full items-end gap-1 text-primary sm:flex"
+            >
+              <span className="font-hand text-lg whitespace-nowrap">
+                start here
+              </span>
+              <svg viewBox="0 0 60 30" className="w-14">
+                <Strokes paths={START_ARROW} animate delay={0.8} />
+              </svg>
+            </span>
             <NewDrawingButton workspaceId={workspaceId} />
-          </>
+          </div>
         ) : (
           <p className="text-sm text-muted-foreground">
             No one has drawn anything in this workspace yet.
@@ -50,41 +147,103 @@ function DrawingGrid({
     )
   }
 
+  const itemProps = { currentUserId, canEdit, canDelete, moveTargets }
+
   return (
-    <>
-      <div className="relative w-full max-w-xs">
-        <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search drawings"
-          aria-label="Search drawings by title"
-          className="bg-card pl-9"
-        />
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative w-full sm:w-72">
+          <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search drawings"
+            aria-label="Search drawings by title"
+            className="bg-card pl-9"
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <Select
+            items={SORT_LABELS}
+            value={sort}
+            onValueChange={(value) => value && change({ sort: value })}
+          >
+            <SelectTrigger className="w-36 bg-card" aria-label="Sort drawings">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(SORT_LABELS) as DrawingSort[]).map((value) => (
+                <SelectItem key={value} value={value}>
+                  {SORT_LABELS[value]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div
+            role="group"
+            aria-label="Layout"
+            className="flex rounded-lg border bg-card p-0.5"
+          >
+            {(
+              [
+                ["grid", "Grid", LayoutGridIcon],
+                ["list", "List", ListIcon],
+              ] as const
+            ).map(([value, label, Icon]) => (
+              <button
+                key={value}
+                type="button"
+                aria-label={label}
+                aria-pressed={view === value}
+                title={label}
+                onClick={() => change({ view: value })}
+                className={cn(
+                  "flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 [&_svg]:size-4",
+                  view === value && "bg-muted text-foreground"
+                )}
+              >
+                <Icon />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
       {shown.length === 0 ? (
-        <EmptyState title="No matches">
+        <EmptyState illustration={<NoMatches />} title="No matches">
           <p className="text-sm text-muted-foreground">
             No drawing titles contain “{query.trim()}”.
           </p>
         </EmptyState>
-      ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      ) : view === "list" ? (
+        <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card shadow-paper">
           {shown.map(({ editedLabel, ...drawing }) => (
-            <DrawingCard
+            <DrawingRow
               key={drawing.id}
               drawing={drawing}
               editedLabel={editedLabel}
-              canEdit={canEdit}
-              canDelete={canDelete}
-              moveTargets={moveTargets}
+              {...itemProps}
+            />
+          ))}
+        </ul>
+      ) : (
+        <ul className="grid grid-cols-1 gap-x-6 gap-y-8 pt-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          {canEdit && !needle && <BlankCanvasTile workspaceId={workspaceId} />}
+          {shown.map(({ editedLabel, ...drawing }, index) => (
+            <DrawingCard
+              key={drawing.id}
+              drawing={drawing}
+              index={index}
+              editedLabel={editedLabel}
+              {...itemProps}
             />
           ))}
         </ul>
       )}
-    </>
+    </div>
   )
 }
 
 export { DrawingGrid }
+export type { DrawingSort, DrawingView }

@@ -1,20 +1,13 @@
 "use client"
 
 import { ChevronsUpDownIcon, LogOutIcon, ShieldIcon } from "lucide-react"
-import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
 
 import { useLogOut } from "@/components/auth/use-log-out"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -22,12 +15,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { UserAvatar } from "@/components/user-avatar"
 import type { User } from "@/lib/auth"
-import { initials } from "@/lib/format"
 
 function UserMenu({ user }: { user: User }) {
   const router = useRouter()
-  const { theme, setTheme } = useTheme()
   const { logOut, pending } = useLogOut()
 
   return (
@@ -35,9 +27,7 @@ function UserMenu({ user }: { user: User }) {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
-            <Avatar>
-              <AvatarFallback>{initials(user.name)}</AvatarFallback>
-            </Avatar>
+            <UserAvatar name={user.name} />
             <span className="grid flex-1 text-left leading-tight">
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs text-muted-foreground">
@@ -50,19 +40,6 @@ function UserMenu({ user }: { user: User }) {
             side="top"
             className="w-(--anchor-width) min-w-56"
           >
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-                <DropdownMenuRadioItem value="light">
-                  Light
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="system">
-                  System
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
             {user.site_owner && (
               <DropdownMenuItem onClick={() => router.push("/admin")}>
                 <ShieldIcon />
