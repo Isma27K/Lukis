@@ -6,7 +6,11 @@ import { Envelope } from "@/components/illustrations/spots"
 import { safeRedirectPath } from "@/lib/auth"
 import { getCurrentUser } from "@/lib/dal"
 
-export const metadata: Metadata = { title: "Confirm your email" }
+// Opened from an emailed link with a token in it.
+export const metadata: Metadata = {
+  title: "Confirm your email",
+  robots: { index: false, follow: false },
+}
 
 // Opened from the email sent at signup, logged in or not, so it sits outside
 // both the (auth) and (app) groups.

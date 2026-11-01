@@ -2,8 +2,14 @@ import { NextResponse, type NextRequest } from "next/server"
 
 import { SESSION_COOKIE } from "@/lib/auth"
 
-// Pages that work without a session, including links opened from emails.
+// Pages that work without a session: the public site, and the login pages
+// and links opened from emails. /pricing checks for itself who may see it.
 const PUBLIC_PATHS = [
+  "/",
+  "/features",
+  "/pricing",
+  "/privacy",
+  "/terms",
   "/login",
   "/register",
   "/forgot-password",
@@ -35,6 +41,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|fonts|favicon.ico|icon|apple-icon|opengraph-image).*)",
+    "/((?!api|_next/static|_next/image|fonts|favicon.ico|icon|apple-icon|opengraph-image|robots.txt|sitemap.xml|manifest.webmanifest).*)",
   ],
 }

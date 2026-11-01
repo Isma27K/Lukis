@@ -6,6 +6,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { DESCRIPTION, indexable, SITE_NAME, siteUrl, TAGLINE } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 const fontSans = Plus_Jakarta_Sans({
@@ -26,8 +27,29 @@ const fontHand = localFont({
   display: "swap",
 })
 
-export const metadata: Metadata = {
-  title: { default: "Lukis", template: "%s · Lukis" },
+// Pages override the title, description and canonical address; the share
+// image comes from opengraph-image.tsx. Search engines are kept out unless
+// this is the real site (PUBLIC_URL set).
+export async function generateMetadata(): Promise<Metadata> {
+  const [base, index] = await Promise.all([siteUrl(), indexable()])
+  return {
+    metadataBase: base,
+    title: {
+      default: `${SITE_NAME}: ${TAGLINE.toLowerCase()}`,
+      template: `%s · ${SITE_NAME}`,
+    },
+    description: DESCRIPTION,
+    applicationName: SITE_NAME,
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "en_US",
+      title: `${SITE_NAME}: ${TAGLINE}`,
+      description: DESCRIPTION,
+    },
+    twitter: { card: "summary_large_image" },
+    robots: index ? undefined : { index: false, follow: false },
+  }
 }
 
 export const viewport: Viewport = {

@@ -19,7 +19,10 @@ import {
 import { getFeatures, getInvitePreview, requireUser } from "@/lib/dal"
 import { ROLE_LABELS } from "@/lib/roles"
 
-export const metadata: Metadata = { title: "Invitation" }
+export const metadata: Metadata = {
+  title: "Invitation",
+  robots: { index: false, follow: false },
+}
 
 export default async function Page({
   params,

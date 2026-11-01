@@ -17,7 +17,7 @@ export default function NotFound() {
         part of.
       </p>
       <Link href="/" className={buttonVariants({ className: "mt-2" })}>
-        Back to your drawings
+        Back to Lukis
       </Link>
     </main>
   )
