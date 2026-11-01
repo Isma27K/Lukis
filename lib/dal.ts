@@ -9,6 +9,7 @@ import { backendUrl } from "@/lib/backend"
 import type {
   Drawing,
   Features,
+  Identity,
   Invite,
   InvitePreview,
   ListedDrawing,
@@ -146,6 +147,10 @@ function getSessions() {
   return backendGet<Session[]>("/account/sessions")
 }
 
+function getIdentities() {
+  return backendGet<Identity[]>("/account/identities")
+}
+
 const getDrawings = cache((workspaceId: string) =>
   backendGet<ListedDrawing[]>(
     `/workspaces/${encodeURIComponent(workspaceId)}/drawings`
@@ -217,6 +222,7 @@ export {
   getDrawing,
   getDrawings,
   getFeatures,
+  getIdentities,
   getInvitePreview,
   getInvites,
   getMembers,

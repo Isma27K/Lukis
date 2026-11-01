@@ -18,10 +18,18 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { apiFetch, errorMessage } from "@/lib/api"
 
-// Asks for the password, then deletes the account for good. The backend
-// refuses while the user is the last owner of a workspace others are in, and
-// says which.
-function DeleteAccountButton({ disabled }: { disabled: boolean }) {
+// Asks for the password (or, for accounts without one, the email address
+// typed out), then deletes the account for good. The backend refuses while
+// the user is the last owner of a workspace others are in, and says which.
+function DeleteAccountButton({
+  disabled,
+  hasPassword,
+  email,
+}: {
+  disabled: boolean
+  hasPassword: boolean
+  email: string
+}) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -29,12 +37,14 @@ function DeleteAccountButton({ disabled }: { disabled: boolean }) {
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const password = new FormData(event.currentTarget).get("password")
+    const confirmation = new FormData(event.currentTarget).get("confirmation")
     startTransition(async () => {
       try {
         await apiFetch("/account/delete", {
           method: "POST",
-          body: { password },
+          body: hasPassword
+            ? { password: confirmation }
+            : { email: confirmation },
         })
       } catch (error) {
         setError(errorMessage(error))
@@ -72,16 +82,24 @@ function DeleteAccountButton({ disabled }: { disabled: boolean }) {
               </DialogDescription>
             </DialogHeader>
             <Field data-invalid={!!error}>
-              <FieldLabel htmlFor="delete-password">
-                Enter your password to confirm
+              <FieldLabel htmlFor="delete-confirmation">
+                {hasPassword ? (
+                  "Enter your password to confirm"
+                ) : (
+                  <span>
+                    Type <span className="font-semibold">{email}</span> to
+                    confirm
+                  </span>
+                )}
               </FieldLabel>
               <Input
-                id="delete-password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
+                id="delete-confirmation"
+                name="confirmation"
+                type={hasPassword ? "password" : "text"}
+                autoComplete={hasPassword ? "current-password" : "off"}
+                spellCheck={false}
                 required
-                maxLength={128}
+                maxLength={hasPassword ? 128 : 320}
                 autoFocus
                 aria-invalid={!!error}
               />

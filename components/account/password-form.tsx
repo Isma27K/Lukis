@@ -12,7 +12,17 @@ import { ApiError, apiFetch, errorMessage } from "@/lib/api"
 type State = { error?: string; currentError?: string; newError?: string }
 
 // Changing the password logs out every other device; this one carries on.
-function PasswordForm({ email, emailOn }: { email: string; emailOn: boolean }) {
+// Accounts made with Google and the like set their first one without
+// entering a current one.
+function PasswordForm({
+  email,
+  emailOn,
+  hasPassword,
+}: {
+  email: string
+  emailOn: boolean
+  hasPassword: boolean
+}) {
   const router = useRouter()
   const [state, formAction, pending] = useActionState(
     async (_state: State, formData: FormData): Promise<State> => {
@@ -20,7 +30,7 @@ function PasswordForm({ email, emailOn }: { email: string; emailOn: boolean }) {
         await apiFetch("/account/password", {
           method: "POST",
           body: {
-            current_password: formData.get("current_password"),
+            current_password: formData.get("current_password") ?? undefined,
             new_password: formData.get("new_password"),
           },
         })
@@ -33,7 +43,11 @@ function PasswordForm({ email, emailOn }: { email: string; emailOn: boolean }) {
         }
         return { error: errorMessage(error) }
       }
-      toast.success("Password changed. Other devices were logged out.")
+      toast.success(
+        hasPassword
+          ? "Password changed. Other devices were logged out."
+          : "Password set. You can log in with your email now too."
+      )
       router.refresh()
       return {}
     },
@@ -52,17 +66,19 @@ function PasswordForm({ email, emailOn }: { email: string; emailOn: boolean }) {
           readOnly
           hidden
         />
+        {hasPassword && (
+          <TextField
+            label="Current password"
+            name="current_password"
+            type="password"
+            autoComplete="current-password"
+            required
+            maxLength={128}
+            error={state.currentError}
+          />
+        )}
         <TextField
-          label="Current password"
-          name="current_password"
-          type="password"
-          autoComplete="current-password"
-          required
-          maxLength={128}
-          error={state.currentError}
-        />
-        <TextField
-          label="New password"
+          label={hasPassword ? "New password" : "Password"}
           name="new_password"
           type="password"
           autoComplete="new-password"
@@ -75,9 +91,13 @@ function PasswordForm({ email, emailOn }: { email: string; emailOn: boolean }) {
         {state.error && <FieldError>{state.error}</FieldError>}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <Button type="submit" disabled={pending}>
-            {pending ? "Saving…" : "Change password"}
+            {pending
+              ? "Saving…"
+              : hasPassword
+                ? "Change password"
+                : "Set password"}
           </Button>
-          {emailOn && <ResetLinkButton email={email} />}
+          {emailOn && hasPassword && <ResetLinkButton email={email} />}
         </div>
       </FieldGroup>
     </form>

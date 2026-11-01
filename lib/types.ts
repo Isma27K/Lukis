@@ -9,13 +9,27 @@ type Role = "owner" | "admin" | "editor" | "viewer"
 // logs, anyone, or only people with an invite from the site owner.
 type RegistrationMode = "setup" | "open" | "invite_only"
 
+// Ways to log in besides email and password.
+type OAuthProvider = "google" | "github" | "microsoft"
+
 // What the server has switched on. Without email there's no verification,
 // password reset or invite emails; invites are shared as links.
 // `public_links`: whether the site owner allows sharing drawings publicly.
+// `oauth_providers`: the providers with credentials set, in display order.
 type Features = {
   email: boolean
   registration: RegistrationMode
   public_links: boolean
+  oauth_providers: OAuthProvider[]
+}
+
+// A Google, GitHub or Microsoft account the user can log in with. `email`
+// is that account's address when it was connected, which may differ from
+// the Lukis one.
+type Identity = {
+  provider: OAuthProvider
+  email: string | null
+  created_at: string
 }
 
 // Settings for the whole site, which only its owner can see.
@@ -173,10 +187,12 @@ export type {
   DrawingSummary,
   Editor,
   Features,
+  Identity,
   Invite,
   InvitePreview,
   ListedDrawing,
   Member,
+  OAuthProvider,
   RegistrationMode,
   Role,
   Scene,

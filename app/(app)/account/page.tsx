@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 
 import { AvatarPicker } from "@/components/account/avatar-picker"
+import { ConnectedAccounts } from "@/components/account/connected-accounts"
 import { DeleteAccountButton } from "@/components/account/delete-account-button"
+import { OAuthNotice } from "@/components/account/oauth-notice"
 import { PasswordForm } from "@/components/account/password-form"
 import { ProfileForm } from "@/components/account/profile-form"
 import { SessionList } from "@/components/account/session-list"
@@ -16,23 +18,40 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { PageHero } from "@/components/workspace/page-hero"
-import { getFeatures, getSessions, requireUser } from "@/lib/dal"
+import { getFeatures, getIdentities, getSessions, requireUser } from "@/lib/dal"
+import { isProvider, oauthErrorMessage, PROVIDER_LABELS } from "@/lib/oauth"
 
 export const metadata: Metadata = { title: "Your account" }
 
-const SECTIONS = [
-  { id: "profile", label: "Profile" },
-  { id: "password", label: "Password" },
-  { id: "devices", label: "Devices" },
-  { id: "danger", label: "Danger zone" },
-]
-
-export default async function Page() {
-  const [user, features, sessions] = await Promise.all([
+export default async function Page({
+  searchParams,
+}: {
+  // Set when a provider sends the browser back after connecting an account.
+  searchParams: Promise<{
+    connected?: string | string[]
+    oauth_error?: string | string[]
+    provider?: string | string[]
+  }>
+}) {
+  const [params, user, features, sessions, identities] = await Promise.all([
+    searchParams,
     requireUser(),
     getFeatures(),
     getSessions(),
+    getIdentities(),
   ])
+  // Shown while any provider is set up, or one is still connected.
+  const showConnected =
+    features.oauth_providers.length > 0 || identities.length > 0
+  const sections = [
+    { id: "profile", label: "Profile" },
+    { id: "password", label: "Password" },
+    ...(showConnected
+      ? [{ id: "connected", label: "Connected accounts" }]
+      : []),
+    { id: "devices", label: "Devices" },
+    { id: "danger", label: "Danger zone" },
+  ]
 
   return (
     <div className="min-h-svh bg-dot-grid">
@@ -44,8 +63,17 @@ export default async function Page() {
           <span className="truncate">{user.email}</span>
         </PageHero>
 
+        <OAuthNotice
+          success={
+            isProvider(params.connected)
+              ? `Connected ${PROVIDER_LABELS[params.connected]}. You can log in with it now.`
+              : undefined
+          }
+          error={oauthErrorMessage(params.oauth_error, params.provider)}
+        />
+
         <div className="grid gap-8 lg:grid-cols-[11rem_1fr]">
-          <SectionNav sections={SECTIONS} />
+          <SectionNav sections={sections} />
 
           <div className="flex min-w-0 flex-col gap-8">
             <Card id="profile" className="scroll-mt-20">
@@ -64,11 +92,39 @@ export default async function Page() {
             <Card id="password" className="scroll-mt-20">
               <CardHeader>
                 <CardTitle>Password</CardTitle>
+                {!user.has_password && (
+                  <CardDescription>
+                    You log in with a connected account. Add a password to also
+                    log in with {user.email}.
+                  </CardDescription>
+                )}
               </CardHeader>
               <CardContent>
-                <PasswordForm email={user.email} emailOn={features.email} />
+                <PasswordForm
+                  email={user.email}
+                  emailOn={features.email}
+                  hasPassword={user.has_password}
+                />
               </CardContent>
             </Card>
+
+            {showConnected && (
+              <Card id="connected" className="scroll-mt-20">
+                <CardHeader>
+                  <CardTitle>Connected accounts</CardTitle>
+                  <CardDescription>
+                    Log in with one click instead of your password.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ConnectedAccounts
+                    available={features.oauth_providers}
+                    identities={identities}
+                    hasPassword={user.has_password}
+                  />
+                </CardContent>
+              </Card>
+            )}
 
             <Card id="devices" className="scroll-mt-20">
               <CardHeader>
@@ -110,7 +166,11 @@ export default async function Page() {
                 </p>
               )}
               <div>
-                <DeleteAccountButton disabled={user.site_owner} />
+                <DeleteAccountButton
+                  disabled={user.site_owner}
+                  hasPassword={user.has_password}
+                  email={user.email}
+                />
               </div>
             </section>
           </div>

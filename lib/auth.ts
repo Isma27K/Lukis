@@ -14,6 +14,9 @@ type User = {
   site_owner: boolean
   // Changes with every new profile picture; null without one (see avatarUrl).
   avatar_version: number | null
+  // False for accounts made with Google, GitHub or Microsoft until they set
+  // one; they set it without a current password, and can't log in with one.
+  has_password: boolean
 }
 
 // Only allows paths on this site, so a crafted ?next= can't send people
