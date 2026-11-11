@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Builds the Excalidraw editor from the local clone and installs it into this
-# app as packed tarballs. Rerun after changing anything in the clone.
+# Builds the editor from the local clone of our Excalidraw fork (the `lukis`
+# branch of isma27k/lukis-editor) and installs it into this app as packed
+# tarballs. Rerun after committing anything in the clone.
 #
 # Tarballs (not file:/symlink deps) are used because the editor pins its
 # internal packages at versions that aren't published on npm, and a symlinked
@@ -12,6 +13,15 @@ EXCALIDRAW_DIR="$(cd "${EXCALIDRAW_DIR:-$FRONTEND_DIR/../excalidraw}" && pwd)"
 VENDOR_DIR="$FRONTEND_DIR/vendor/excalidraw"
 FONTS_DIR="$FRONTEND_DIR/public/fonts"
 PACKAGES=(common element math fractional-indexing laser-pointer excalidraw)
+
+# CI builds the commit recorded below from the fork, so building anything
+# that isn't committed there would ship a different editor than you tested.
+# CI itself checks out a clean commit, so this never trips there.
+if [ -n "$(git -C "$EXCALIDRAW_DIR" status --porcelain -- packages)" ]; then
+  echo "✗ $EXCALIDRAW_DIR has uncommitted changes in packages/." >&2
+  echo "  Commit them on the fork's lukis branch first (CI builds commits only)." >&2
+  exit 1
+fi
 
 echo "› Building packages in $EXCALIDRAW_DIR"
 if [ ! -d "$EXCALIDRAW_DIR/node_modules" ]; then
@@ -30,11 +40,9 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 echo "› Recording the commit in .excalidraw-ref"
-# CI checks out excalidraw/excalidraw at this commit to build the same editor.
+# CI checks out the fork at this commit to build the same editor, so push it
+# before pushing this repo.
 git -C "$EXCALIDRAW_DIR" rev-parse HEAD > "$FRONTEND_DIR/.excalidraw-ref"
-if [ -n "$(git -C "$EXCALIDRAW_DIR" status --porcelain -- packages)" ]; then
-  echo "! The clone has uncommitted changes in packages/; CI won't see them."
-fi
 
 echo "› Copying fonts to $FONTS_DIR"
 rm -rf "$FONTS_DIR"
