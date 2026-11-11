@@ -128,6 +128,8 @@ function bumpElementVersions<T extends ExcalidrawElement>(
 class Collaboration {
   private socket: WebSocket | null = null
   private api: ExcalidrawImperativeAPI | null = null
+  // Counts calls to start, so one that was waiting knows it's been replaced.
+  private starts = 0
   // Our id in the room, once the server has welcomed us.
   private ownId: SocketId | null = null
   private reconnectAttempt = 0
@@ -147,7 +149,8 @@ class Collaboration {
   private viewportFrame: number | null = null
 
   constructor(
-    private readonly apiBase: string,
+    // Settles once the drawing exists (see DrawingTarget).
+    private readonly apiBase: Promise<string>,
     private readonly canEdit: boolean,
     private readonly realtimeUrl: string,
     // What a guest on a public link wants to be called; null for members.
@@ -162,7 +165,13 @@ class Collaboration {
   start(api: ExcalidrawImperativeAPI) {
     this.stop()
     this.api = api
-    this.connect()
+    const start = (this.starts += 1)
+    // A new drawing has no room to join until its first save creates it.
+    void this.apiBase.then((apiBase) => {
+      if (this.api && start === this.starts) {
+        this.connect(apiBase)
+      }
+    })
   }
 
   stop() {
@@ -228,10 +237,10 @@ class Collaboration {
     this.send({ type: "follow", id })
   }
 
-  private connect() {
+  private connect(apiBase: string) {
     this.callbacks.onStatus(this.reconnectAttempt ? "offline" : "connecting")
     const socket = new WebSocket(
-      liveUrl(this.realtimeUrl, this.apiBase, this.guestName)
+      liveUrl(this.realtimeUrl, apiBase, this.guestName)
     )
     this.socket = socket
 
@@ -266,7 +275,7 @@ class Collaboration {
       this.reconnectAttempt += 1
       this.reconnectTimer = setTimeout(() => {
         this.reconnectTimer = null
-        this.connect()
+        this.connect(apiBase)
       }, delay)
     }
   }

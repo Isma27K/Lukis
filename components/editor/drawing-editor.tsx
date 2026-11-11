@@ -14,11 +14,17 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 import { Logo } from "@/components/brand/logo"
 import { LogoMark } from "@/components/brand/logo-mark"
 import { ConnectionIndicator } from "@/components/editor/collab/connection-indicator"
 import { useCollaboration } from "@/components/editor/collab/use-collaboration"
+import {
+  NEW_DRAWING_PATH,
+  newDrawing,
+  savedDrawing,
+} from "@/components/editor/drawing-target"
 import { DrawingTitle } from "@/components/editor/drawing-title"
 import { SaveIndicator } from "@/components/editor/save-indicator"
 import { useAutosave } from "@/components/editor/use-autosave"
@@ -29,8 +35,9 @@ import {
   VersionHistory,
 } from "@/components/editor/version-history"
 import { ShareDialog } from "@/components/share/share-dialog"
+import { errorMessage } from "@/lib/api"
 import { canShare } from "@/lib/roles"
-import type { Drawing, Scene, ShareInfo } from "@/lib/types"
+import type { Drawing, Role, Scene, ShareInfo } from "@/lib/types"
 
 // Matches the backend's max_file_bytes. The editor downscales images to fit
 // 1440px first, so few photos come near it.
@@ -42,10 +49,12 @@ const ISLAND =
 const ISLAND_ICON_BUTTON =
   "flex size-7 items-center justify-center rounded-(--border-radius-md) text-(--text-primary-color) hover:bg-(--button-hover-bg) [&_svg]:size-4"
 
-// Who has the drawing open: a workspace member with the full editor, or a
+// Who has the drawing open: a workspace member with the full editor, on a
+// saved drawing or a new one that isn't saved until its first change, or a
 // guest who came through its public link (/s/<token>).
 type EditorSource =
   | { kind: "member"; drawing: Drawing; publicLinks: boolean }
+  | { kind: "new"; workspaceId: string; role: Role; publicLinks: boolean }
   | {
       kind: "guest"
       token: string
@@ -62,43 +71,75 @@ type DrawingEditorProps = {
 }
 
 // Where the editor saves, loads images and connects live, and what it allows.
-function describe(source: EditorSource) {
+// `member` is what a workspace member gets around the canvas; null for guests.
+// `onCreated` runs when the first change to a new drawing has saved it.
+function describe(source: EditorSource, onCreated: (drawing: Drawing) => void) {
   if (source.kind === "member") {
-    const { drawing } = source
+    const { drawing, publicLinks } = source
     return {
-      apiBase: `/drawings/${encodeURIComponent(drawing.id)}`,
+      target: savedDrawing(`/drawings/${encodeURIComponent(drawing.id)}`),
       title: drawing.title,
       canEdit: drawing.role !== "viewer",
       hasThumbnail: drawing.thumbnail_version !== null,
       guestName: null,
+      member: {
+        workspaceId: drawing.workspace_id,
+        role: drawing.role,
+        publicLinks,
+      },
+    }
+  }
+  if (source.kind === "new") {
+    const { workspaceId, role, publicLinks } = source
+    return {
+      target: newDrawing(workspaceId, onCreated),
+      // What the backend calls a drawing created without a name.
+      title: "Untitled",
+      canEdit: true,
+      hasThumbnail: false,
+      guestName: null,
+      member: { workspaceId, role, publicLinks },
     }
   }
   return {
-    apiBase: `/share/${encodeURIComponent(source.token)}`,
+    target: savedDrawing(`/share/${encodeURIComponent(source.token)}`),
     title: source.info.title ?? "Shared drawing",
     canEdit: source.info.access === "edit",
     hasThumbnail: source.info.has_thumbnail,
     guestName: source.guestName,
+    member: null,
   }
 }
 
 function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
   const router = useRouter()
   const { theme, resolvedTheme, setTheme } = useTheme()
-  const [{ apiBase, canEdit, hasThumbnail, guestName, ...initial }] = useState(
-    () => describe(source)
+  // The drawing as members know it. Null for guests, and for a new drawing
+  // until it's saved: nothing to share or look back on before that.
+  const [drawingId, setDrawingId] = useState(
+    source.kind === "member" ? source.drawing.id : null
   )
-  const member = source.kind === "member" ? source : null
-  const thumbnail = useThumbnail(apiBase, canEdit, hasThumbnail)
+  const [{ target, canEdit, hasThumbnail, guestName, member, ...initial }] =
+    useState(() =>
+      describe(source, (drawing) => {
+        setDrawingId(drawing.id)
+        // The drawing's own address from here on, without loading the page
+        // again. Not if the save only finished after leaving the editor.
+        if (window.location.pathname === NEW_DRAWING_PATH) {
+          window.history.replaceState(null, "", `/d/${drawing.id}`)
+        }
+      })
+    )
+  const thumbnail = useThumbnail(target.apiBase, canEdit, hasThumbnail)
   const autosave = useAutosave(
-    apiBase,
+    target,
     scene.elements,
     canEdit,
     thumbnail.onSaved
   )
-  const images = useImageFiles(apiBase, canEdit)
+  const images = useImageFiles(target.apiBase, canEdit)
   const collaboration = useCollaboration({
-    apiBase,
+    apiBase: target.apiBase,
     canEdit,
     realtimeUrl,
     guestName,
@@ -113,7 +154,7 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
     scrollToContent: true,
   }))
   const shareable =
-    member !== null && member.publicLinks && canShare(member.drawing.role)
+    member !== null && member.publicLinks && canShare(member.role)
 
   useEffect(() => {
     document.title = `${title} · Lukis`
@@ -126,7 +167,17 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
     // So the dashboard shows this drawing as just edited, thumbnail included.
     await autosave.save()
     await thumbnail.flush()
-    router.push(`/w/${member.drawing.workspace_id}`)
+    router.push(`/w/${member.workspaceId}`)
+  }
+
+  async function share() {
+    try {
+      // A link needs a drawing to point at, so sharing a new one saves it.
+      await target.create()
+      setSharing(true)
+    } catch (error) {
+      toast.error(errorMessage(error))
+    }
   }
 
   return (
@@ -184,7 +235,7 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
           <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
           {member && canEdit ? (
             <DrawingTitle
-              drawingId={member.drawing.id}
+              target={target}
               title={title}
               onRenamed={setTitle}
               className={isMobile ? "max-w-28" : "max-w-44"}
@@ -202,26 +253,29 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
           <ConnectionIndicator status={collaboration.status} />
         </div>
       )}
-      // History and sharing, for members. Guests have nothing here.
+      // History and sharing, for members. Guests have nothing here, and a
+      // drawing has no history until it's saved.
       renderTopRightUI={(isMobile) =>
-        member && (
+        drawingId || shareable ? (
           <div className={`${ISLAND} gap-1 px-1`}>
-            <button
-              type="button"
-              onClick={() => api?.toggleSidebar({ name: HISTORY_SIDEBAR })}
-              aria-label="Version history"
-              title="Version history"
-              // Otherwise the sidebar closes on pointerdown, and this click
-              // reopens it.
-              data-prevent-outside-click
-              className={ISLAND_ICON_BUTTON}
-            >
-              <HistoryIcon />
-            </button>
+            {drawingId && (
+              <button
+                type="button"
+                onClick={() => api?.toggleSidebar({ name: HISTORY_SIDEBAR })}
+                aria-label="Version history"
+                title="Version history"
+                // Otherwise the sidebar closes on pointerdown, and this click
+                // reopens it.
+                data-prevent-outside-click
+                className={ISLAND_ICON_BUTTON}
+              >
+                <HistoryIcon />
+              </button>
+            )}
             {shareable && (
               <button
                 type="button"
-                onClick={() => setSharing(true)}
+                onClick={share}
                 aria-label="Share"
                 className="flex h-7 items-center gap-1.5 rounded-(--border-radius-md) border border-primary-edge/60 bg-primary px-2.5 text-sm font-medium text-primary-foreground shadow-[inset_0_1px_0_oklch(1_0_0/28%)] hover:bg-[color-mix(in_oklch,var(--primary),var(--ink)_9%)] dark:border-transparent [&_svg]:size-3.5"
               >
@@ -230,25 +284,24 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
               </button>
             )}
           </div>
-        )
+        ) : null
       }
     >
       <MainMenu>
-        {member && (
+        {(drawingId || shareable) && (
           <>
-            <MainMenu.Item
-              icon={<HistoryIcon />}
-              onSelect={() =>
-                api?.toggleSidebar({ name: HISTORY_SIDEBAR, force: true })
-              }
-            >
-              Version history
-            </MainMenu.Item>
-            {shareable && (
+            {drawingId && (
               <MainMenu.Item
-                icon={<Share2Icon />}
-                onSelect={() => setSharing(true)}
+                icon={<HistoryIcon />}
+                onSelect={() =>
+                  api?.toggleSidebar({ name: HISTORY_SIDEBAR, force: true })
+                }
               >
+                Version history
+              </MainMenu.Item>
+            )}
+            {shareable && (
+              <MainMenu.Item icon={<Share2Icon />} onSelect={share}>
                 Share
               </MainMenu.Item>
             )}
@@ -268,18 +321,18 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
         />
         <MainMenu.DefaultItems.ChangeCanvasBackground />
       </MainMenu>
-      {member && (
+      {member && drawingId && (
         <VersionHistory
-          drawingId={member.drawing.id}
-          role={member.drawing.role}
+          drawingId={drawingId}
+          role={member.role}
           api={api}
           theme={resolvedTheme === "dark" ? "dark" : "light"}
           flush={autosave.save}
         />
       )}
-      {shareable && (
+      {shareable && drawingId && (
         <ShareDialog
-          drawingId={member.drawing.id}
+          drawingId={drawingId}
           title={title}
           publicLinks={member.publicLinks}
           open={sharing}

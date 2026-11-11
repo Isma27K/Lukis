@@ -4,16 +4,17 @@ import { cn } from "cn"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
+import type { DrawingTarget } from "@/components/editor/drawing-target"
 import { apiFetch, errorMessage } from "@/lib/api"
 
 // Looks like text, edits like an input. Saves on Enter or blur; Escape undoes.
 function DrawingTitle({
-  drawingId,
+  target,
   title,
   onRenamed,
   className,
 }: {
-  drawingId: string
+  target: DrawingTarget
   title: string
   onRenamed: (title: string) => void
   className?: string
@@ -29,10 +30,13 @@ function DrawingTitle({
       return
     }
     try {
-      await apiFetch(`/drawings/${drawingId}`, {
-        method: "PATCH",
-        body: { title: next },
-      })
+      // Naming a new drawing is enough to save it, under that name.
+      if (!(await target.create({ title: next }))) {
+        await apiFetch(await target.apiBase, {
+          method: "PATCH",
+          body: { title: next },
+        })
+      }
       onRenamed(next)
       setDraft(next)
     } catch (error) {

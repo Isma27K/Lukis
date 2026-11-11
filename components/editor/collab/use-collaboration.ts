@@ -21,8 +21,9 @@ function useCollaboration({
   realtimeUrl,
   guestName = null,
 }: {
-  // /drawings/{id}, or /share/{token} for a guest on a public link.
-  apiBase: string
+  // /drawings/{id}, or /share/{token} for a guest on a public link, once the
+  // drawing exists (see DrawingTarget).
+  apiBase: Promise<string>
   canEdit: boolean
   realtimeUrl: string
   guestName?: string | null
@@ -55,7 +56,10 @@ function useCollaboration({
       }
     },
     editorProps: {
-      isCollaborating: status === "live",
+      // All this changes is the toolbar, which gains the laser pointer. So
+      // it also counts while connecting (or waiting for a new drawing's
+      // first save), or the tools would shift right after someone starts.
+      isCollaborating: status === "connecting" || status === "live",
       onPointerUpdate: collaboration.onPointerUpdate,
       onScrollChange: collaboration.onScrollChange,
       onUserFollow: ({ userToFollow, action }: OnUserFollowedPayload) =>

@@ -2,18 +2,18 @@
 
 import { PlusIcon } from "lucide-react"
 
-import { useCreateDrawing } from "@/components/dashboard/use-create-drawing"
+import { useNewDrawing } from "@/components/dashboard/use-new-drawing"
 
 // The first tile in the grid: an empty sheet on the editor's dot grid that
 // starts a drawing. Sized like a drawing card so the grid lines up.
 function BlankCanvasTile({ workspaceId }: { workspaceId: string }) {
-  const { create, pending } = useCreateDrawing(workspaceId)
+  const { open, pending } = useNewDrawing(workspaceId)
 
   return (
     <li>
       <button
         type="button"
-        onClick={create}
+        onClick={open}
         disabled={pending}
         className="group/blank flex size-full flex-row items-center overflow-hidden rounded-xl border border-dashed border-[color-mix(in_oklch,var(--input),var(--foreground)_12%)] text-left transition-[border-color,background-color] duration-200 hover:border-primary-edge hover:bg-card disabled:opacity-60 sm:flex-col sm:items-stretch"
       >

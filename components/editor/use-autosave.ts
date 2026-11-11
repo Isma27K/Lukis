@@ -12,6 +12,7 @@ import type { AppState } from "@excalidraw/excalidraw/types"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import type { DrawingTarget } from "@/components/editor/drawing-target"
 import { ApiError, apiFetch, errorMessage } from "@/lib/api"
 
 type SaveStatus = "saved" | "pending" | "saving" | "retrying" | "failed"
@@ -31,8 +32,17 @@ function persistedAppState(appState: AppState) {
   return JSON.stringify(cleaned)
 }
 
+// Nothing to see yet: a click that drew no shape, or a text box before
+// anything is typed in it (the editor deletes one that's left empty).
+function isBlank(element: ExcalidrawElement) {
+  return (
+    isInvisiblySmallElement(element) ||
+    (element.type === "text" && element.text.trim() === "")
+  )
+}
+
 function createAutosaver(
-  apiBase: string,
+  target: DrawingTarget,
   storedElements: readonly ExcalidrawElement[],
   onStatus: (status: SaveStatus) => void,
   onSaved: () => void
@@ -59,7 +69,7 @@ function createAutosaver(
       (el) =>
         savedVersions.get(el.id) !== el.version &&
         // Skip stray clicks, and things deleted before they were ever saved.
-        (el.isDeleted ? savedVersions.has(el.id) : !isInvisiblySmallElement(el))
+        (el.isDeleted ? savedVersions.has(el.id) : !isBlank(el))
     )
     const appState = persistedAppState(latest.appState)
     const appStateChanged = savedAppState !== null && appState !== savedAppState
@@ -92,14 +102,18 @@ function createAutosaver(
     onStatus("saving")
     saving = (async () => {
       try {
-        await apiFetch(`${apiBase}/scene`, {
-          method: "PUT",
-          body: {
-            elements: changes.elements,
-            app_state: changes.appState && JSON.parse(changes.appState),
-          },
-          keepalive,
-        })
+        const body = {
+          elements: changes.elements,
+          app_state: changes.appState && JSON.parse(changes.appState),
+        }
+        // A new drawing's first save creates it, with these changes on it.
+        if (!(await target.create(body, { keepalive }))) {
+          await apiFetch(`${await target.apiBase}/scene`, {
+            method: "PUT",
+            body,
+            keepalive,
+          })
+        }
         for (const el of changes.elements) {
           savedVersions.set(el.id, el.version)
         }
@@ -149,18 +163,19 @@ function createAutosaver(
   }
 }
 
-// Saves the scene as it changes, plus on tab hide, page close and unmount.
-// `apiBase` is /drawings/{id}, or /share/{token} for a guest on a public link.
+// Saves the scene as it changes, plus on tab hide, page close and unmount. A
+// new drawing (see DrawingTarget) is created by its first save, so a canvas
+// nobody drew on is never saved.
 // `onSaved` runs after each successful save; only its first value is used.
 function useAutosave(
-  apiBase: string,
+  target: DrawingTarget,
   storedElements: readonly ExcalidrawElement[],
   enabled: boolean,
   onSaved: () => void
 ) {
   const [status, setStatus] = useState<SaveStatus>("saved")
   const [autosaver] = useState(() =>
-    createAutosaver(apiBase, storedElements, setStatus, onSaved)
+    createAutosaver(target, storedElements, setStatus, onSaved)
   )
 
   useEffect(() => {

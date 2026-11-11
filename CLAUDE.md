@@ -34,6 +34,10 @@ There is no test framework set up yet.
   - It saves 1 s after the last change (at most every 5 s while drawing), and also on tab hide, page close and unmount.
   - The backend merges the sent elements into the stored scene using Excalidraw's own reconcile rule, so partial or concurrent saves never drop elements.
   - Deletions are sent as `isDeleted` tombstones; don't filter deleted elements out of saves.
+  - **A blank canvas isn't a drawing until its first change.** "Blank canvas" and "New drawing" only open `/d/new?w=<workspace>`, which saves nothing. The editor gets a `DrawingTarget` (`components/editor/drawing-target.ts`): `savedDrawing` for one that exists, `newDrawing` for one that doesn't yet.
+    - The first real change creates it: autosave's first save (`POST /workspaces/{id}/drawings` with the elements and app state, one request so it survives closing the tab), a rename (created under that name), or opening Share (a link needs a drawing). The URL then becomes `/d/<id>` through `history.replaceState`.
+    - Everything else waits on `target.apiBase`, a promise that settles once the drawing exists: the live connection, image transfers and thumbnails. Version history only appears then.
+    - Anything new that talks to the backend about the open drawing must go through the target the same way, never assume an id at mount.
 - **Backend:** FastAPI lives in `../backend`. `next.config.ts` rewrites `/api/*` to `BACKEND_URL` (default `http://localhost:8000`), so browser code calls `/api/...` on the same origin. Rewrites are baked in at build time, while server components read `BACKEND_URL` at runtime, so set it for `next build` as well as `next start`.
 - **Public site** (`app/(marketing)/`, `components/marketing/`):
   - Lukis is closed source and used only through this website. **Copy rules:** never call it free (no "free", no `offers` in JSON-LD), and never pitch self-hosting or open source. Only claim what the code does.

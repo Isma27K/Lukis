@@ -96,7 +96,8 @@ class ImageFiles {
   }
 
   constructor(
-    private readonly apiBase: string,
+    // Settles once the drawing exists (see DrawingTarget); transfers wait.
+    private readonly apiBase: Promise<string>,
     private readonly canEdit: boolean,
     // An upload the server refused, e.g. because the image is too large.
     private readonly onRejected: (message: string) => void
@@ -244,7 +245,7 @@ class ImageFiles {
     await Promise.all(
       [...uploads.values()].map(async (file) => {
         try {
-          await apiFetch(fileUrl(this.apiBase, file.id), {
+          await apiFetch(fileUrl(await this.apiBase, file.id), {
             method: "PUT",
             body: { data_url: file.dataURL },
           })
@@ -285,7 +286,7 @@ class ImageFiles {
     await Promise.all(
       [...downloads].map(async (id) => {
         try {
-          loaded.push(await downloadFile(this.apiBase, id))
+          loaded.push(await downloadFile(await this.apiBase, id))
           this.states.set(id, "done")
           this.retries.delete(id)
         } catch {

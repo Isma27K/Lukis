@@ -6,9 +6,9 @@ import { toast } from "sonner"
 import { ImageFiles } from "@/components/editor/image-files"
 
 // Uploads and downloads the drawing's images through `apiBase` (see
-// useAutosave). Call `attach` from onExcalidrawAPI and `onChange` from the
+// DrawingTarget). Call `attach` from onExcalidrawAPI and `onChange` from the
 // editor's onChange.
-function useImageFiles(apiBase: string, canEdit: boolean) {
+function useImageFiles(apiBase: Promise<string>, canEdit: boolean) {
   const [images] = useState(
     () =>
       new ImageFiles(apiBase, canEdit, (message) =>
