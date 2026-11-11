@@ -1,4 +1,4 @@
-// An illustration and a hand-lettered line for lists with nothing in them.
+// An illustration and a short title for lists with nothing in them.
 function EmptyState({
   illustration,
   title,
@@ -9,10 +9,14 @@ function EmptyState({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 py-12 text-center">
-      {illustration}
-      <p className="font-hand text-3xl">{title}</p>
-      {children}
+    <div className="flex flex-col items-center gap-3 py-14 text-center">
+      <div className="text-foreground/90">{illustration}</div>
+      <p className="font-display text-lg font-semibold">{title}</p>
+      {children && (
+        <div className="flex max-w-sm flex-col items-center gap-4 text-sm text-muted-foreground">
+          {children}
+        </div>
+      )}
     </div>
   )
 }

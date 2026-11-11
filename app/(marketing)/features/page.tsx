@@ -2,19 +2,22 @@ import { cn } from "cn"
 import type { Metadata } from "next"
 
 import { ProviderIcon } from "@/components/auth/provider-icon"
-import {
-  BlankCanvas,
-  Rewind,
-  Roles,
-  ShareLink,
-  Together,
-} from "@/components/illustrations/spots"
+import { BlankCanvas, Together } from "@/components/illustrations/spots"
 import { CtaButtons } from "@/components/marketing/cta-buttons"
 import { ClosingCta, PrivacyPromise } from "@/components/marketing/home"
-import { SectionHeading, TickList } from "@/components/marketing/parts"
+import {
+  CanvasTile,
+  SectionHeading,
+  TickList,
+} from "@/components/marketing/parts"
+import {
+  CanvasVignette,
+  FollowFrame,
+  HistoryVignette,
+  MembersVignette,
+  ShareVignette,
+} from "@/components/marketing/vignettes"
 import { getVisitor } from "@/components/marketing/visitor"
-import { Highlight } from "@/components/sketch/highlight"
-import { Tape } from "@/components/sketch/tape"
 import { PROVIDER_LABELS } from "@/lib/oauth"
 import { pageMetadata } from "@/lib/site"
 import type { OAuthProvider } from "@/lib/types"
@@ -33,14 +36,15 @@ export default async function Page() {
   const sections = [
     {
       id: "collaboration",
-      title: (
-        <>
-          Draw together, <Highlight seed={21}>live</Highlight>
-        </>
-      ),
+      label: "Live collaboration",
+      title: "Draw together, live",
       intro:
         "Real-time collaboration that feels like standing at the same whiteboard.",
-      illustration: <Together className="w-full" />,
+      illustration: (
+        <FollowFrame>
+          <Together className="w-full" />
+        </FollowFrame>
+      ),
       points: [
         "See everyone's cursor, with their name and picture on it.",
         "Follow whoever's explaining, and your view moves with theirs.",
@@ -50,30 +54,28 @@ export default async function Page() {
     },
     {
       id: "canvas",
-      title: (
-        <>
-          A whiteboard that feels like <Highlight seed={22}>paper</Highlight>
-        </>
-      ),
+      label: "The canvas",
+      title: "A whiteboard that feels like paper",
       intro:
         "An endless canvas with a hand-drawn look, so ideas stay loose and easy to change.",
-      illustration: <BlankCanvas className="w-full" />,
+      illustration: (
+        <CanvasVignette>
+          <BlankCanvas className="w-full" />
+        </CanvasVignette>
+      ),
       points: [
         "Shapes, arrows, lines, freehand drawing and text.",
         "Drop in images and screenshots, up to 4 MB each.",
-        "Warm paper by day, a chalkboard in dark mode.",
+        "Bright paper by day, a graphite drawing board in dark mode.",
         "Search the canvas, or jump anywhere with the command palette.",
       ],
     },
     {
       id: "history",
-      title: (
-        <>
-          Go back to <Highlight seed={23}>any version</Highlight>
-        </>
-      ),
+      label: "Version history",
+      title: "Go back to any version",
       intro: "Try the wild idea. You can always get back to how it was.",
-      illustration: <Rewind className="w-full" />,
+      illustration: <HistoryVignette />,
       points: [
         "While a drawing is being edited, Lukis keeps a version of it about every ten minutes.",
         "Give a version a name to keep it for good.",
@@ -83,13 +85,10 @@ export default async function Page() {
     },
     {
       id: "workspaces",
-      title: (
-        <>
-          Workspaces with the <Highlight seed={24}>right roles</Highlight>
-        </>
-      ),
+      label: "Workspaces and roles",
+      title: "Workspaces with the right roles",
       intro: "Keep each team's drawings together, and decide who can do what.",
-      illustration: <Roles className="w-full" />,
+      illustration: <MembersVignette />,
       points: [
         "A personal workspace for your own sketches.",
         "Team workspaces with owners, admins, editors and viewers.",
@@ -99,14 +98,11 @@ export default async function Page() {
     },
     {
       id: "sharing",
-      title: (
-        <>
-          Share a drawing with <Highlight seed={25}>anyone</Highlight>
-        </>
-      ),
+      label: "Share links",
+      title: "Share a drawing with anyone",
       intro:
         "Bring in a client, a classmate or the whole internet, one drawing at a time.",
-      illustration: <ShareLink className="w-full" />,
+      illustration: <ShareVignette />,
       points: [
         "Make a link that lets people view, or view and edit.",
         "Guests don't need an account; they just pick a name.",
@@ -116,11 +112,8 @@ export default async function Page() {
     },
     {
       id: "accounts",
-      title: (
-        <>
-          Log in your way, <Highlight seed={26}>stay in control</Highlight>
-        </>
-      ),
+      label: "Logging in",
+      title: "Log in your way, stay in control",
       intro: "Getting in takes one click, and you can see every way in.",
       illustration: <LoginCard providers={visitor.providers} />,
       points: [
@@ -136,44 +129,59 @@ export default async function Page() {
 
   return (
     <>
-      <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 px-4 pt-16 pb-8 text-center sm:px-6 lg:pt-20">
-        <h1 className="font-hand text-6xl leading-[1.05] font-normal sm:text-7xl">
-          Everything <Highlight seed={20}>on the board</Highlight>
+      <section className="mx-auto flex w-full max-w-7xl flex-col items-center gap-7 px-4 pt-16 pb-10 text-center sm:px-8 lg:pt-24">
+        <h1 className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-[0.98] font-semibold">
+          Everything on the board
         </h1>
         <p className="max-w-xl text-lg text-muted-foreground">
           Lukis is an online whiteboard for teams who think out loud.
           Here&apos;s what&apos;s in the box.
         </p>
-        <CtaButtons visitor={visitor} />
+        <CtaButtons visitor={visitor} className="justify-center" />
+        <nav
+          aria-label="On this page"
+          className="mt-4 flex max-w-3xl flex-wrap justify-center gap-2"
+        >
+          {sections.map((section) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              className="rounded-full border bg-card px-3.5 py-1.5 text-sm text-muted-foreground shadow-[0_1px_2px_var(--paper-shadow)] transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_18%)] hover:text-foreground"
+            >
+              {section.label}
+            </a>
+          ))}
+        </nav>
       </section>
 
-      {sections.map((section, index) => (
-        <section
-          key={section.id}
-          id={section.id}
-          className="mx-auto grid w-full max-w-6xl scroll-mt-20 items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:gap-16"
-        >
-          <div
-            className={cn("flex justify-center", index % 2 && "md:order-last")}
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
+        {sections.map((section, index) => (
+          <section
+            key={section.id}
+            id={section.id}
+            className="grid scroll-mt-20 items-center gap-10 border-t py-16 md:grid-cols-2 md:gap-20 lg:py-24"
           >
-            <div
+            <CanvasTile
               className={cn(
-                "relative w-full max-w-sm rounded-2xl border bg-card p-8 shadow-paper",
-                index % 2 ? "md:rotate-1" : "md:-rotate-1"
+                "w-full bg-background px-5 py-10 sm:px-10 sm:py-14",
+                index % 2 && "md:order-last"
               )}
             >
-              <Tape className="-top-2.5 left-1/2 -translate-x-1/2 rotate-2" />
               {section.illustration}
+            </CanvasTile>
+            <div className="flex flex-col gap-7">
+              <SectionHeading title={section.title}>
+                {section.intro}
+              </SectionHeading>
+              <TickList
+                items={section.points}
+                seed={500 + index * 10}
+                className="text-lg"
+              />
             </div>
-          </div>
-          <div className="flex flex-col gap-6">
-            <SectionHeading title={section.title}>
-              {section.intro}
-            </SectionHeading>
-            <TickList items={section.points} seed={500 + index * 10} />
-          </div>
-        </section>
-      ))}
+          </section>
+        ))}
+      </div>
 
       <PrivacyPromise />
       <ClosingCta visitor={visitor} />
@@ -184,12 +192,15 @@ export default async function Page() {
 // A little login screen, drawn as paper buttons.
 function LoginCard({ providers }: { providers: OAuthProvider[] }) {
   return (
-    <div aria-hidden className="flex flex-col gap-3 py-2">
-      <span className="font-hand text-3xl">Log in</span>
+    <div
+      aria-hidden
+      className="flex w-full max-w-sm flex-col gap-3 rounded-xl border bg-card p-5 shadow-paper-lg"
+    >
+      <span className="font-display text-2xl font-semibold">Log in</span>
       {providers.map((provider) => (
         <span
           key={provider}
-          className="flex h-10 items-center justify-center gap-2.5 rounded-md border-[1.5px] border-ink bg-card text-sm font-medium shadow-sticker dark:border-foreground/50"
+          className="flex h-10 items-center justify-center gap-2.5 rounded-md border border-input bg-card text-sm font-medium shadow-[0_1px_2px_var(--paper-shadow)]"
         >
           <ProviderIcon provider={provider} className="size-4" />
           Continue with {PROVIDER_LABELS[provider]}
@@ -198,7 +209,7 @@ function LoginCard({ providers }: { providers: OAuthProvider[] }) {
       <span className="flex h-10 items-center rounded-md border px-3 text-sm text-muted-foreground">
         you@example.com
       </span>
-      <span className="flex h-10 items-center justify-center rounded-md border-[1.5px] border-ink bg-primary text-sm font-medium text-primary-foreground shadow-sticker">
+      <span className="flex h-10 items-center justify-center rounded-md border border-primary-edge/60 bg-primary text-sm font-medium text-primary-foreground dark:border-transparent">
         Log in
       </span>
     </div>

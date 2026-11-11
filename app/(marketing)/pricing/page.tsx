@@ -5,9 +5,6 @@ import { notFound } from "next/navigation"
 import { CtaButtons } from "@/components/marketing/cta-buttons"
 import { TickList } from "@/components/marketing/parts"
 import { getVisitor } from "@/components/marketing/visitor"
-import { Highlight } from "@/components/sketch/highlight"
-import { SketchFrame } from "@/components/sketch/sketch-frame"
-import { StickyNote } from "@/components/sketch/sticky-note"
 import { pageMetadata, pricingPublic } from "@/lib/site"
 
 // Not decided yet, so not advertised: only the site owner can open this
@@ -72,46 +69,47 @@ export default async function Page() {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-14 sm:px-6 lg:py-20">
+    <section className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 py-14 sm:px-8 lg:py-20">
       {!isPublic && (
-        <StickyNote color="pink" className="mx-auto max-w-xl -rotate-1 text-sm">
+        <p className="mx-auto max-w-xl rounded-lg border border-primary-edge/40 bg-highlight px-4 py-3 text-sm">
           <strong className="font-semibold">
             Draft, only you can see this.
           </strong>{" "}
           It&apos;s hidden from everyone else and from search engines. Set{" "}
           <code className="font-mono text-xs">PRICING_PAGE=public</code> on the
           frontend to publish it, then link it from the menu.
-        </StickyNote>
+        </p>
       )}
       <div className="flex flex-col items-center gap-4 text-center">
-        <h1 className="font-hand text-6xl leading-[1.05] font-normal sm:text-7xl">
-          <Highlight seed={41}>Pricing</Highlight>
+        <h1 className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-[0.98] font-semibold">
+          Pricing
         </h1>
         <p className="max-w-xl text-lg text-muted-foreground">
           Plans for individuals, teams and whole organizations.
         </p>
       </div>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid items-start gap-5 md:grid-cols-3">
         {PLANS.map((plan, index) => (
           <div
             key={plan.name}
             className={cn(
-              "relative flex flex-col gap-4 rounded-xl bg-card p-6 shadow-paper",
-              plan.featured && "md:-translate-y-2 md:shadow-paper-lg"
+              "flex flex-col gap-4 overflow-hidden rounded-xl border bg-card p-6 shadow-paper",
+              plan.featured && "border-primary-edge/60 shadow-paper-lg md:-mt-3"
             )}
           >
-            <SketchFrame
-              seed={70 + index}
-              ratio={0.8}
-              tone={plan.featured ? "primary" : "ink"}
-            />
-            <h2 className="font-hand text-3xl font-normal">{plan.name}</h2>
+            {plan.featured && (
+              <span
+                aria-hidden
+                className="-mx-6 -mt-6 mb-2 block h-2 bg-primary"
+              />
+            )}
+            <h2 className="font-display text-2xl font-semibold">{plan.name}</h2>
             <p className="font-semibold">{plan.price}</p>
             <p className="text-sm text-muted-foreground">{plan.blurb}</p>
             <TickList
               items={plan.points}
               seed={700 + index * 10}
-              className="text-sm"
+              className="border-t pt-4 text-sm"
             />
           </div>
         ))}

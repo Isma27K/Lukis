@@ -213,7 +213,7 @@ function AvatarCropDialog({
             const factor = Math.exp(-event.deltaY / 500)
             zoom((zoom) => zoom * factor)
           }}
-          className="relative mx-auto size-64 cursor-grab touch-none overflow-hidden rounded-lg bg-muted outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:cursor-grabbing"
+          className="relative mx-auto size-64 cursor-grab touch-none overflow-hidden rounded-lg bg-muted select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid active:cursor-grabbing"
         >
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element -- a local blob URL

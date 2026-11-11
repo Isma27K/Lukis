@@ -41,7 +41,7 @@ function ResetPasswordForm({ token }: { token: string }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Password changed</CardTitle>
+          <CardTitle as="h1">Password changed</CardTitle>
           <CardDescription>
             You&apos;ve been logged out everywhere. Log in with your new
             password.
@@ -62,7 +62,7 @@ function ResetPasswordForm({ token }: { token: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Choose a new password</CardTitle>
+        <CardTitle as="h1">Choose a new password</CardTitle>
         <CardDescription>
           This logs you out on every device where you&apos;re logged in.
         </CardDescription>

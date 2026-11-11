@@ -35,7 +35,7 @@ function DrawingThumbnail({
     return (
       <div
         className={cn(
-          "flex aspect-video items-center justify-center bg-muted",
+          "flex aspect-video items-center justify-center bg-muted/60 dot-grid",
           className
         )}
       >
@@ -49,7 +49,12 @@ function DrawingThumbnail({
   // Plain <img>: next/image's optimizer fetches from the server, without the
   // session cookie these need.
   return (
-    <div className={cn("aspect-video overflow-hidden bg-muted", className)}>
+    <div
+      className={cn(
+        "aspect-video overflow-hidden bg-white dark:bg-[#121212]",
+        className
+      )}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={thumbnailUrl(drawing, "light")}

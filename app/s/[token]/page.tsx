@@ -44,7 +44,7 @@ export default async function Page({ params }: Props) {
       >
         <Card>
           <CardHeader>
-            <CardTitle>Password, please</CardTitle>
+            <CardTitle as="h1">Password, please</CardTitle>
             <CardDescription>
               Whoever shared this drawing protected it with a password. Ask them
               for it if you don&apos;t have it.

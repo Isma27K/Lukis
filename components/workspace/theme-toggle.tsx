@@ -31,7 +31,7 @@ function ThemeToggle() {
     <div
       role="group"
       aria-label="Theme"
-      className="flex rounded-lg border bg-sidebar-accent/50 p-0.5"
+      className="flex rounded-lg border bg-sidebar-accent/60 p-0.5"
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => {
         const pressed = mounted && theme === value
@@ -44,7 +44,7 @@ function ThemeToggle() {
             title={label}
             onClick={() => setTheme(value)}
             className={cn(
-              "flex h-7 flex-1 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 [&_svg]:size-4",
+              "flex h-7 flex-1 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground [&_svg]:size-4",
               pressed && "bg-card text-foreground shadow-paper"
             )}
           >

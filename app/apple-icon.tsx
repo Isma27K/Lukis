@@ -15,7 +15,7 @@ export default function AppleIcon() {
         justifyContent: "center",
         width: "100%",
         height: "100%",
-        background: "#faf7f2",
+        background: "#f5f5f2",
       }}
     >
       <StaticLogoMark size={150} />

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google"
+import { Archivo, Geist_Mono } from "next/font/google"
 import localFont from "next/font/local"
 
 import "./globals.css"
@@ -9,8 +9,11 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { DESCRIPTION, indexable, SITE_NAME, siteUrl, TAGLINE } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
-const fontSans = Plus_Jakarta_Sans({
+// One family for everything set in type: normal width for the interface,
+// widened (the wdth axis, through font-stretch) for titles.
+const fontSans = Archivo({
   subsets: ["latin"],
+  axes: ["wdth"],
   variable: "--font-sans",
 })
 
@@ -19,7 +22,7 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-// The editor's hand-drawn font, for the wordmark and titles only. A copy of
+// The editor's hand-drawn font, for the wordmark and margin notes only. A copy of
 // its Latin subset lives here so pages don't depend on the editor build.
 const fontHand = localFont({
   src: "./fonts/excalifont-latin.woff2",
@@ -54,8 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#1b201e" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1b1a" },
   ],
 }
 

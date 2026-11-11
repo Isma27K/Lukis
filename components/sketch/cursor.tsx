@@ -35,7 +35,7 @@ function Cursor({
       </svg>
       <span
         className={cn(
-          "mt-4 -ml-1 rounded-full px-2 py-0.5 font-hand text-sm whitespace-nowrap text-note-ink shadow-sm",
+          "mt-4 -ml-1 rounded-md px-1.5 py-0.5 text-[0.6875rem] font-semibold whitespace-nowrap text-note-ink shadow-sm",
           NOTE_BG[color]
         )}
       >

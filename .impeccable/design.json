@@ -1,0 +1,733 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T06:52:58+00:00",
+  "title": "Design System: Lukis",
+  "extensions": {
+    "colorMeta": {
+      "pad-cover-orange": {
+        "role": "primary",
+        "displayName": "Pad-Cover Orange",
+        "canonical": "oklch(0.68 0.18 45)",
+        "tonalRamp": [
+          "oklch(15% 0.072 45)",
+          "oklch(26% 0.098 45)",
+          "oklch(38% 0.127 45)",
+          "oklch(50% 0.156 45)",
+          "oklch(62% 0.175 45)",
+          "oklch(74% 0.146 45)",
+          "oklch(86% 0.118 45)",
+          "oklch(95% 0.096 45)"
+        ]
+      },
+      "cover-edge": {
+        "role": "primary",
+        "displayName": "Cover Edge",
+        "canonical": "oklch(0.58 0.16 45)",
+        "tonalRamp": [
+          "oklch(15% 0.064 45)",
+          "oklch(26% 0.087 45)",
+          "oklch(38% 0.113 45)",
+          "oklch(50% 0.139 45)",
+          "oklch(62% 0.156 45)",
+          "oklch(74% 0.130 45)",
+          "oklch(86% 0.105 45)",
+          "oklch(95% 0.085 45)"
+        ]
+      },
+      "orange-ink": {
+        "role": "primary",
+        "displayName": "Orange Ink",
+        "canonical": "oklch(0.53 0.14 45)",
+        "tonalRamp": [
+          "oklch(15% 0.056 45)",
+          "oklch(26% 0.077 45)",
+          "oklch(38% 0.099 45)",
+          "oklch(50% 0.121 45)",
+          "oklch(62% 0.136 45)",
+          "oklch(74% 0.114 45)",
+          "oklch(86% 0.091 45)",
+          "oklch(95% 0.075 45)"
+        ]
+      },
+      "orange-tint": {
+        "role": "primary",
+        "displayName": "Orange Tint",
+        "canonical": "oklch(0.93 0.04 55)",
+        "tonalRamp": [
+          "oklch(15% 0.016 55)",
+          "oklch(26% 0.022 55)",
+          "oklch(38% 0.028 55)",
+          "oklch(50% 0.035 55)",
+          "oklch(62% 0.039 55)",
+          "oklch(74% 0.033 55)",
+          "oklch(86% 0.026 55)",
+          "oklch(95% 0.021 55)"
+        ]
+      },
+      "construction-blue": {
+        "role": "secondary",
+        "displayName": "Construction Blue",
+        "canonical": "oklch(0.6 0.13 250)",
+        "tonalRamp": [
+          "oklch(15% 0.052 250)",
+          "oklch(26% 0.071 250)",
+          "oklch(38% 0.092 250)",
+          "oklch(50% 0.113 250)",
+          "oklch(62% 0.127 250)",
+          "oklch(74% 0.106 250)",
+          "oklch(86% 0.085 250)",
+          "oklch(95% 0.069 250)"
+        ]
+      },
+      "construction-blue-soft": {
+        "role": "secondary",
+        "displayName": "Construction Blue Soft",
+        "canonical": "oklch(0.93 0.025 245)",
+        "tonalRamp": [
+          "oklch(15% 0.010 245)",
+          "oklch(26% 0.014 245)",
+          "oklch(38% 0.018 245)",
+          "oklch(50% 0.022 245)",
+          "oklch(62% 0.024 245)",
+          "oklch(74% 0.020 245)",
+          "oklch(86% 0.016 245)",
+          "oklch(95% 0.013 245)"
+        ]
+      },
+      "crimson": {
+        "role": "tertiary",
+        "displayName": "Crimson",
+        "canonical": "oklch(0.5 0.17 15)",
+        "tonalRamp": [
+          "oklch(15% 0.068 15)",
+          "oklch(26% 0.093 15)",
+          "oklch(38% 0.120 15)",
+          "oklch(50% 0.147 15)",
+          "oklch(62% 0.165 15)",
+          "oklch(74% 0.138 15)",
+          "oklch(86% 0.111 15)",
+          "oklch(95% 0.091 15)"
+        ]
+      },
+      "note-yellow": {
+        "role": "tertiary",
+        "displayName": "Note Yellow",
+        "canonical": "oklch(0.94 0.105 96.83)",
+        "tonalRamp": [
+          "oklch(15% 0.042 96.83)",
+          "oklch(26% 0.057 96.83)",
+          "oklch(38% 0.074 96.83)",
+          "oklch(50% 0.091 96.83)",
+          "oklch(62% 0.102 96.83)",
+          "oklch(74% 0.085 96.83)",
+          "oklch(86% 0.069 96.83)",
+          "oklch(95% 0.056 96.83)"
+        ]
+      },
+      "note-pink": {
+        "role": "tertiary",
+        "displayName": "Note Pink",
+        "canonical": "oklch(0.883 0.062 18.39)",
+        "tonalRamp": [
+          "oklch(15% 0.025 18.39)",
+          "oklch(26% 0.034 18.39)",
+          "oklch(38% 0.044 18.39)",
+          "oklch(50% 0.054 18.39)",
+          "oklch(62% 0.060 18.39)",
+          "oklch(74% 0.050 18.39)",
+          "oklch(86% 0.041 18.39)",
+          "oklch(95% 0.033 18.39)"
+        ]
+      },
+      "note-blue": {
+        "role": "tertiary",
+        "displayName": "Note Blue",
+        "canonical": "oklch(0.86 0.076 241.66)",
+        "tonalRamp": [
+          "oklch(15% 0.030 241.66)",
+          "oklch(26% 0.042 241.66)",
+          "oklch(38% 0.054 241.66)",
+          "oklch(50% 0.066 241.66)",
+          "oklch(62% 0.074 241.66)",
+          "oklch(74% 0.062 241.66)",
+          "oklch(86% 0.050 241.66)",
+          "oklch(95% 0.041 241.66)"
+        ]
+      },
+      "note-green": {
+        "role": "tertiary",
+        "displayName": "Note Green",
+        "canonical": "oklch(0.904 0.099 148.43)",
+        "tonalRamp": [
+          "oklch(15% 0.040 148.43)",
+          "oklch(26% 0.054 148.43)",
+          "oklch(38% 0.070 148.43)",
+          "oklch(50% 0.086 148.43)",
+          "oklch(62% 0.096 148.43)",
+          "oklch(74% 0.081 148.43)",
+          "oklch(86% 0.065 148.43)",
+          "oklch(95% 0.053 148.43)"
+        ]
+      },
+      "note-violet": {
+        "role": "tertiary",
+        "displayName": "Note Violet",
+        "canonical": "oklch(0.841 0.09 296.6)",
+        "tonalRamp": [
+          "oklch(15% 0.036 296.6)",
+          "oklch(26% 0.049 296.6)",
+          "oklch(38% 0.064 296.6)",
+          "oklch(50% 0.078 296.6)",
+          "oklch(62% 0.088 296.6)",
+          "oklch(74% 0.073 296.6)",
+          "oklch(86% 0.059 296.6)",
+          "oklch(95% 0.048 296.6)"
+        ]
+      },
+      "note-orange": {
+        "role": "tertiary",
+        "displayName": "Note Orange",
+        "canonical": "oklch(0.904 0.076 72.42)",
+        "tonalRamp": [
+          "oklch(15% 0.030 72.42)",
+          "oklch(26% 0.042 72.42)",
+          "oklch(38% 0.054 72.42)",
+          "oklch(50% 0.066 72.42)",
+          "oklch(62% 0.074 72.42)",
+          "oklch(74% 0.062 72.42)",
+          "oklch(86% 0.050 72.42)",
+          "oklch(95% 0.041 72.42)"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "oklch(0.24 0.004 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.005 100)",
+          "oklch(62% 0.006 100)",
+          "oklch(74% 0.005 100)",
+          "oklch(86% 0.004 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "pad-paper": {
+        "role": "neutral",
+        "displayName": "Pad Paper",
+        "canonical": "oklch(0.97 0.004 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.005 100)",
+          "oklch(62% 0.006 100)",
+          "oklch(74% 0.005 100)",
+          "oklch(86% 0.004 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "sheet-white": {
+        "role": "neutral",
+        "displayName": "Sheet White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.002 100)",
+          "oklch(38% 0.003 100)",
+          "oklch(50% 0.003 100)",
+          "oklch(62% 0.004 100)",
+          "oklch(74% 0.003 100)",
+          "oklch(86% 0.003 100)",
+          "oklch(95% 0.002 100)"
+        ]
+      },
+      "pencil-grey": {
+        "role": "neutral",
+        "displayName": "Pencil Grey",
+        "canonical": "oklch(0.5 0.01 100)",
+        "tonalRamp": [
+          "oklch(15% 0.004 100)",
+          "oklch(26% 0.005 100)",
+          "oklch(38% 0.007 100)",
+          "oklch(50% 0.009 100)",
+          "oklch(62% 0.010 100)",
+          "oklch(74% 0.008 100)",
+          "oklch(86% 0.007 100)",
+          "oklch(95% 0.005 100)"
+        ]
+      },
+      "wash": {
+        "role": "neutral",
+        "displayName": "Wash",
+        "canonical": "oklch(0.94 0.006 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.005 100)",
+          "oklch(62% 0.006 100)",
+          "oklch(74% 0.005 100)",
+          "oklch(86% 0.004 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.91 0.008 100)",
+        "tonalRamp": [
+          "oklch(15% 0.003 100)",
+          "oklch(26% 0.004 100)",
+          "oklch(38% 0.006 100)",
+          "oklch(50% 0.007 100)",
+          "oklch(62% 0.008 100)",
+          "oklch(74% 0.007 100)",
+          "oklch(86% 0.005 100)",
+          "oklch(95% 0.004 100)"
+        ]
+      },
+      "control-edge": {
+        "role": "neutral",
+        "displayName": "Control Edge",
+        "canonical": "oklch(0.65 0.01 100)",
+        "tonalRamp": [
+          "oklch(15% 0.004 100)",
+          "oklch(26% 0.005 100)",
+          "oklch(38% 0.007 100)",
+          "oklch(50% 0.009 100)",
+          "oklch(62% 0.010 100)",
+          "oklch(74% 0.008 100)",
+          "oklch(86% 0.007 100)",
+          "oklch(95% 0.005 100)"
+        ]
+      },
+      "sidebar-paper": {
+        "role": "neutral",
+        "displayName": "Sidebar Paper",
+        "canonical": "oklch(0.95 0.005 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.005 100)",
+          "oklch(62% 0.006 100)",
+          "oklch(74% 0.005 100)",
+          "oklch(86% 0.004 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "sidebar-wash": {
+        "role": "neutral",
+        "displayName": "Sidebar Wash",
+        "canonical": "oklch(0.92 0.007 100)",
+        "tonalRamp": [
+          "oklch(15% 0.003 100)",
+          "oklch(26% 0.004 100)",
+          "oklch(38% 0.005 100)",
+          "oklch(50% 0.006 100)",
+          "oklch(62% 0.007 100)",
+          "oklch(74% 0.006 100)",
+          "oklch(86% 0.005 100)",
+          "oklch(95% 0.004 100)"
+        ]
+      },
+      "board": {
+        "role": "neutral",
+        "displayName": "Graphite Board (dark)",
+        "canonical": "oklch(0.21 0.003 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.004 100)",
+          "oklch(62% 0.005 100)",
+          "oklch(74% 0.004 100)",
+          "oklch(86% 0.003 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "board-sheet": {
+        "role": "neutral",
+        "displayName": "Board Sheet (dark)",
+        "canonical": "oklch(0.25 0.003 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.004 100)",
+          "oklch(62% 0.005 100)",
+          "oklch(74% 0.004 100)",
+          "oklch(86% 0.003 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "board-chalk": {
+        "role": "neutral",
+        "displayName": "Board Chalk (dark)",
+        "canonical": "oklch(0.94 0.006 100)",
+        "tonalRamp": [
+          "oklch(15% 0.002 100)",
+          "oklch(26% 0.003 100)",
+          "oklch(38% 0.004 100)",
+          "oklch(50% 0.005 100)",
+          "oklch(62% 0.006 100)",
+          "oklch(74% 0.005 100)",
+          "oklch(86% 0.004 100)",
+          "oklch(95% 0.003 100)"
+        ]
+      },
+      "board-cover": {
+        "role": "primary",
+        "displayName": "Board Cover (dark)",
+        "canonical": "oklch(0.71 0.17 48)",
+        "tonalRamp": [
+          "oklch(15% 0.068 48)",
+          "oklch(26% 0.093 48)",
+          "oklch(38% 0.120 48)",
+          "oklch(50% 0.147 48)",
+          "oklch(62% 0.165 48)",
+          "oklch(74% 0.138 48)",
+          "oklch(86% 0.111 48)",
+          "oklch(95% 0.091 48)"
+        ]
+      },
+      "board-orange-ink": {
+        "role": "primary",
+        "displayName": "Board Orange Ink (dark)",
+        "canonical": "oklch(0.76 0.14 50)",
+        "tonalRamp": [
+          "oklch(15% 0.056 50)",
+          "oklch(26% 0.077 50)",
+          "oklch(38% 0.099 50)",
+          "oklch(50% 0.121 50)",
+          "oklch(62% 0.136 50)",
+          "oklch(74% 0.114 50)",
+          "oklch(86% 0.091 50)",
+          "oklch(95% 0.075 50)"
+        ]
+      },
+      "board-blue": {
+        "role": "secondary",
+        "displayName": "Board Construction Blue (dark)",
+        "canonical": "oklch(0.7 0.12 250)",
+        "tonalRamp": [
+          "oklch(15% 0.048 250)",
+          "oklch(26% 0.066 250)",
+          "oklch(38% 0.085 250)",
+          "oklch(50% 0.104 250)",
+          "oklch(62% 0.117 250)",
+          "oklch(74% 0.098 250)",
+          "oklch(86% 0.078 250)",
+          "oklch(95% 0.064 250)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home hero H1 only, widened Archivo; 3.5rem, 4.75rem from sm, 5.5rem from xl."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Public-site section headings (SectionHeading), legal page titles and the sign-in panel line: clamp(2.125rem, 4vw, 2.75rem)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The app's page-title row (PageHero), 1.75rem rising to 2rem."
+      },
+      "title-sm": {
+        "displayName": "Title Sm",
+        "purpose": "Dialog, alert-dialog and auth card titles."
+      },
+      "section-title": {
+        "displayName": "Section Title",
+        "purpose": "Card and settings-section titles at normal width."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Ledes under headings, capped near 34rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Interface default text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chips, meta lines, footer."
+      },
+      "hand": {
+        "displayName": "Hand",
+        "purpose": "Excalifont: wordmark, margin notes, text inside drawn illustrations only."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Code and technical strings."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper",
+        "value": "0 1px 2px var(--paper-shadow), 0 6px 16px -8px var(--paper-shadow-far)",
+        "purpose": "Cards, settings sections and drawing cards at rest."
+      },
+      {
+        "name": "lift",
+        "value": "0 2px 4px var(--paper-shadow), 0 14px 28px -12px var(--paper-shadow-far)",
+        "purpose": "Hovered drawing cards and tiles, with a 2px rise."
+      },
+      {
+        "name": "paper-lg",
+        "value": "0 2px 4px var(--paper-shadow), 0 22px 44px -18px var(--paper-shadow-far)",
+        "purpose": "Dialogs, popups, auth cards."
+      },
+      {
+        "name": "contact",
+        "value": "0 1px 2px var(--paper-shadow)",
+        "purpose": "Outline buttons and select triggers."
+      },
+      {
+        "name": "inset-field",
+        "value": "inset 0 1px 2px var(--paper-shadow)",
+        "purpose": "Text inputs."
+      },
+      {
+        "name": "cover-sheen",
+        "value": "inset 0 1px 0 oklch(1 0 0 / 28%), 0 1px 2px var(--paper-shadow)",
+        "purpose": "Primary button's printed top light."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--ring); outline-offset: 2px",
+        "purpose": "Every keyboard focus: the construction line."
+      },
+      {
+        "name": "paper-shadow-tokens",
+        "value": "--paper-shadow: oklch(0.21 0.004 100 / 7%); --paper-shadow-far: oklch(0.21 0.004 100 / 16%) (dark: oklch(0 0 0 / 30%) and / 50%)",
+        "purpose": "Graphite-tinted shadow colours behind all of the above."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Interface motion, 150-220ms: hovers, lifts, dialogs, switch thumb."
+      },
+      {
+        "name": "rise",
+        "value": "rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "purpose": "Content fading up 10px into place, motion-safe only."
+      },
+      {
+        "name": "sketch-draw",
+        "value": "stroke-dashoffset 1 to 0, var(--duration, 0.7s) cubic-bezier(0.6, 0.1, 0.3, 1), staggered by --delay",
+        "purpose": "Drawn strokes drawing themselves in once, reduced-motion off."
+      },
+      {
+        "name": "sketch-fade",
+        "value": "opacity 0 to 1, 0.5s ease-out",
+        "purpose": "Fills of drawn illustrations."
+      },
+      {
+        "name": "drift",
+        "value": "drift-a 11s / drift-b 13s ease-in-out infinite",
+        "purpose": "Collaborator cursors wandering over demo canvases, motion-safe only."
+      },
+      {
+        "name": "bob",
+        "value": "bob 5s ease-in-out infinite (5px)",
+        "purpose": "Gentle float on hero elements, motion-safe only."
+      },
+      {
+        "name": "dialog-rise",
+        "value": "fade plus zoom from 0.98, 200ms ease-out-expo",
+        "purpose": "Dialogs and alert dialogs."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ],
+    "utilities": [
+      {
+        "name": "dot-grid",
+        "value": "radial-gradient(circle, var(--dot) 1px, transparent 1.4px) at 20px pitch",
+        "purpose": "Only on surfaces that stand for a canvas."
+      },
+      {
+        "name": "font-display",
+        "value": "font-stretch: 118%; letter-spacing: -0.025em; font-feature-settings: 'ss01'",
+        "purpose": "Widened Archivo for titles; pair with 600."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The pad cover: orange with graphite lettering and a printed edge, for the one primary action.",
+      "html": "<button class=\"ds-btn-primary\">Start drawing</button>",
+      "css": ".ds-btn-primary{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6.4px;border:1px solid color-mix(in oklch,var(--primary-edge,#c9530f) 60%,transparent);background:var(--primary,#f26a21);color:var(--primary-foreground,#1e1e1c);font-size:14px;font-weight:500;box-shadow:inset 0 1px 0 oklch(1 0 0/28%),0 1px 2px oklch(0.21 0.004 100/7%);transition:background-color 150ms ease-out,box-shadow 150ms ease-out,translate 150ms ease-out;cursor:pointer}.ds-btn-primary:hover{background:color-mix(in oklch,var(--primary,#f26a21),var(--ink,#1e1e1c) 9%);box-shadow:inset 0 1px 0 oklch(1 0 0/28%),0 3px 10px -4px oklch(0.21 0.004 100/16%)}.ds-btn-primary:active{translate:0 1px;box-shadow:none}.ds-btn-primary:focus-visible{outline:2px solid var(--ring,#2f86d0);outline-offset:2px}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "A white sheet button for secondary actions.",
+      "html": "<button class=\"ds-btn-outline\">Log in</button>",
+      "css": ".ds-btn-outline{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6.4px;border:1px solid var(--input,#8f8f88);background:var(--card,#fff);color:var(--foreground,#1e1e1c);font-size:14px;font-weight:500;box-shadow:0 1px 2px oklch(0.21 0.004 100/7%);transition:background-color 150ms ease-out,border-color 150ms ease-out;cursor:pointer}.ds-btn-outline:hover{border-color:color-mix(in oklch,#8f8f88,#1e1e1c 18%);background:color-mix(in oklch,#ebebe6 60%,#fff)}.ds-btn-outline:active{translate:0 1px}.ds-btn-outline:focus-visible{outline:2px solid var(--ring,#2f86d0);outline-offset:2px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost-hover",
+      "description": "Quiet toolbar and menu actions.",
+      "html": "<button class=\"ds-btn-ghost\">Rename</button>",
+      "css": ".ds-btn-ghost{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';height:36px;padding:0 14px;border-radius:6.4px;border:1px solid transparent;background:transparent;color:var(--foreground,#1e1e1c);font-size:14px;font-weight:500;transition:background-color 150ms ease-out;cursor:pointer}.ds-btn-ghost:hover{background:var(--muted,#ebebe6)}.ds-btn-ghost:focus-visible{outline:2px solid var(--ring,#2f86d0);outline-offset:2px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A white field cut into the sheet, with a blue construction ring on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Drawing title\" />",
+      "css": ".ds-input{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';height:36px;width:260px;padding:4px 12px;border-radius:6.4px;border:1px solid var(--input,#8f8f88);background:var(--card,#fff);color:var(--foreground,#1e1e1c);font-size:14px;box-shadow:inset 0 1px 2px oklch(0.21 0.004 100/7%);outline:none;transition:border-color 150ms,box-shadow 150ms}.ds-input::placeholder{color:var(--muted-foreground,#62625c)}.ds-input:hover{border-color:color-mix(in oklch,#8f8f88,#1e1e1c 15%)}.ds-input:focus-visible{border-color:var(--ring,#2f86d0);box-shadow:0 0 0 3px color-mix(in oklch,var(--ring,#2f86d0) 25%,transparent)}"
+    },
+    {
+      "name": "Sheet Card",
+      "kind": "card",
+      "refersTo": "card-sheet",
+      "description": "A white sheet lifted off the pad with a hairline and the Paper shadow.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Workspace name</div><div class=\"ds-card-desc\">Shown to everyone in this workspace.</div></div>",
+      "css": ".ds-card{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';width:300px;padding:24px;border-radius:11.2px;border:1px solid var(--border,#e1e1db);background:var(--card,#fff);color:var(--foreground,#1e1e1c);box-shadow:0 1px 2px oklch(0.21 0.004 100/7%),0 6px 16px -8px oklch(0.21 0.004 100/16%);font-size:14px}.ds-card-title{font-size:15px;font-weight:600;line-height:1.375;letter-spacing:-0.005em}.ds-card-desc{margin-top:4px;color:var(--muted-foreground,#62625c)}"
+    },
+    {
+      "name": "Drawing Card",
+      "kind": "card",
+      "refersTo": "card-sheet",
+      "description": "Dashboard sheet: thumbnail on dot grid, title and meta; rises 2px with the Lift shadow on hover.",
+      "html": "<a class=\"ds-drawing\" href=\"#\"><div class=\"ds-drawing-thumb\"></div><div class=\"ds-drawing-body\"><p class=\"ds-drawing-title\">Q3 roadmap</p><p class=\"ds-drawing-meta\">You · 2 hours ago</p></div></a>",
+      "css": ".ds-drawing{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';display:block;width:240px;overflow:hidden;border-radius:11.2px;border:1px solid var(--border,#e1e1db);background:var(--card,#fff);color:var(--foreground,#1e1e1c);text-decoration:none;box-shadow:0 1px 2px oklch(0.21 0.004 100/7%),0 6px 16px -8px oklch(0.21 0.004 100/16%);transition:translate 200ms cubic-bezier(0.16,1,0.3,1),box-shadow 200ms cubic-bezier(0.16,1,0.3,1),border-color 200ms}.ds-drawing:hover{translate:0 -2px;border-color:color-mix(in oklch,#e1e1db,#1e1e1c 14%);box-shadow:0 2px 4px oklch(0.21 0.004 100/7%),0 14px 28px -12px oklch(0.21 0.004 100/16%)}.ds-drawing:focus-visible{outline:2px solid var(--ring,#2f86d0);outline-offset:2px}.ds-drawing-thumb{aspect-ratio:16/9;border-bottom:1px solid var(--border,#e1e1db);background-image:radial-gradient(circle,oklch(0.21 0.004 100/13%) 1px,transparent 1.4px);background-size:20px 20px}.ds-drawing-body{padding:12px 14px}.ds-drawing-title{margin:0;font-size:14px;font-weight:600}.ds-drawing-meta{margin:0;font-size:12px;color:var(--muted-foreground,#62625c)}"
+    },
+    {
+      "name": "Role Chip",
+      "kind": "chip",
+      "refersTo": "role-chip",
+      "description": "A quiet white pill with a role-coloured dot.",
+      "html": "<span class=\"ds-chip\"><span class=\"ds-chip-dot\"></span>Owner</span>",
+      "css": ".ds-chip{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:9999px;border:1px solid var(--border,#e1e1db);background:var(--card,#fff);color:var(--foreground,#1e1e1c);font-size:12px;font-weight:500}.ds-chip-dot{width:6px;height:6px;border-radius:9999px;background:var(--primary,#f26a21)}"
+    },
+    {
+      "name": "Active Sidebar Item",
+      "kind": "nav",
+      "refersTo": "sidebar-item-active",
+      "description": "Workspace navigation: the active item is a white sheet with a hairline and an Orange Ink icon.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-nav-active\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/></svg><span>Drawings</span></a><a class=\"ds-nav-item\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\"/></svg><span>Trash</span></a></nav>",
+      "css": ".ds-nav{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-feature-settings:'ss01';display:flex;flex-direction:column;gap:2px;width:220px;padding:8px;background:var(--sidebar,#efefeb)}.ds-nav-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6.4px;color:var(--sidebar-foreground,#1e1e1c);font-size:14px;text-decoration:none;transition:background-color 150ms}.ds-nav-item:hover{background:var(--sidebar-accent,#e4e4de)}.ds-nav-item:focus-visible{outline:2px solid var(--ring,#2f86d0);outline-offset:2px}.ds-nav-active{background:var(--sheet,#fff);font-weight:500;box-shadow:0 0 0 1px var(--sidebar-border,#e1e1db),0 1px 2px oklch(0.21 0.004 100/7%)}.ds-nav-active svg{color:var(--primary-ink,#b3470e)}"
+    },
+    {
+      "name": "Margin Note",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "The one handwritten voice: Excalifont in Orange Ink beside drawn content.",
+      "html": "<span class=\"ds-note\">Your team, live</span>",
+      "css": ".ds-note{font-family:Excalifont,cursive;font-size:1.3rem;line-height:1.25;color:var(--primary-ink,#b3470e);display:inline-block;rotate:-2deg}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Drawing Pad",
+    "overview": "Loose sketches on an exact sheet. The hand-drawn line belongs to the work: the drawings, the illustrations, the logo, and a few handwritten margin notes. Everything around it is a precise, printed drawing pad: bright neutral pad paper, white sheets cut clean with graphite hairlines, soft lifted shadows, a confident widened grotesk for titles, and one orange pad-cover colour that marks the action. Non-photo-blue construction lines are the only second voice, used for focus, guides and the editor's selection outlines.\n\nThis is an evolution of the earlier \"Sketchbook\" look, not a replacement. The hand-drawn DNA stays (rough.js strokes drawn with the editor's own engine, Excalifont, named cursors, the dotted canvas), but it is confined to content, so the product reads as a calm professional tool rather than a craft project. The public site speaks at Persuade volume (large widened titles, the editor window demo, one full-bleed orange band); the app uses the same world at Operate restraint (compact title rows, sheets, hairlines, no hero banners).\n\nDark mode is a graphite drawing board: warm near-black board, slightly lifted graphite sheets, chalk-white text, a brighter cover orange and a lighter construction blue. It is never black and neon. Two confirmed anti-references bound the world: the craft-project sketchbook (tape, sticky-note headings, tilted cards, sticker buttons, handwriting for every title) and the generic SaaS template (gradient hero, icon-tile grids).",
+    "keyCharacteristics": [
+      "Bright neutral pad paper (not cream) under white sheets with graphite hairlines.",
+      "One pad-cover orange for primary actions, always with graphite lettering on it.",
+      "Non-photo-blue construction lines for focus rings, guides and selection.",
+      "Archivo widened toward a title-block stroke for titles; normal width for the interface.",
+      "Hand-drawn strokes (rough.js) and Excalifont only on drawn content and margin notes.",
+      "Soft lifted shadows (offset plus blur), never hard offset blocks.",
+      "Every text/background pair at least 4.5:1, in both themes."
+    ],
+    "rules": [
+      {
+        "name": "The One Cover Rule",
+        "body": "Orange is the pad cover: it marks the primary action and appears as one full-bleed field at most per page (the home privacy band). Everything else is graphite on paper.",
+        "section": "colors"
+      },
+      {
+        "name": "The Graphite Lettering Rule",
+        "body": "Text on orange is graphite in light mode and board-dark in dark mode. Never white on orange.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Versus Cover Rule",
+        "body": "Orange as text is always Orange Ink, never the cover orange; the cover is too light to read as text on paper.",
+        "section": "colors"
+      },
+      {
+        "name": "The Construction Line Rule",
+        "body": "Blue means \"the tool is pointing at this\": focus, guides, selection. It never decorates and never marks an action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Widened Title Rule",
+        "body": "Page titles, section headings, dialog and auth card titles are widened Archivo at 600. Emphasis comes from the width and weight, never from underlines, swashes or highlight strokes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Margin-Only Hand Rule",
+        "body": "Excalifont appears only in the wordmark, margin notes (the public site's `MarginNote`, the dashboard's \"start here\") and inside drawn illustrations. Never for titles, buttons or body text.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Kicker Rule",
+        "body": "Headings stand alone: no eyebrow or kicker labels above them.",
+        "section": "typography"
+      },
+      {
+        "name": "The Soft Lift Rule",
+        "body": "Every shadow is an offset plus a blur, tinted graphite. Never a hard, unblurred offset block.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do put graphite (#1e1e1c) lettering on the pad-cover orange (5.45:1); never white.",
+      "Do use Orange Ink (#b3470e) whenever orange is text, including links and accents.",
+      "Do mark every keyboard focus with the 2px construction-blue (#2f86d0) outline, offset 2px.",
+      "Do set page titles, section headings, dialog and auth card titles in widened Archivo (118% width, 600, -0.025em).",
+      "Do build interface chrome (cards, buttons, frames around controls) in CSS, and draw only content (illustrations, ticks, arrows, the logo) with rough.js using a fixed seed.",
+      "Do use the soft two-part paper shadows: Paper at rest, Lift on hover with a 2px rise, Paper Large for popups and dialogs.",
+      "Do keep every text/background pair at 4.5:1 or more in both themes when adding or changing tokens.",
+      "Do put graphite text on the note pastels in both themes; they are paper, not themed surfaces.",
+      "Do keep decorative and interface motion behind reduced-motion switches, at 150 to 220ms with the exponential ease-out.",
+      "Do show Lukis's real panels and editor rather than an illustration floating in an empty sheet."
+    ],
+    "donts": [
+      "Don't use tape strips, sticky-note headings, tilted cards, or sticker buttons with hard offset shadows; the Sketchbook props were removed on purpose.",
+      "Don't put marker swashes, scribbles or highlight strokes under or behind headings, or a scribble under the active sidebar link.",
+      "Don't use hard, unblurred offset shadows anywhere.",
+      "Don't set titles, buttons or body text in Excalifont.",
+      "Don't place eyebrow or kicker labels above headings.",
+      "Don't put the dotted canvas grid behind ordinary app pages; it marks surfaces that stand for a canvas.",
+      "Don't use spiral-binding rings or other repeating decorative patterns that can be read as text.",
+      "Don't reach for gradient heroes or icon-tile grids.",
+      "Don't make dark mode black and neon; it is a graphite drawing board.",
+      "Don't use blue for actions or decoration, or orange for focus."
+    ]
+  }
+}

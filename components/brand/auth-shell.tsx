@@ -1,12 +1,10 @@
 import Link from "next/link"
 
 import { Logo } from "@/components/brand/logo"
-import { Highlight } from "@/components/sketch/highlight"
-import { Tape } from "@/components/sketch/tape"
 
-// The signed-out pages, email confirmation and invites: a drawn scene with a
-// tagline on dotted paper, and one taped-down card beside it. On small
-// screens the scene gives way to the wordmark. Card titles are hand-lettered.
+// The signed-out pages, email confirmation and invites. On wide screens a
+// canvas sheet with a drawn scene sits beside the form; on small screens
+// the scene gives way to the wordmark. The form is a plain white sheet.
 function AuthShell({
   scene,
   heading = "Sketch together.",
@@ -19,28 +17,33 @@ function AuthShell({
   children: React.ReactNode
 }) {
   return (
-    <main className="grid min-h-svh lg:grid-cols-[1.15fr_1fr]">
-      <section className="relative hidden flex-col gap-8 overflow-hidden border-r bg-dot-grid p-10 lg:flex">
-        <Link href="/" aria-label="Lukis home" className="w-fit">
-          <Logo animate />
-        </Link>
-        <div className="mx-auto flex w-full max-w-2xl flex-1 items-center">
-          {scene}
-        </div>
-        <div className="max-w-lg">
-          <h2 className="font-hand text-5xl leading-tight">
-            <Highlight seed={8}>{heading}</Highlight>
-          </h2>
-          <p className="mt-3 text-muted-foreground">{blurb}</p>
+    <main className="grid min-h-svh bg-background lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <section className="hidden p-3 lg:flex">
+        <div className="relative flex flex-1 flex-col gap-8 overflow-hidden rounded-2xl border bg-card dot-grid p-10 shadow-paper">
+          <Link href="/" aria-label="Lukis home" className="w-fit">
+            <Logo animate />
+          </Link>
+          <div className="mx-auto flex w-full max-w-xl flex-1 items-center">
+            {scene}
+          </div>
+          <div className="max-w-md">
+            <p className="font-display text-[clamp(2.125rem,4vw,2.75rem)] leading-[1.05] font-semibold">
+              {heading}
+            </p>
+            <p className="mt-3 text-[0.9375rem] text-muted-foreground">
+              {blurb}
+            </p>
+          </div>
         </div>
       </section>
-      <section className="flex flex-col items-center justify-center gap-8 bg-dot-grid p-6 lg:bg-background lg:bg-none">
-        <div className="flex flex-col items-center gap-3 lg:hidden">
-          <Logo size="lg" animate />
+      <section className="flex flex-col items-center justify-center gap-8 px-4 py-10 sm:px-6">
+        <div className="flex flex-col items-center gap-2 lg:hidden">
+          <Link href="/" aria-label="Lukis home">
+            <Logo size="lg" animate />
+          </Link>
           <p className="text-sm text-muted-foreground">{heading}</p>
         </div>
-        <div className="relative w-full max-w-sm [&_[data-slot=card-title]]:font-hand [&_[data-slot=card-title]]:text-3xl [&_[data-slot=card-title]]:font-normal [&_[data-slot=card]]:shadow-paper-lg">
-          <Tape className="-top-2.5 left-1/2 -translate-x-1/2 -rotate-3" />
+        <div className="w-full max-w-sm motion-safe:animate-rise [&_[data-slot=card-title]]:font-display [&_[data-slot=card-title]]:text-2xl [&_[data-slot=card-title]]:leading-tight [&_[data-slot=card]]:shadow-paper-lg">
           {children}
         </div>
       </section>

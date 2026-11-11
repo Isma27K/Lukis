@@ -40,8 +40,8 @@ const LOGO_MARK = {
   }),
 }
 
-// A marker-colored sticky note with a looped "l" drawn on it. Colors come
-// from the theme, so it follows light and dark.
+// A pad-cover orange note with a looped "l" drawn on it in graphite. Colors
+// come from the theme, so it follows light and dark.
 function LogoMark({
   animate = false,
   className,
@@ -83,9 +83,9 @@ function StaticLogoMark({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48">
       <g transform="rotate(-6 24 24)">
-        {colored(LOGO_MARK.note, "#c8410f")}
-        {colored(LOGO_MARK.outline, "#1c1917")}
-        {colored(LOGO_MARK.loop, "#ffffff")}
+        {colored(LOGO_MARK.note, "#f26a21")}
+        {colored(LOGO_MARK.outline, "#1e1e1c")}
+        {colored(LOGO_MARK.loop, "#1e1e1c")}
       </g>
     </svg>
   )

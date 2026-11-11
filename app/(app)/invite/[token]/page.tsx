@@ -61,7 +61,7 @@ export default async function Page({
         {!invite ? (
           <>
             <CardHeader>
-              <CardTitle>Invite not found</CardTitle>
+              <CardTitle as="h1">Invite not found</CardTitle>
               <CardDescription>
                 This link is invalid, was already used, or has expired. Ask
                 whoever sent it for a new one.
@@ -76,7 +76,7 @@ export default async function Page({
         ) : invite.email !== user.email ? (
           <>
             <CardHeader>
-              <CardTitle>This invite is for someone else</CardTitle>
+              <CardTitle as="h1">This invite is for someone else</CardTitle>
               <CardDescription>
                 It was sent to {invite.email}, but you&apos;re logged in as{" "}
                 {user.email}.
@@ -89,7 +89,7 @@ export default async function Page({
         ) : mustConfirmEmail ? (
           <>
             <CardHeader>
-              <CardTitle>Confirm your email to join</CardTitle>
+              <CardTitle as="h1">Confirm your email to join</CardTitle>
               <CardDescription>
                 {invite.invited_by} invited you to {invite.workspace_name}.
                 First open the link we emailed to {user.email}; it brings you
@@ -106,7 +106,7 @@ export default async function Page({
         ) : (
           <>
             <CardHeader>
-              <CardTitle>Join {invite.workspace_name}</CardTitle>
+              <CardTitle as="h1">Join {invite.workspace_name}</CardTitle>
               <CardDescription>
                 {invite.invited_by} invited you to join as{" "}
                 {ROLE_LABELS[invite.role].toLowerCase()}.

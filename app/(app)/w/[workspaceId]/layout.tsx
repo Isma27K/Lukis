@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 
 import { VerifyEmailBanner } from "@/components/auth/verify-email-banner"
+import { SkipLink } from "@/components/skip-link"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/workspace/app-sidebar"
 import {
@@ -31,17 +32,24 @@ export default async function WorkspaceLayout({
 
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
+      <SkipLink />
       <AppSidebar
         user={user}
         workspaces={workspaces}
         current={workspace}
         trashCount={trash.length}
       />
-      <SidebarInset className="bg-dot-grid">
+      <SidebarInset>
         {features.email && !user.email_verified && (
           <VerifyEmailBanner email={user.email} />
         )}
-        {children}
+        <div
+          id="content"
+          tabIndex={-1}
+          className="flex flex-1 flex-col outline-none"
+        >
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

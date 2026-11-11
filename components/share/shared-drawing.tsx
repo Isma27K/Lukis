@@ -48,7 +48,7 @@ function SharedDrawing({
   const name = answered ?? stored
 
   if (name === undefined) {
-    return <div className="h-full bg-dot-grid" />
+    return <div className="h-full dot-grid" />
   }
   if (name === null && info.access === "edit" && info.viewer_name === null) {
     const answer = (value: string) => {
@@ -61,7 +61,7 @@ function SharedDrawing({
       setAnswered(trimmed)
     }
     return (
-      <div className="h-full bg-dot-grid">
+      <div className="h-full dot-grid">
         <TextInputDialog
           open
           onOpenChange={(open) => !open && answer(typed.current ?? "")}

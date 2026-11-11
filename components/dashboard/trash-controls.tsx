@@ -38,7 +38,7 @@ function DeleteForeverButton({ drawing }: { drawing: TrashedDrawing }) {
 
   return (
     <>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
         Delete forever
       </Button>
       <ConfirmDialog

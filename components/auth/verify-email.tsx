@@ -57,7 +57,7 @@ function VerifyEmail({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Confirming your email…</CardTitle>
+          <CardTitle as="h1">Confirming your email…</CardTitle>
         </CardHeader>
       </Card>
     )
@@ -67,7 +67,7 @@ function VerifyEmail({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Email confirmed</CardTitle>
+          <CardTitle as="h1">Email confirmed</CardTitle>
           <CardDescription>
             Thanks! You can now join workspaces you&apos;re invited to.
           </CardDescription>
@@ -87,7 +87,7 @@ function VerifyEmail({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>That link didn&apos;t work</CardTitle>
+        <CardTitle as="h1">That link didn&apos;t work</CardTitle>
         <CardDescription>
           {error} Links work once, for 48 hours.
         </CardDescription>

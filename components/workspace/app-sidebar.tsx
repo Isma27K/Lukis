@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 import { Logo } from "@/components/brand/logo"
-import { Scribble } from "@/components/brand/scribble"
 import { NewDrawingButton } from "@/components/dashboard/new-drawing-button"
 import {
   Sidebar,
@@ -81,13 +80,7 @@ function AppSidebar({
                     render={<Link href={href} />}
                   >
                     <Icon />
-                    <span className="relative pb-1">
-                      {label}
-                      {active && (
-                        // The button sizes every icon inside it; the stroke opts out.
-                        <Scribble className="absolute bottom-0 left-0 h-1.5! w-full!" />
-                      )}
-                    </span>
+                    <span>{label}</span>
                   </SidebarMenuButton>
                   {count > 0 && <SidebarMenuBadge>{count}</SidebarMenuBadge>}
                 </SidebarMenuItem>
@@ -110,6 +103,7 @@ function AppSidebar({
                 <SidebarMenuButton
                   isActive={workspace.id === current.id}
                   render={<Link href={`/w/${workspace.id}`} />}
+                  className="data-active:bg-sidebar-accent data-active:shadow-none"
                 >
                   <WorkspaceAvatar
                     name={workspace.name}

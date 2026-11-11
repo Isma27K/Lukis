@@ -26,7 +26,7 @@ export async function GET(
         justifyContent: "center",
         width: "100%",
         height: "100%",
-        background: "#faf7f2",
+        background: "#f5f5f2",
       }}
     >
       <StaticLogoMark size={Math.round(size * 0.7)} />

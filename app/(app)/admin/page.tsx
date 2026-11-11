@@ -8,13 +8,7 @@ import {
   SignupInviteForm,
 } from "@/components/site/signup-invite-controls"
 import { SiteHeader } from "@/components/site-header"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { SettingsSection } from "@/components/settings-section"
 import { UserAvatar } from "@/components/user-avatar"
 import { PageHero } from "@/components/workspace/page-hero"
 import {
@@ -41,43 +35,34 @@ export default async function Page() {
   ])
 
   return (
-    <div className="min-h-svh bg-dot-grid">
+    <div className="min-h-svh bg-background">
       <SiteHeader />
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-8">
+      <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8 sm:px-8 sm:py-10">
         <PageHero title="Site settings">
           <span>Only you see this page, as the person who set Lukis up.</span>
         </PageHero>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign-up</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="flex flex-col gap-6">
+          <SettingsSection title="Sign-up">
             <RegistrationSwitch open={settings.registration_open} />
-          </CardContent>
-        </Card>
+          </SettingsSection>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Sharing</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <SettingsSection title="Sharing">
             <PublicLinksSwitch on={settings.public_links} />
-          </CardContent>
-        </Card>
+          </SettingsSection>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Invite people to sign up</CardTitle>
-            <CardDescription>
-              While sign-up is off, an invite from you is the only way to create
-              an account. That includes the workspace invites you send; other
-              members&apos; workspace invites only work for people who already
-              have an account. Each link is for one email address, works once
-              and expires after 7 days.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+          <SettingsSection
+            title="Invite people to sign up"
+            description={
+              <>
+                While sign-up is off, an invite from you is the only way to
+                create an account. That includes the workspace invites you send;
+                other members&apos; workspace invites only work for people who
+                already have an account. Each link is for one email address,
+                works once and expires after 7 days.
+              </>
+            }
+          >
             <SignupInviteForm emailed={features.email} />
             {invites.length > 0 && (
               <div className="flex flex-col gap-1">
@@ -101,8 +86,8 @@ export default async function Page() {
                 </ul>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </SettingsSection>
+        </div>
       </main>
     </div>
   )

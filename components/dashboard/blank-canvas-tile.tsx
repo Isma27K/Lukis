@@ -3,38 +3,32 @@
 import { PlusIcon } from "lucide-react"
 
 import { useCreateDrawing } from "@/components/dashboard/use-create-drawing"
-import { SketchFrame } from "@/components/sketch/sketch-frame"
 
-// The first tile in the grid: an empty, dashed sheet that starts a drawing.
-// Sized like a drawing card so the grid lines up.
+// The first tile in the grid: an empty sheet on the editor's dot grid that
+// starts a drawing. Sized like a drawing card so the grid lines up.
 function BlankCanvasTile({ workspaceId }: { workspaceId: string }) {
   const { create, pending } = useCreateDrawing(workspaceId)
 
   return (
-    <li className="motion-safe:animate-pop">
+    <li>
       <button
         type="button"
         onClick={create}
         disabled={pending}
-        className="group/blank flex w-full flex-col gap-3 text-left outline-none disabled:opacity-60"
+        className="group/blank flex size-full flex-row items-center overflow-hidden rounded-xl border border-dashed border-[color-mix(in_oklch,var(--input),var(--foreground)_12%)] text-left transition-[border-color,background-color] duration-200 hover:border-primary-edge hover:bg-card disabled:opacity-60 sm:flex-col sm:items-stretch"
       >
-        <span className="relative block rounded-lg p-2 transition-colors group-hover/blank:bg-card/60 group-focus-visible/blank:ring-3 group-focus-visible/blank:ring-ring/50">
-          <span className="flex aspect-video flex-col items-center justify-center gap-1 text-muted-foreground transition-colors group-hover/blank:text-primary">
-            <PlusIcon className="size-8" />
-            <span className="font-hand text-2xl">
-              {pending ? "Opening…" : "Blank canvas"}
-            </span>
+        <span className="flex shrink-0 items-center justify-center p-3 sm:aspect-video sm:w-full sm:dot-grid sm:p-0">
+          <span className="flex size-11 items-center justify-center rounded-full border bg-card text-foreground shadow-paper transition-[color,translate,box-shadow] duration-200 ease-out-expo group-hover/blank:text-primary-ink group-hover/blank:shadow-lift motion-safe:group-hover/blank:-translate-y-0.5">
+            <PlusIcon className="size-5" />
           </span>
-          <SketchFrame
-            seed={5}
-            ratio={1.6}
-            dashed
-            tone="muted"
-            className="transition-colors group-hover/blank:text-primary"
-          />
         </span>
-        <span className="px-1 text-xs text-muted-foreground">
-          Start from scratch
+        <span className="flex flex-col py-3 pr-3.5 sm:px-3.5">
+          <span className="text-sm font-semibold">
+            {pending ? "Opening…" : "Blank canvas"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Start from scratch
+          </span>
         </span>
       </button>
     </li>

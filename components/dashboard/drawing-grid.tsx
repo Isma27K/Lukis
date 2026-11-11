@@ -130,7 +130,7 @@ function DrawingGrid({
           <div className="relative mt-2">
             <span
               aria-hidden
-              className="absolute top-1/2 right-full mr-3 hidden -translate-y-full items-end gap-1 text-primary sm:flex"
+              className="absolute top-1/2 right-full mr-3 hidden -translate-y-full items-end gap-1 text-primary-ink sm:flex"
             >
               <span className="font-hand text-lg whitespace-nowrap">
                 start here
@@ -160,7 +160,7 @@ function DrawingGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="relative w-full sm:w-72">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -169,7 +169,7 @@ function DrawingGrid({
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search drawings"
             aria-label="Search drawings by title"
-            className="bg-card pl-9"
+            className="pl-9"
           />
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -178,7 +178,7 @@ function DrawingGrid({
             value={sort}
             onValueChange={(value) => value && change({ sort: value })}
           >
-            <SelectTrigger className="w-36 bg-card" aria-label="Sort drawings">
+            <SelectTrigger className="w-36" aria-label="Sort drawings">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -192,7 +192,7 @@ function DrawingGrid({
           <div
             role="group"
             aria-label="Layout"
-            className="flex rounded-lg border bg-card p-0.5"
+            className="flex rounded-lg border bg-card p-0.5 shadow-[0_1px_2px_var(--paper-shadow)]"
           >
             {(
               [
@@ -208,7 +208,7 @@ function DrawingGrid({
                 title={label}
                 onClick={() => change({ view: value })}
                 className={cn(
-                  "flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 [&_svg]:size-4",
+                  "flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground [&_svg]:size-4",
                   view === value && "bg-muted text-foreground"
                 )}
               >
@@ -237,13 +237,12 @@ function DrawingGrid({
           ))}
         </ul>
       ) : (
-        <ul className="grid grid-cols-1 gap-x-6 gap-y-8 pt-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {canEdit && !needle && <BlankCanvasTile workspaceId={workspaceId} />}
-          {shown.map(({ editedLabel, ...drawing }, index) => (
+          {shown.map(({ editedLabel, ...drawing }) => (
             <DrawingCard
               key={drawing.id}
               drawing={drawing}
-              index={index}
               editedLabel={editedLabel}
               {...itemProps}
             />

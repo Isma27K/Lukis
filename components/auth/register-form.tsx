@@ -43,7 +43,7 @@ function RegisterForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
+        <CardTitle as="h1">
           {setupRequired ? "Set up Lukis" : "Create your account"}
         </CardTitle>
         <CardDescription>

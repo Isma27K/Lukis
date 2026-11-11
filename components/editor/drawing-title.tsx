@@ -57,7 +57,7 @@ function DrawingTitle({
         }
       }}
       className={cn(
-        "field-sizing-content h-full max-w-60 min-w-16 truncate rounded-md bg-transparent px-2 font-hand text-xl outline-none hover:bg-muted focus:bg-muted",
+        "field-sizing-content h-full max-w-60 min-w-16 truncate rounded-md bg-transparent px-2 text-[0.9375rem] font-semibold outline-hidden hover:bg-muted focus:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-solid",
         className
       )}
     />

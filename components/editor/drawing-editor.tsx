@@ -191,7 +191,7 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
             />
           ) : (
             <span
-              className={`${isMobile ? "max-w-28" : "max-w-44"} truncate px-2 font-hand text-xl`}
+              className={`${isMobile ? "max-w-28" : "max-w-44"} truncate px-2 text-[0.9375rem] font-semibold`}
             >
               {title}
             </span>
@@ -223,7 +223,7 @@ function DrawingEditor({ source, scene, realtimeUrl }: DrawingEditorProps) {
                 type="button"
                 onClick={() => setSharing(true)}
                 aria-label="Share"
-                className="flex h-7 items-center gap-1.5 rounded-(--border-radius-md) bg-primary px-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 [&_svg]:size-3.5"
+                className="flex h-7 items-center gap-1.5 rounded-(--border-radius-md) border border-primary-edge/60 bg-primary px-2.5 text-sm font-medium text-primary-foreground shadow-[inset_0_1px_0_oklch(1_0_0/28%)] hover:bg-[color-mix(in_oklch,var(--primary),var(--ink)_9%)] dark:border-transparent [&_svg]:size-3.5"
               >
                 <Share2Icon />
                 {!isMobile && "Share"}

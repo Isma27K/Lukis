@@ -45,7 +45,7 @@ function LoginForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Log in</CardTitle>
+        <CardTitle as="h1">Log in</CardTitle>
         <CardDescription>Welcome back to Lukis.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

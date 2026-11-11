@@ -1,29 +1,22 @@
-import { cn } from "cn"
-import { ArrowRightIcon, PlusIcon } from "lucide-react"
+import { PlusIcon } from "lucide-react"
 import Link from "next/link"
 
 import { ProviderIcon } from "@/components/auth/provider-icon"
+import { LogoMark } from "@/components/brand/logo-mark"
 import { CollabScene } from "@/components/illustrations/collab-scene"
-import {
-  BlankCanvas,
-  Envelope,
-  Padlock,
-  Rewind,
-  Roles,
-  ShareLink,
-  Together,
-} from "@/components/illustrations/spots"
+import { Padlock } from "@/components/illustrations/spots"
 import { CtaButtons } from "@/components/marketing/cta-buttons"
 import {
-  FeatureCard,
+  ArrowLink,
+  CanvasTile,
+  EditorWindow,
+  MarginNote,
   SectionHeading,
   TickList,
 } from "@/components/marketing/parts"
+import { HistoryVignette } from "@/components/marketing/vignettes"
 import type { Visitor } from "@/components/marketing/visitor"
-import { Highlight } from "@/components/sketch/highlight"
-import { StickyNote } from "@/components/sketch/sticky-note"
 import { Strokes } from "@/components/sketch/strokes"
-import { Tape } from "@/components/sketch/tape"
 import { PROVIDER_LABELS } from "@/lib/oauth"
 import { sketch } from "@/lib/sketch"
 import type { OAuthProvider } from "@/lib/types"
@@ -33,15 +26,12 @@ import type { OAuthProvider } from "@/lib/types"
 
 function HomeHero({ visitor }: { visitor: Visitor }) {
   return (
-    <section className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 pt-12 pb-16 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:pt-20 lg:pb-24">
-      <div className="flex flex-col items-start gap-6">
-        <span className="rounded-full bg-note-green px-3 py-1 text-xs font-medium text-note-ink">
-          No AI. No ads. Just your team and a pen.
-        </span>
-        <h1 className="font-hand text-6xl leading-[1.05] font-normal sm:text-7xl">
-          <Highlight seed={8}>Sketch</Highlight> together.
+    <section className="mx-auto grid w-full max-w-7xl items-center gap-x-14 gap-y-12 px-4 pt-10 pb-20 sm:px-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:pt-16 lg:pb-28">
+      <div className="flex flex-col items-start gap-7">
+        <h1 className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-[0.98] font-semibold">
+          Sketch together.
         </h1>
-        <p className="max-w-lg text-lg text-muted-foreground">
+        <p className="max-w-[31rem] text-lg leading-relaxed text-muted-foreground">
           Lukis is a hand-drawn whiteboard for teams. Map out ideas, diagrams
           and plans on one canvas, watch each other&apos;s cursors move as you
           think out loud, and keep every version along the way.
@@ -54,12 +44,18 @@ function HomeHero({ visitor }: { visitor: Visitor }) {
           <LoginOptions providers={visitor.providers} />
         )}
       </div>
-      <div className="relative lg:rotate-1">
-        <Tape className="-top-2.5 left-10 -rotate-6" />
-        <Tape className="-top-2.5 right-10 rotate-3" />
-        <div className="rounded-2xl border bg-dot-grid p-4 shadow-paper-lg">
+      <div className="relative">
+        <EditorWindow title="Launch plan">
           <CollabScene />
-        </div>
+        </EditorWindow>
+        <MarginNote
+          arrow="up-right"
+          className="mt-4 ml-2 lg:absolute lg:-bottom-14 lg:-left-6 lg:mt-0 lg:ml-0"
+        >
+          No AI. No ads.
+          <br />
+          Just your team and a pen.
+        </MarginNote>
       </div>
     </section>
   )
@@ -68,14 +64,17 @@ function HomeHero({ visitor }: { visitor: Visitor }) {
 function LoginOptions({ providers }: { providers: OAuthProvider[] }) {
   const names = providers.map((provider) => PROVIDER_LABELS[provider])
   return (
-    <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+    <Link
+      href="/login"
+      className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+    >
       <span className="flex items-center gap-1.5">
         {providers.map((provider) => (
           <ProviderIcon key={provider} provider={provider} className="size-4" />
         ))}
       </span>
       Log in with your email, {formatList(names, "or")}.
-    </p>
+    </Link>
   )
 }
 
@@ -85,74 +84,70 @@ function formatList(items: string[], joiner: "and" | "or") {
   }).format(items)
 }
 
+// The feature the section leads with, shown as the panel itself.
+const LEAD = {
+  title: "Rewind any time",
+  body: "Lukis keeps versions as you work. Name the ones that matter and bring any of them back in one step.",
+}
+
 const FEATURES = [
   {
     title: "Draw together, live",
-    illustration: <Together className="w-48" />,
     body: "Everyone's cursor has a name on it, every stroke shows up as it's drawn, and you can follow whoever's explaining.",
   },
   {
-    title: "Rewind any time",
-    illustration: <Rewind className="w-48" />,
-    body: "Lukis keeps versions as you work. Name the ones that matter and bring any of them back in one step.",
-  },
-  {
     title: "Workspaces for every team",
-    illustration: <Roles className="w-48" />,
     body: "Give each team its own space, with owners, admins, editors and viewers who see only what they should.",
   },
   {
     title: "Share with a link",
-    illustration: <ShareLink className="w-48" />,
     body: "Let anyone view or edit one drawing, add a password if you like, and switch the link off when you're done.",
   },
   {
     title: "Invite in seconds",
-    illustration: <Envelope className="w-48" />,
     body: "Send an invite by email, or copy the link and drop it in your team chat.",
   },
   {
     title: "Sketchy, never sloppy",
-    illustration: <BlankCanvas className="w-48" />,
-    body: "Shapes, arrows, text and images on an endless canvas, all with that hand-drawn feel. Dark mode turns it into a chalkboard.",
+    body: "Shapes, arrows, text and images on an endless canvas, all with that hand-drawn feel. Dark mode turns it into a graphite drawing board.",
   },
 ]
 
+// What's in the box: one feature shown as the real panel, then the rest as a
+// ruled spec list.
 function FeatureGrid() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-      <SectionHeading
-        center
-        title={
-          <>
-            Everything your team needs{" "}
-            <Highlight seed={11}>on the board</Highlight>
-          </>
-        }
-      >
-        Lukis is built around how people actually think together: fast, messy
-        and all at once.
-      </SectionHeading>
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((feature, index) => (
-          <FeatureCard
-            key={feature.title}
-            title={feature.title}
-            illustration={feature.illustration}
-            seed={50 + index}
-          >
-            {feature.body}
-          </FeatureCard>
-        ))}
-      </div>
-      <div className="mt-10 flex justify-center">
-        <Link
-          href="/features"
-          className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
-        >
-          See every feature
-          <ArrowRightIcon className="size-4" />
-        </Link>
+    <section className="border-y bg-card">
+      <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-8 lg:py-28">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="flex flex-col items-start gap-8">
+            <SectionHeading title="Everything your team needs on the board">
+              Lukis is built around how people actually think together: fast,
+              messy and all at once.
+            </SectionHeading>
+            <div className="flex max-w-md flex-col gap-2 border-t pt-6">
+              <h3 className="text-xl font-semibold">{LEAD.title}</h3>
+              <p className="text-muted-foreground">{LEAD.body}</p>
+            </div>
+            <ArrowLink href="/features">See every feature</ArrowLink>
+          </div>
+          <CanvasTile className="bg-background px-5 py-10 sm:px-12 sm:py-14">
+            <HistoryVignette />
+          </CanvasTile>
+        </div>
+        <dl className="mt-16 divide-y border-y lg:mt-24">
+          {FEATURES.map((feature) => (
+            <div
+              key={feature.title}
+              className="grid gap-1.5 py-5 sm:grid-cols-[17rem_minmax(0,1fr)] sm:gap-10 sm:py-6"
+            >
+              <dt className="text-lg font-semibold">{feature.title}</dt>
+              <dd className="max-w-2xl text-muted-foreground">
+                {feature.body}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   )
@@ -178,33 +173,37 @@ const PROMISES = [
   </>,
 ]
 
+// The pad cover: the one place the orange takes a whole band of the page.
 function PrivacyPromise() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-      <div className="relative grid items-center gap-10 rounded-2xl border bg-card p-8 shadow-paper sm:p-12 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="flex justify-center">
-          <Padlock className="w-64" />
-        </div>
-        <div className="flex flex-col gap-6">
-          <SectionHeading
-            title={
-              <>
-                Your drawings <Highlight seed={9}>stay yours</Highlight>
-              </>
-            }
-          >
-            Half-finished ideas deserve a quiet place. Lukis keeps out of the
-            way.
-          </SectionHeading>
-          <TickList items={PROMISES} seed={300} />
-          <Link
+    <section className="bg-primary text-primary-foreground">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-20 lg:py-28">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
+            <h2 className="font-display text-[clamp(2.125rem,4vw,2.75rem)] leading-[1.08] font-semibold">
+              Your drawings stay yours
+            </h2>
+            <p className="max-w-[34rem] text-lg text-primary-foreground">
+              Half-finished ideas deserve a quiet place. Lukis keeps out of the
+              way.
+            </p>
+          </div>
+          <TickList
+            items={PROMISES}
+            seed={300}
+            className="max-w-xl"
+            tickClassName="text-primary-foreground"
+          />
+          <ArrowLink
             href="/privacy"
-            className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
+            className="text-primary-foreground decoration-primary-foreground"
           >
             Read the privacy policy
-            <ArrowRightIcon className="size-4" />
-          </Link>
+          </ArrowLink>
         </div>
+        <CanvasTile className="mx-auto aspect-square w-full max-w-sm border-primary-foreground/20 shadow-paper-lg">
+          <Padlock className="w-60" />
+        </CanvasTile>
       </div>
     </section>
   )
@@ -214,47 +213,36 @@ const STEPS = [
   {
     title: "Make a workspace",
     body: "Start in your personal space, or make one for your team.",
-    color: "yellow",
-    tilt: "md:-rotate-2",
   },
   {
     title: "Invite your team",
     body: "Send invites by email or link, and pick who edits and who just looks.",
-    color: "pink",
-    tilt: "md:rotate-1",
   },
   {
     title: "Draw together",
     body: "Everyone sees every stroke as it happens. Lukis saves as you go.",
-    color: "blue",
-    tilt: "md:-rotate-1",
   },
 ] as const
 
+// Three steps on one sheet, split by hairlines and joined by pen arrows.
 function HowItWorks() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-      <SectionHeading
-        center
-        title={
-          <>
-            From blank page to <Highlight seed={12}>big picture</Highlight>
-          </>
-        }
-      />
-      <ol className="mt-12 grid gap-8 md:grid-cols-3 md:gap-16">
+    <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-8 lg:py-28">
+      <SectionHeading center title="From blank page to big picture" />
+      <ol className="mt-12 grid divide-y rounded-2xl border bg-card shadow-paper md:grid-cols-3 md:divide-x md:divide-y-0 lg:mt-16">
         {STEPS.map((step, index) => (
-          <li key={step.title} className="relative">
-            <StickyNote
-              color={step.color}
-              className={cn("flex min-h-44 flex-col gap-2", step.tilt)}
+          <li
+            key={step.title}
+            className="relative flex flex-col p-7 sm:p-9 lg:p-10"
+          >
+            <span
+              aria-hidden
+              className="font-display text-5xl leading-none font-semibold text-primary-ink tabular-nums"
             >
-              <span aria-hidden className="font-hand text-4xl leading-none">
-                {index + 1}
-              </span>
-              <h3 className="font-hand text-2xl font-normal">{step.title}</h3>
-              <p className="text-sm">{step.body}</p>
-            </StickyNote>
+              {index + 1}
+            </span>
+            <h3 className="mt-6 text-lg font-semibold">{step.title}</h3>
+            <p className="mt-1.5 max-w-xs text-muted-foreground">{step.body}</p>
             {index < STEPS.length - 1 && <StepArrow seed={400 + index} />}
           </li>
         ))}
@@ -268,7 +256,7 @@ function StepArrow({ seed }: { seed: number }) {
     <svg
       aria-hidden
       viewBox="0 0 48 32"
-      className="absolute top-1/2 -right-14 hidden w-12 -translate-y-1/2 text-primary md:block"
+      className="absolute top-10 -right-6 z-10 hidden w-12 bg-card text-foreground/70 md:block"
     >
       <Strokes
         paths={sketch.arrow(
@@ -277,8 +265,10 @@ function StepArrow({ seed }: { seed: number }) {
             [24, 8],
             [44, 18],
           ],
-          { seed, strokeWidth: 2.2, head: 8, disableMultiStroke: true }
+          { seed, strokeWidth: 2, head: 8, disableMultiStroke: true }
         )}
+        animate
+        delay={0.6}
       />
     </svg>
   )
@@ -324,27 +314,22 @@ function Faq({ visitor }: { visitor: Visitor }) {
   return (
     <section
       id="faq"
-      className="mx-auto w-full max-w-3xl scroll-mt-20 px-4 py-16 sm:px-6"
+      className="mx-auto grid w-full max-w-7xl scroll-mt-20 gap-10 px-4 py-20 sm:px-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20 lg:py-28"
     >
       <SectionHeading
-        center
-        title={
-          <>
-            Questions, <Highlight seed={14}>answered</Highlight>
-          </>
-        }
+        className="lg:sticky lg:top-28 lg:self-start"
+        title="Questions, answered"
       />
-      <div className="mt-10 divide-y rounded-xl border bg-card shadow-paper">
+      <div className="divide-y border-y">
         {questions.map(({ question, answer }) => (
-          <details key={question} className="group px-5 py-4 sm:px-6">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium [&::-webkit-details-marker]:hidden">
+          <details key={question} className="group">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-lg font-medium transition-colors hover:text-primary-ink [&::-webkit-details-marker]:hidden">
               <h3>{question}</h3>
-              <PlusIcon
-                aria-hidden
-                className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-45 motion-reduce:transition-none"
-              />
+              <span className="grid size-7 shrink-0 place-items-center rounded-full border bg-card transition-[rotate,background-color] duration-200 ease-out-expo group-open:rotate-45 group-open:bg-muted motion-reduce:transition-none">
+                <PlusIcon aria-hidden className="size-3.5" />
+              </span>
             </summary>
-            <p className="pt-3 text-sm text-muted-foreground">{answer}</p>
+            <p className="max-w-2xl pb-6 text-muted-foreground">{answer}</p>
           </details>
         ))}
       </div>
@@ -354,17 +339,17 @@ function Faq({ visitor }: { visitor: Visitor }) {
 
 function ClosingCta({ visitor }: { visitor: Visitor }) {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 pt-8 pb-20 sm:px-6">
-      <div className="relative flex flex-col items-center gap-5 rounded-2xl bg-note-yellow px-6 py-14 text-center text-note-ink shadow-note">
-        <Tape className="-top-2.5 left-1/2 -translate-x-1/2 -rotate-2" />
-        <h2 className="font-hand text-5xl font-normal sm:text-6xl">
+    <section className="mx-auto w-full max-w-7xl px-4 pt-4 pb-24 sm:px-8">
+      <div className="relative flex flex-col items-center gap-6 overflow-hidden rounded-2xl border bg-card dot-grid px-6 py-16 text-center shadow-paper sm:py-20">
+        <LogoMark animate className="size-16" />
+        <h2 className="font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-none font-semibold">
           Grab a pen.
         </h2>
-        <p className="max-w-md">
+        <p className="max-w-md text-lg text-muted-foreground">
           Your team&apos;s next big idea starts as a scribble. Give it somewhere
           to land.
         </p>
-        <CtaButtons visitor={visitor} />
+        <CtaButtons visitor={visitor} className="justify-center" />
       </div>
     </section>
   )

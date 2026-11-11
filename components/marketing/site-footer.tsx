@@ -25,8 +25,8 @@ async function SiteFooter() {
   ]
 
   return (
-    <footer className="border-t bg-background">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 sm:grid-cols-[1.6fr_1fr_1fr] sm:px-6">
+    <footer className="border-t bg-card">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:grid-cols-[1.6fr_1fr_1fr] sm:px-8">
         <div className="flex flex-col items-start gap-3">
           <Link href="/" aria-label="Lukis home">
             <Logo />
@@ -36,7 +36,7 @@ async function SiteFooter() {
         <FooterLinks title="Product" links={product} />
         <FooterLinks title="Company" links={company} />
       </div>
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap justify-between gap-2 border-t px-4 py-6 text-xs text-muted-foreground sm:px-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap justify-between gap-2 border-t px-4 py-6 text-xs text-muted-foreground sm:px-8">
         <span>
           © {new Date().getFullYear()} {OPERATOR_NAME}
         </span>
@@ -55,13 +55,13 @@ function FooterLinks({
 }) {
   return (
     <div className="flex flex-col gap-3 text-sm">
-      <h2 className="font-semibold">{title}</h2>
+      <h2 className="font-semibold text-foreground">{title}</h2>
       <ul className="flex flex-col gap-2">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
             </Link>

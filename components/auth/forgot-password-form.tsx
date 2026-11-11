@@ -38,7 +38,7 @@ function ForgotPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reset your password</CardTitle>
+        <CardTitle as="h1">Reset your password</CardTitle>
         <CardDescription>
           {state.sentTo
             ? `If ${state.sentTo} has a Lukis account, we've sent it a link to choose a new password. It works for 1 hour.`

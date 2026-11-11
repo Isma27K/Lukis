@@ -8,19 +8,16 @@ import { toast } from "sonner"
 
 import { AvatarCropDialog } from "@/components/account/avatar-crop-dialog"
 import { ConfirmDialog } from "@/components/confirm-dialog"
-import { Strokes } from "@/components/sketch/strokes"
-import { Tape } from "@/components/sketch/tape"
 import { Button } from "@/components/ui/button"
 import { UserAvatar } from "@/components/user-avatar"
 import { apiFetch } from "@/lib/api"
 import type { User } from "@/lib/auth"
 import { avatarUrl } from "@/lib/avatar"
-import { seedFrom, sketch } from "@/lib/sketch"
 
 // Big photos are fine: they're cropped and shrunk to 256×256 before upload.
 const MAX_SOURCE_BYTES = 10 * 1024 * 1024
 
-// The user's picture pinned to the page, with ways to change it: choose a
+// The user's picture in a drop target, with ways to change it: choose a
 // file, or drop one on the picture.
 function AvatarPicker({ user }: { user: User }) {
   const router = useRouter()
@@ -29,10 +26,6 @@ function AvatarPicker({ user }: { user: User }) {
   const [dropping, setDropping] = useState(false)
   const [removing, setRemoving] = useState(false)
   const picture = avatarUrl(user.id, user.avatar_version)
-  const ring = sketch.ellipse(72, 72, 136, 136, {
-    seed: seedFrom(user.id),
-    strokeWidth: 1.8,
-  })
 
   function choose(chosen: File | undefined) {
     if (!chosen) {
@@ -61,19 +54,13 @@ function AvatarPicker({ user }: { user: User }) {
           setDropping(false)
           choose(event.dataTransfer.files[0])
         }}
-        className="relative grid size-36 place-items-center"
+        className={cn(
+          "relative grid size-36 place-items-center rounded-full border border-dashed transition-[border-color,background-color] duration-150",
+          dropping
+            ? "border-primary-edge bg-highlight/60"
+            : "border-[color-mix(in_oklch,var(--input),var(--foreground)_12%)] dot-grid"
+        )}
       >
-        <svg
-          aria-hidden
-          viewBox="0 0 144 144"
-          className={cn(
-            "pointer-events-none absolute inset-0 size-full overflow-visible transition-colors",
-            dropping ? "text-primary" : "text-foreground/60"
-          )}
-        >
-          <Strokes paths={ring} />
-        </svg>
-        <Tape className="-top-1 left-1/2 -translate-x-1/2 -rotate-6" />
         <UserAvatar
           name={user.name}
           picture={picture}

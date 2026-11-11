@@ -7,13 +7,21 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
     --font-hand: var(--font-hand);
-    --shadow-paper: 2px 3px 0 0 var(--paper-shadow);
-    --shadow-paper-lg: 3px 5px 0 0 var(--paper-shadow);
+    /* Sheets lift off the pad: an offset plus a soft blur, never a hard block. */
+    --shadow-paper: 0 1px 2px var(--paper-shadow), 0 6px 16px -8px var(--paper-shadow-far);
+    --shadow-paper-lg: 0 2px 4px var(--paper-shadow), 0 22px 44px -18px var(--paper-shadow-far);
+    --shadow-lift: 0 2px 4px var(--paper-shadow), 0 14px 28px -12px var(--paper-shadow-far);
+    --shadow-note: 0 10px 16px -10px oklch(0 0 0 / 35%);
     --color-dot: var(--dot);
     --color-highlight: var(--highlight);
     --color-ink: var(--ink);
-    --color-tape: var(--tape);
+    --color-guide: var(--guide);
+    --color-guide-soft: var(--guide-soft);
+    --color-primary-ink: var(--primary-ink);
+    --color-primary-edge: var(--primary-edge);
+    --color-sheet: var(--sheet);
     --color-note-ink: var(--note-ink);
     --color-note-yellow: var(--note-yellow);
     --color-note-pink: var(--note-pink);
@@ -21,8 +29,6 @@
     --color-note-green: var(--note-green);
     --color-note-violet: var(--note-violet);
     --color-note-orange: var(--note-orange);
-    --shadow-sticker: 2px 2px 0 0 var(--ink);
-    --shadow-note: 0 10px 16px -10px oklch(0 0 0 / 35%);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -61,118 +67,137 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /*
- * "Sketchbook": warm paper, graphite ink and one vermilion marker. Dark mode is
- * a chalkboard. Every text/background pair here is at least 4.5:1.
+ * "Drawing pad": loose sketches on an exact sheet. Bright pad paper, white
+ * sheets with graphite hairlines, one pad-cover orange (graphite text on it)
+ * and non-photo-blue construction lines for focus and guides. Dark mode is a
+ * graphite drawing board. Every text/background pair here is at least 4.5:1.
  */
 :root {
-    --background: oklch(0.977 0.007 80.72); /* paper #FAF7F2 */
-    --foreground: oklch(0.216 0.006 56.04); /* ink #1C1917 */
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.216 0.006 56.04);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.216 0.006 56.04);
-    --primary: oklch(0.564 0.18 37.43); /* marker #C8410F */
-    --primary-foreground: oklch(1 0 0);
-    --secondary: oklch(0.945 0.013 82.4);
-    --secondary-foreground: oklch(0.216 0.006 56.04);
-    --muted: oklch(0.945 0.013 82.4);
-    --muted-foreground: oklch(0.505 0.015 63.7);
-    --accent: oklch(0.945 0.013 82.4);
-    --accent-foreground: oklch(0.216 0.006 56.04);
-    /* Crimson, kept away from the orange marker. */
-    --destructive: oklch(0.506 0.179 16.58);
-    --border: oklch(0.906 0.018 81.33);
-    --input: oklch(0.876 0.021 81.78);
-    --ring: oklch(0.564 0.18 37.43);
-    --chart-1: oklch(0.564 0.18 37.43);
-    --chart-2: oklch(0.543 0.149 251.67);
-    --chart-3: oklch(0.617 0.162 146.43);
-    --chart-4: oklch(0.683 0.169 54.96);
-    --chart-5: oklch(0.533 0.203 319);
-    --radius: 0.75rem;
-    --sidebar: oklch(0.954 0.013 82.4);
-    --sidebar-foreground: oklch(0.216 0.006 56.04);
-    --sidebar-primary: oklch(0.564 0.18 37.43);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.918 0.019 83.06);
-    --sidebar-accent-foreground: oklch(0.216 0.006 56.04);
-    --sidebar-border: oklch(0.906 0.018 81.33);
-    --sidebar-ring: oklch(0.564 0.18 37.43);
-    --dot: oklch(0.216 0.006 56.04 / 10%);
-    --paper-shadow: oklch(0.216 0.006 56.04 / 8%);
-    --highlight: oklch(0.934 0.03 49.45); /* marker tint #FBE4D8 */
-    /* Sticker outlines and their hard shadows. */
-    --ink: oklch(0.216 0.006 56.04);
-    --tape: oklch(0.885 0.06 62 / 70%);
-    /* Sticky notes are paper in both themes, so always pastel with ink. */
-    --note-ink: oklch(0.216 0.006 56.04);
+    --background: #f5f5f2; /* pad paper */
+    --foreground: #1e1e1c; /* graphite */
+    --sheet: #ffffff;
+    --card: #ffffff;
+    --card-foreground: #1e1e1c;
+    --popover: #ffffff;
+    --popover-foreground: #1e1e1c;
+    --primary: #f26a21; /* pad cover, graphite text on it (5.4:1) */
+    --primary-foreground: #1e1e1c;
+    --primary-edge: #c9530f; /* the cover's printed edge, 3:1 on paper */
+    --primary-ink: #b3470e; /* orange as text: links, small accents */
+    --secondary: #ebebe6;
+    --secondary-foreground: #1e1e1c;
+    --muted: #ebebe6;
+    --muted-foreground: #62625c;
+    --accent: #ebebe6;
+    --accent-foreground: #1e1e1c;
+    /* Crimson, kept away from the orange cover. */
+    --destructive: #b4233a;
+    --border: #e1e1db;
+    --input: #8f8f88; /* control edges, 3:1 on white */
+    /* Non-photo-blue construction line: focus rings and guides. */
+    --ring: #2f86d0;
+    --guide: #2f86d0;
+    --guide-soft: #d9e9f7;
+    --chart-1: #f26a21;
+    --chart-2: #2f86d0;
+    --chart-3: #2f9e61;
+    --chart-4: #d99a1e;
+    --chart-5: #9b4fc4;
+    --radius: 0.5rem;
+    --sidebar: #efefeb;
+    --sidebar-foreground: #1e1e1c;
+    --sidebar-primary: #f26a21;
+    --sidebar-primary-foreground: #1e1e1c;
+    --sidebar-accent: #e4e4de;
+    --sidebar-accent-foreground: #1e1e1c;
+    --sidebar-border: #e1e1db;
+    --sidebar-ring: #2f86d0;
+    --dot: oklch(0.21 0.004 100 / 13%);
+    --paper-shadow: oklch(0.21 0.004 100 / 7%);
+    --paper-shadow-far: oklch(0.21 0.004 100 / 16%);
+    --highlight: #fde3d1; /* orange tint, also the text selection */
+    --ink: #1e1e1c;
+    /* Sticky notes, cursors and avatars are paper in both themes, so always
+       pastel with graphite on them. */
+    --note-ink: #1e1e1c;
     --note-yellow: oklch(0.94 0.105 96.83); /* #FFEC99 */
     --note-pink: oklch(0.883 0.062 18.39); /* #FFC9C9 */
     --note-blue: oklch(0.86 0.076 241.66); /* #A5D8FF */
     --note-green: oklch(0.904 0.099 148.43); /* #B2F2BB */
     --note-violet: oklch(0.841 0.09 296.6); /* #D0BFFF */
     --note-orange: oklch(0.904 0.076 72.42); /* #FFD8A8 */
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --scrollbar: #c9c9c2;
 }
 
 .dark {
-    --background: oklch(0.238 0.008 169.59); /* chalkboard #1B201E */
-    --foreground: oklch(0.932 0.01 81.79); /* chalk #ECE8E1 */
-    --card: oklch(0.274 0.01 164.13);
-    --card-foreground: oklch(0.932 0.01 81.79);
-    --popover: oklch(0.286 0.01 164.19);
-    --popover-foreground: oklch(0.932 0.01 81.79);
-    --primary: oklch(0.753 0.155 42); /* marker #FF8A5B */
-    --primary-foreground: oklch(0.238 0.008 169.59);
-    --secondary: oklch(0.309 0.011 167.96);
-    --secondary-foreground: oklch(0.932 0.01 81.79);
-    --muted: oklch(0.309 0.011 167.96);
-    --muted-foreground: oklch(0.735 0.013 133.41);
-    --accent: oklch(0.309 0.011 167.96);
-    --accent-foreground: oklch(0.932 0.01 81.79);
-    --destructive: oklch(0.71 0.154 19.34);
-    --border: oklch(0.932 0.01 81.79 / 12%);
-    --input: oklch(0.932 0.01 81.79 / 16%);
-    --ring: oklch(0.753 0.155 42);
-    --chart-1: oklch(0.753 0.155 42);
-    --chart-2: oklch(0.718 0.142 246.06);
-    --chart-3: oklch(0.802 0.168 147.32);
-    --chart-4: oklch(0.883 0.165 92.22);
-    --chart-5: oklch(0.725 0.196 319.53);
-    --sidebar: oklch(0.217 0.007 164.25);
-    --sidebar-foreground: oklch(0.932 0.01 81.79);
-    --sidebar-primary: oklch(0.753 0.155 42);
-    --sidebar-primary-foreground: oklch(0.238 0.008 169.59);
-    --sidebar-accent: oklch(0.309 0.011 167.96);
-    --sidebar-accent-foreground: oklch(0.932 0.01 81.79);
-    --sidebar-border: oklch(0.932 0.01 81.79 / 10%);
-    --sidebar-ring: oklch(0.753 0.155 42);
-    --dot: oklch(0.932 0.01 81.79 / 8%);
-    --paper-shadow: oklch(0 0 0 / 45%);
-    --highlight: oklch(0.345 0.038 46.55); /* #4A3328 */
-    --ink: oklch(0.12 0.005 165);
-    --tape: oklch(0.55 0.05 52 / 55%);
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --background: #1b1b1a; /* graphite board */
+    --foreground: #ecece7;
+    --sheet: #242423;
+    --card: #242423;
+    --card-foreground: #ecece7;
+    --popover: #282827;
+    --popover-foreground: #ecece7;
+    --primary: #f47a33;
+    --primary-foreground: #1b1b1a;
+    --primary-edge: #f6955c;
+    --primary-ink: #f69259;
+    --secondary: #2e2e2c;
+    --secondary-foreground: #ecece7;
+    --muted: #2e2e2c;
+    --muted-foreground: #a2a29b;
+    --accent: #2e2e2c;
+    --accent-foreground: #ecece7;
+    --destructive: #f27b86;
+    --border: oklch(0.94 0.005 100 / 11%);
+    --input: oklch(0.94 0.005 100 / 38%);
+    --ring: #5da8ea;
+    --guide: #5da8ea;
+    --guide-soft: #1f3447;
+    --chart-1: #f47a33;
+    --chart-2: #5da8ea;
+    --chart-3: #4cc283;
+    --chart-4: #f0c04a;
+    --chart-5: #c58ae6;
+    --sidebar: #171716;
+    --sidebar-foreground: #ecece7;
+    --sidebar-primary: #f47a33;
+    --sidebar-primary-foreground: #1b1b1a;
+    --sidebar-accent: #2a2a28;
+    --sidebar-accent-foreground: #ecece7;
+    --sidebar-border: oklch(0.94 0.005 100 / 9%);
+    --sidebar-ring: #5da8ea;
+    --dot: oklch(0.94 0.005 100 / 9%);
+    --paper-shadow: oklch(0 0 0 / 30%);
+    --paper-shadow-far: oklch(0 0 0 / 50%);
+    --highlight: #4a2e1d;
+    --ink: #0f0f0e;
+    --scrollbar: #3d3d3a;
 }
 
-/* Dotted paper, like the editor's grid, with a faint grain. */
-@utility bg-dot-grid {
-    background-image:
-        radial-gradient(circle, var(--dot) 1px, transparent 1.5px),
-        var(--grain);
-    background-size:
-        20px 20px,
-        180px 180px;
+/* The editor's dotted grid, for surfaces that stand for a canvas. */
+@utility dot-grid {
+    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+    background-size: 20px 20px;
+    background-position: -10px -10px;
+}
+
+/* Display lettering: Archivo widened toward a title-block stroke. */
+@utility font-display {
+    font-family: var(--font-sans);
+    font-stretch: 118%;
+    letter-spacing: -0.025em;
+    font-feature-settings: "ss01";
 }
 
 @theme {
     --animate-drift-a: drift-a 11s ease-in-out infinite;
     --animate-drift-b: drift-b 13s ease-in-out infinite;
     --animate-bob: bob 5s ease-in-out infinite;
-    --animate-pop: pop 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+    --animate-rise: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 
     @keyframes drift-a {
         0%, 100% { translate: 0 0; }
@@ -190,9 +215,9 @@
         0%, 100% { translate: 0 0; }
         50% { translate: 0 -5px; }
     }
-    @keyframes pop {
-        from { opacity: 0; scale: 0.9; }
-        to { opacity: 1; scale: 1; }
+    @keyframes rise {
+        from { opacity: 0; translate: 0 10px; }
+        to { opacity: 1; translate: 0 0; }
     }
 }
 
@@ -221,17 +246,38 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+    html {
+        @apply font-sans;
+        scrollbar-color: var(--scrollbar) transparent;
+        -webkit-tap-highlight-color: transparent;
     }
-  html {
-    @apply font-sans;
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "ss01";
+        caret-color: var(--primary-ink);
     }
-  ::selection {
-    @apply bg-highlight;
+    h1,
+    h2,
+    h3 {
+        text-wrap: balance;
+    }
+    p {
+        text-wrap: pretty;
+    }
+    ::selection {
+        @apply bg-highlight text-foreground;
+    }
+    /* Keyboard focus is a construction line: a crisp blue ring off the edge. */
+    :where(a, button, [role="button"], summary, [tabindex]):focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+    a {
+        text-underline-offset: 0.2em;
+        text-decoration-thickness: 1px;
     }
 }
 
@@ -239,51 +285,52 @@
  * The editor in the same colors. Excalidraw sets these on `.excalidraw` and
  * `.excalidraw.theme--dark` in a stylesheet that loads after this one, so the
  * `:root` prefix is what lets these win. The canvas background stays each
- * drawing's own.
+ * drawing's own. Selection outlines are the blue construction line.
  */
 :root .excalidraw {
-    --color-primary: #c8410f;
-    --color-primary-darker: #b33a0d;
-    --color-primary-darkest: #9a320b;
-    --color-primary-hover: #b83c0e;
-    --color-primary-light: #fbe4d8;
-    --color-primary-light-darker: #f8d5c3;
-    --color-brand-hover: #b83c0e;
-    --color-brand-active: #9a320b;
-    --color-surface-primary-container: #fbe4d8;
-    --color-on-primary-container: #5a1e07;
-    --color-logo-icon: #c8410f;
+    --color-primary: #c9530f;
+    --color-primary-darker: #b3470e;
+    --color-primary-darkest: #9a3d0c;
+    --color-primary-hover: #b3470e;
+    --color-primary-light: #fde3d1;
+    --color-primary-light-darker: #fbd2b6;
+    --color-brand-hover: #b3470e;
+    --color-brand-active: #9a3d0c;
+    --color-surface-primary-container: #fde3d1;
+    --color-on-primary-container: #5a2406;
+    --color-logo-icon: #f26a21;
     /* Read by the canvas renderer, so this colors selection outlines too. */
-    --color-selection: #c8410f;
-    --color-slider-track: #f8d5c3;
-    --color-surface-high: #f4efe6;
-    --color-surface-mid: #f6f3ee;
-    --color-surface-low: #eee8de;
+    --color-selection: #2f86d0;
+    --color-slider-track: #fbd2b6;
+    --color-surface-high: #ebebe6;
+    --color-surface-mid: #f5f5f2;
+    --color-surface-low: #e4e4de;
     --color-surface-lowest: #ffffff;
-    --color-on-surface: #1c1917;
+    --color-on-surface: #1e1e1c;
+    --island-bg-color: #ffffff;
 }
 
 :root .excalidraw.theme--dark {
-    --color-primary: #ff8a5b;
-    --color-primary-darker: #ff9a70;
-    --color-primary-darkest: #ffab87;
-    --color-primary-hover: #ffa07a;
-    --color-primary-light: #4a3328;
-    --color-primary-light-darker: #5a3b2d;
-    --color-brand-hover: #ffa07a;
-    --color-brand-active: #ffab87;
-    --color-surface-primary-container: #4a3328;
-    --color-on-primary-container: #fbe4d8;
-    --color-logo-icon: #ff8a5b;
-    --color-selection: #ff8a5b;
-    --color-slider-track: #7a4a35;
-    --island-bg-color: #232926;
-    --island-bg-color-alt: #1f2421;
-    --color-surface-high: #2e3632;
-    --color-surface-mid: #1f2421;
-    --color-surface-low: #262c29;
-    --color-surface-lowest: #171b19;
-    --color-on-surface: #ece8e1;
+    --color-primary: #f69259;
+    --color-primary-darker: #f8a676;
+    --color-primary-darkest: #fab891;
+    --color-primary-hover: #f8a676;
+    --color-primary-light: #4a2e1d;
+    --color-primary-light-darker: #5c3822;
+    --color-brand-hover: #f8a676;
+    --color-brand-active: #fab891;
+    --color-surface-primary-container: #4a2e1d;
+    --color-on-primary-container: #fde3d1;
+    --color-logo-icon: #f47a33;
+    --color-selection: #5da8ea;
+    --color-slider-track: #7a4526;
+    --island-bg-color: #242423;
+    --island-bg-color-alt: #1f1f1e;
+    --color-surface-high: #2e2e2c;
+    --color-surface-mid: #1f1f1e;
+    --color-surface-low: #282827;
+    --color-surface-lowest: #161615;
+    --color-on-surface: #ecece7;
 }
 
 /*

@@ -11,8 +11,8 @@ import { avatarUrl } from "@/lib/avatar"
 import { initials } from "@/lib/format"
 import { NOTE_BG, noteColorFor } from "@/lib/notes"
 
-// Someone's picture (see avatarUrl), or their initials on their own
-// sticky-note color while it loads or if they have none.
+// Someone's picture (see avatarUrl), or their initials on their own pastel
+// color while it loads or if they have none.
 function UserAvatar({
   name,
   picture,

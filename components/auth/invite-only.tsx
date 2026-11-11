@@ -16,7 +16,7 @@ function InviteOnly({ next, hadInvite }: { next: string; hadInvite: boolean }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sign-up is invite-only</CardTitle>
+        <CardTitle as="h1">Sign-up is invite-only</CardTitle>
         <CardDescription>
           {hadInvite
             ? "This link can't be used to create an account. It may have expired or been used already. "

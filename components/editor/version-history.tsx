@@ -245,7 +245,7 @@ function VersionHistory({
         }}
       >
         <Sidebar.Header>
-          <h2 className="font-hand text-2xl font-normal">Version history</h2>
+          <h2 className="text-[0.9375rem] font-semibold">Version history</h2>
         </Sidebar.Header>
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 pb-3">
           {canEdit && (

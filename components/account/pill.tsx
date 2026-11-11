@@ -1,12 +1,12 @@
 import { cn } from "cn"
 
 const TONES = {
-  green: "bg-note-green text-note-ink",
-  yellow: "bg-note-yellow text-note-ink",
-  muted: "bg-muted text-muted-foreground",
+  green: "border-chart-3/35 bg-chart-3/10 text-foreground",
+  yellow: "border-chart-4/45 bg-chart-4/12 text-foreground",
+  muted: "border-border bg-muted text-muted-foreground",
 }
 
-// A small highlighter label, like RoleBadge.
+// A small status label, in the same chip shape as RoleBadge.
 function Pill({
   tone,
   children,
@@ -19,7 +19,7 @@ function Pill({
   return (
     <span
       className={cn(
-        "inline-flex h-6 shrink-0 items-center rounded-full px-2.5 text-xs font-medium",
+        "inline-flex h-6 shrink-0 items-center rounded-full border px-2.5 text-xs font-medium",
         TONES[tone],
         className
       )}

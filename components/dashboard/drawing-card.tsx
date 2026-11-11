@@ -3,9 +3,6 @@ import Link from "next/link"
 import { DrawingActions } from "@/components/dashboard/drawing-actions"
 import { DrawingThumbnail } from "@/components/dashboard/drawing-thumbnail"
 import { EditorAvatar, editedByLabel } from "@/components/dashboard/edited-by"
-import { SketchFrame } from "@/components/sketch/sketch-frame"
-import { Tape } from "@/components/sketch/tape"
-import { seedFrom } from "@/lib/sketch"
 import type { ListedDrawing, Workspace } from "@/lib/types"
 
 type DrawingItemProps = {
@@ -19,57 +16,47 @@ type DrawingItemProps = {
   publicLinks: boolean
 }
 
-// A drawing as a sheet taped to the page, in a hand-drawn frame. One link
-// covers the whole card underneath, so the actions button never sits inside
-// it; everything on top ignores the pointer except that button.
+// A drawing as a white sheet: the thumbnail on top, title and who edited it
+// last underneath. One link covers the whole card underneath, so the actions
+// button never sits inside it; everything on top ignores the pointer except
+// that button.
 function DrawingCard({
   drawing,
-  index,
   editedLabel,
   currentUserId,
   canEdit,
   canDelete,
   moveTargets,
   publicLinks,
-}: DrawingItemProps & { index: number }) {
-  const even = index % 2 === 0
+}: DrawingItemProps) {
   return (
-    <li
-      className="group/drawing relative"
-      style={{ "--tilt": even ? "-1deg" : "1deg" } as React.CSSProperties}
-    >
+    <li className="group/drawing relative">
       <Link
         href={`/d/${drawing.id}`}
-        className="peer absolute inset-0 rounded-lg outline-none"
+        className="peer absolute inset-0 z-0 rounded-xl outline-none"
       >
         <span className="sr-only">{drawing.title}</span>
       </Link>
-      <div className="pointer-events-none relative rounded-lg bg-card p-2 shadow-paper transition-[translate,rotate,box-shadow] duration-200 group-hover/drawing:-translate-y-1 group-hover/drawing:shadow-paper-lg peer-focus-visible:ring-3 peer-focus-visible:ring-ring/50 motion-safe:group-hover/drawing:rotate-(--tilt)">
-        <DrawingThumbnail drawing={drawing} className="rounded-sm" />
-        <SketchFrame seed={seedFrom(drawing.id)} ratio={1.6} />
-        <Tape
-          className={
-            even ? "-top-2.5 left-6 -rotate-6" : "-top-2.5 right-6 rotate-6"
-          }
-        />
+      <div className="pointer-events-none relative overflow-hidden rounded-xl border bg-card shadow-paper transition-[translate,box-shadow,border-color] duration-200 ease-out-expo group-hover/drawing:border-[color-mix(in_oklch,var(--border),var(--foreground)_14%)] group-hover/drawing:shadow-lift peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-focus-visible:outline-solid focus-visible:outline-solid motion-safe:group-hover/drawing:-translate-y-0.5">
+        <DrawingThumbnail drawing={drawing} className="border-b" />
+        <div className="flex items-center gap-2.5 px-3.5 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">{drawing.title}</p>
+            <p className="truncate text-xs text-muted-foreground tabular-nums">
+              {editedByLabel(drawing, currentUserId, editedLabel)}
+            </p>
+          </div>
+          <EditorAvatar drawing={drawing} />
+        </div>
         {canEdit && (
           <DrawingActions
             drawing={drawing}
             canDelete={canDelete}
             moveTargets={moveTargets}
             publicLinks={publicLinks}
-            className="pointer-events-auto absolute top-3.5 right-3.5 opacity-0 group-hover/drawing:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100"
+            className="pointer-events-auto absolute top-2.5 right-2.5 bg-card/95 opacity-0 shadow-paper group-hover/drawing:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100 pointer-coarse:opacity-100"
           />
         )}
-      </div>
-      <div className="pointer-events-none relative mt-3 flex items-center gap-2.5 px-1">
-        <EditorAvatar drawing={drawing} />
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{drawing.title}</p>
-          <p className="truncate text-xs text-muted-foreground">
-            {editedByLabel(drawing, currentUserId, editedLabel)}
-          </p>
-        </div>
       </div>
     </li>
   )
@@ -86,17 +73,17 @@ function DrawingRow({
   publicLinks,
 }: DrawingItemProps) {
   return (
-    <li className="group/drawing relative flex items-center gap-4 px-3 py-2.5 transition-colors hover:bg-muted/60 has-[a:focus-visible]:ring-3 has-[a:focus-visible]:ring-ring/50 has-[a:focus-visible]:ring-inset">
+    <li className="group/drawing relative flex items-center gap-4 px-3 py-2.5 transition-colors hover:bg-muted/50 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 has-[a:focus-visible]:outline-ring has-[a:focus-visible]:outline-solid">
       <Link href={`/d/${drawing.id}`} className="absolute inset-0 outline-none">
         <span className="sr-only">{drawing.title}</span>
       </Link>
       <DrawingThumbnail
         drawing={drawing}
-        className="pointer-events-none relative w-24 shrink-0 rounded-sm border"
+        className="pointer-events-none relative w-24 shrink-0 rounded-md border"
       />
       <div className="pointer-events-none relative min-w-0 flex-1">
         <p className="truncate text-sm font-semibold">{drawing.title}</p>
-        <p className="truncate text-xs text-muted-foreground">
+        <p className="truncate text-xs text-muted-foreground tabular-nums">
           {editedByLabel(drawing, currentUserId, editedLabel)}
         </p>
       </div>

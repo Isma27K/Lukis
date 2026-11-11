@@ -36,7 +36,7 @@ export default async function Page({ params }: Props) {
           { label: "Trash" },
         ]}
       />
-      <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-8">
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-8 sm:px-8 sm:py-10">
         <PageHero title="Trash">
           <span>
             Drawings here are hidden from everyone in {workspace.name}.
@@ -51,15 +51,15 @@ export default async function Page({ params }: Props) {
             title="The trash is empty"
           />
         ) : (
-          <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card shadow-paper">
+          <ul className="flex max-w-5xl flex-col divide-y overflow-hidden rounded-xl border bg-card shadow-paper">
             {drawings.map((drawing) => (
               <li
                 key={drawing.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2.5"
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-3"
               >
                 <DrawingThumbnail
                   drawing={drawing}
-                  className="w-24 shrink-0 rounded-sm border opacity-75 grayscale"
+                  className="w-24 shrink-0 rounded-md border opacity-75 grayscale"
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span className="truncate text-sm font-semibold">

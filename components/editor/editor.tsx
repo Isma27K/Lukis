@@ -24,9 +24,9 @@ const Editor = dynamic<DrawingEditorProps>(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full flex-col items-center justify-center gap-2 bg-dot-grid">
+      <div className="flex h-full flex-col items-center justify-center gap-2 dot-grid">
         <BlankCanvas className="w-64" />
-        <p className="font-hand text-2xl text-muted-foreground">
+        <p className="text-sm font-medium text-muted-foreground">
           Loading editor…
         </p>
       </div>

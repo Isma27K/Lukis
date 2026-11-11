@@ -4,7 +4,6 @@ import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { cn } from "cn"
 
-import { Tape } from "@/components/sketch/tape"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
@@ -35,7 +34,7 @@ function DialogOverlay({
       // except in elements marked like this.
       data-prevent-outside-click
       className={cn(
-        "fixed inset-0 isolate z-50 bg-ink/15 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-ink/25 duration-150 supports-backdrop-filter:backdrop-blur-[2px] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -58,12 +57,11 @@ function DialogContent({
         data-slot="dialog-content"
         data-prevent-outside-click
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl border bg-popover p-6 text-sm text-popover-foreground shadow-paper-lg duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl border bg-popover p-6 text-sm text-popover-foreground shadow-paper-lg duration-200 ease-out-expo outline-none motion-reduce:animate-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:slide-in-from-bottom-1 data-open:zoom-in-[0.98] data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-[0.98]",
           className
         )}
         {...props}
       >
-        <Tape className="-top-2.5 left-1/2 -translate-x-1/2 -rotate-2" />
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close
@@ -126,7 +124,10 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("font-hand text-2xl leading-none font-normal", className)}
+      className={cn(
+        "font-display text-xl leading-tight font-semibold",
+        className
+      )}
       {...props}
     />
   )
