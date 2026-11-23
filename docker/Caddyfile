@@ -1,0 +1,37 @@
+# Used by the "caddy" profile in compose.yaml. Everything goes to the frontend,
+# which passes /api (including the live-collaboration WebSockets) on to the
+# backend. SITE_ADDRESS is CADDY_ADDRESS or PUBLIC_URL: an https:// address
+# gets certificates automatically, an http:// one (or ":80") is plain HTTP.
+
+# Behind a Cloudflare Tunnel, connections come from cloudflared on this
+# machine or the LAN, and the visitor's address is in CF-Connecting-IP. Only
+# trusted from private addresses, so it can't be spoofed from the internet.
+# Trusting the tunnel also keeps its X-Forwarded-Proto: https.
+{
+	servers {
+		trusted_proxies static private_ranges
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
+{$SITE_ADDRESS} {
+	encode zstd gzip
+
+	# Uploads are JSON. Images are at most 4 MB, a third more once encoded.
+	request_body {
+		max_size 16MB
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		-Server
+	}
+
+	# X-Forwarded-For becomes just the visitor's real address (whatever they
+	# sent is dropped), which the backend's rate limits rely on.
+	reverse_proxy frontend:3000 {
+		header_up X-Forwarded-For {client_ip}
+	}
+}

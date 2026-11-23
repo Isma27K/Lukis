@@ -9,3 +9,8 @@ next-env.d.ts
 Dockerfile
 .dockerignore
 # vendor/ and public/fonts/ are gitignored but needed: keep them in.
+
+# Self-hosting docs and media; not needed in the image
+docs
+docker
+compose.yaml

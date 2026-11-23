@@ -1,0 +1,18 @@
+# Builds the images from source instead of pulling them:
+#
+#   docker compose -f compose.yaml -f docker/compose.build.yaml up -d --build
+#
+# Needs the backend checked out next to this repo (or LUKIS_BACKEND_SOURCE
+# pointing at it), and `npm run excalidraw:build` run here first: the editor
+# packages the frontend image installs are gitignored. See
+# docs/self-hosting.md#building-from-source.
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        BACKEND_URL: http://backend:8000
+  backend:
+    build: ${LUKIS_BACKEND_SOURCE:-../backend}
+  backup:
+    build: ${LUKIS_BACKEND_SOURCE:-../backend}

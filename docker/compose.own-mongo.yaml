@@ -1,0 +1,8 @@
+# Leaves the bundled MongoDB out, for a database you already run. Turn it on
+# with this in .env, and set MONGO_URL there too:
+#   COMPOSE_FILE=compose.yaml:docker/compose.own-mongo.yaml
+# A MongoDB on this machine itself is reachable as host.docker.internal.
+services:
+  mongo:
+    # Only started when asked for by name, so it never is.
+    profiles: [own-mongo]
