@@ -13,7 +13,7 @@ jobs:
     env:
       # On main, once every check below passed, the image is built from the
       # editor packages built here and pushed to GitHub's container registry
-      # as ghcr.io/<owner>/lukis-frontend, private like this repo.
+      # as ghcr.io/<owner>/lukis-frontend.
       PUBLISH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +22,6 @@ jobs:
 
       # The editor is built from our Excalidraw fork at the commit the
       # tarballs were last built from (scripts/build-excalidraw.sh records it).
-      # The fork is private: EDITOR_REPO_SSH_KEY is the private half of a
-      # read-only deploy key on isma27k/lukis-editor.
       - name: Read the Excalidraw commit
         id: excalidraw
         run: echo "ref=$(cat frontend/.excalidraw-ref)" >> "$GITHUB_OUTPUT"
@@ -31,7 +29,6 @@ jobs:
         with:
           repository: isma27k/lukis-editor
           ref: ${{ steps.excalidraw.outputs.ref }}
-          ssh-key: ${{ secrets.EDITOR_REPO_SSH_KEY }}
           path: excalidraw
 
       - uses: actions/setup-node@v4
@@ -89,13 +86,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      # Private packages get little free storage, so keep only recent ones.
-      # Never fails the run: deleting needs the repo to have admin access to
-      # the package (package settings -> Manage Actions access).
-      - if: env.PUBLISH == 'true'
-        uses: actions/delete-package-versions@v5
-        continue-on-error: true
-        with:
-          package-name: lukis-frontend
-          package-type: container
-          min-versions-to-keep: 10

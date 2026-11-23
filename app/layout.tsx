@@ -6,7 +6,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { DESCRIPTION, indexable, SITE_NAME, siteUrl, TAGLINE } from "@/lib/site"
+import { DESCRIPTION, SITE_NAME, siteUrl, TAGLINE } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 // One family for everything set in type: normal width for the interface,
@@ -30,13 +30,12 @@ const fontHand = localFont({
   display: "swap",
 })
 
-// Pages override the title, description and canonical address; the share
-// image comes from opengraph-image.tsx. Search engines are kept out unless
-// this is the real site (PUBLIC_URL set).
+// Pages override the title; the share image comes from opengraph-image.tsx.
+// Everything is behind a login or a private link, so search engines are kept
+// out of all of it.
 export async function generateMetadata(): Promise<Metadata> {
-  const [base, index] = await Promise.all([siteUrl(), indexable()])
   return {
-    metadataBase: base,
+    metadataBase: await siteUrl(),
     title: {
       default: `${SITE_NAME}: ${TAGLINE.toLowerCase()}`,
       template: `%s · ${SITE_NAME}`,
@@ -51,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: DESCRIPTION,
     },
     twitter: { card: "summary_large_image" },
-    robots: index ? undefined : { index: false, follow: false },
+    robots: { index: false, follow: false },
   }
 }
 

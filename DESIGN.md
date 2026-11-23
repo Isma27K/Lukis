@@ -31,14 +31,6 @@ colors:
   board-orange-ink: "#f69259"
   board-blue: "#5da8ea"
 typography:
-  display:
-    fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(3.5rem, 6vw, 5.5rem)"
-    fontWeight: 600
-    lineHeight: 0.98
-    letterSpacing: "-0.025em"
-    fontFeature: "\"ss01\""
-    fontVariation: "\"wdth\" 118"
   headline:
     fontFamily: "Archivo, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2.125rem, 4vw, 2.75rem)"
@@ -185,9 +177,6 @@ components:
     textColor: "{colors.graphite}"
     rounded: "{rounded.md}"
     padding: "8px"
-  privacy-band:
-    backgroundColor: "{colors.pad-cover-orange}"
-    textColor: "{colors.graphite}"
 ---
 
 # Design System: Lukis
@@ -198,7 +187,7 @@ components:
 
 Loose sketches on an exact sheet. The hand-drawn line belongs to the work: the drawings, the illustrations, the logo, and a few handwritten margin notes. Everything around it is a precise, printed drawing pad: bright neutral pad paper, white sheets cut clean with graphite hairlines, soft lifted shadows, a confident widened grotesk for titles, and one orange pad-cover colour that marks the action. Non-photo-blue construction lines are the only second voice, used for focus, guides and the editor's selection outlines.
 
-This is an evolution of the earlier "Sketchbook" look, not a replacement. The hand-drawn DNA stays (rough.js strokes drawn with the editor's own engine, Excalifont, named cursors, the dotted canvas), but it is confined to content, so the product reads as a calm professional tool rather than a craft project. The public site speaks at Persuade volume (large widened titles, the editor window demo, one full-bleed orange band); the app uses the same world at Operate restraint (compact title rows, sheets, hairlines, no hero banners).
+This is an evolution of the earlier "Sketchbook" look, not a replacement. The hand-drawn DNA stays (rough.js strokes drawn with the editor's own engine, Excalifont, named cursors, the dotted canvas), but it is confined to content, so the product reads as a calm professional tool rather than a craft project. The app works at Operate restraint: compact title rows, sheets, hairlines, no hero banners.
 
 Dark mode is a graphite drawing board: warm near-black board, slightly lifted graphite sheets, chalk-white text, a brighter cover orange and a lighter construction blue. It is never black and neon. Two confirmed anti-references bound the world: the craft-project sketchbook (tape, sticky-note headings, tilted cards, sticker buttons, handwriting for every title) and the generic SaaS template (gradient hero, icon-tile grids).
 
@@ -216,10 +205,10 @@ Dark mode is a graphite drawing board: warm near-black board, slightly lifted gr
 A near-achromatic graphite-and-paper pad with one warm cover colour and one cool construction line.
 
 ### Primary
-- **Pad-Cover Orange** (`pad-cover-orange`): primary buttons, the Share button in the editor, the owner role dot, the logo mark's note, chart 1 and the home page's single full-bleed privacy band. Text on it is always graphite (5.45:1), never white.
-- **Cover Edge** (`cover-edge`): the printed edge of the cover: the 60%-opacity border on primary buttons, the editor's own primary colour, and the pricing note's border. A non-text edge at 3:1 on paper.
+- **Pad-Cover Orange** (`pad-cover-orange`): primary buttons, the Share button in the editor, the owner role dot, the logo mark's note and chart 1. Text on it is always graphite (5.45:1), never white.
+- **Cover Edge** (`cover-edge`): the printed edge of the cover: the 60%-opacity border on primary buttons and the editor's own primary colour. A non-text edge at 3:1 on paper.
 - **Orange Ink** (`orange-ink`): orange used as text: links, the `link` button, margin notes, pen ticks, the active sidebar icon, the caret colour, and hover accents on tiles. 5.0:1 on paper.
-- **Orange Tint** (`orange-tint`): the highlight wash; text selection, the pricing notice, the editor's primary containers.
+- **Orange Tint** (`orange-tint`): the highlight wash; text selection and the editor's primary containers.
 
 ### Secondary
 - **Construction Blue** (`construction-blue`): the `--ring` and `--guide` token. Every keyboard focus ring (2px solid, 2px offset), focused field borders with a 25% ring, the editor's selection outlines, the admin role dot, chart 2. 3.5:1 on paper, used as a non-text indicator only.
@@ -241,7 +230,7 @@ A near-achromatic graphite-and-paper pad with one warm cover colour and one cool
 - **Board, Board Sheet, Board Chalk, Board Cover, Board Orange Ink, Board Blue**: the dark-mode counterparts on `.dark` (graphite board, lifted sheet, chalk text, brighter cover with board-coloured lettering, lighter orange ink, lighter construction blue).
 
 ### Named Rules
-**The One Cover Rule.** Orange is the pad cover: it marks the primary action and appears as one full-bleed field at most per page (the home privacy band). Everything else is graphite on paper.
+**The One Cover Rule.** Orange is the pad cover: it marks the primary action and never fills a whole band or background. Everything else is graphite on paper.
 
 **The Graphite Lettering Rule.** Text on orange is graphite in light mode and board-dark in dark mode. Never white on orange.
 
@@ -259,8 +248,7 @@ A near-achromatic graphite-and-paper pad with one warm cover colour and one cool
 **Character:** A confident grotesk widened toward a title-block stroke gives titles their emphasis, so headings need no marker strokes; the same family at normal width keeps the interface quiet and dense. Excalifont is the pen in the margin, not a heading face.
 
 ### Hierarchy
-- **Display** (600, 3.5rem rising to 4.75rem and 5.5rem, 0.98): the home hero H1 only; the features hero sits at 3.25rem to 4.5rem.
-- **Headline** (600, `clamp(2.125rem, 4vw, 2.75rem)`, 1.08): public-site section headings, legal page titles and the sign-in panel line.
+- **Headline** (600, `clamp(2.125rem, 4vw, 2.75rem)`, 1.08): the sign-in panel line.
 - **Title** (600, 1.75rem to 2rem, 1.15): the app's page-title row (`PageHero`), widened.
 - **Title Small** (600, 1.25rem to 1.5rem, 1.25): dialog, alert-dialog and auth card titles, widened.
 - **Section Title** (600, 0.9375rem, 1.375): card titles and settings-section titles, normal width.
@@ -272,7 +260,7 @@ A near-achromatic graphite-and-paper pad with one warm cover colour and one cool
 ### Named Rules
 **The Widened Title Rule.** Page titles, section headings, dialog and auth card titles are widened Archivo at 600. Emphasis comes from the width and weight, never from underlines, swashes or highlight strokes.
 
-**The Margin-Only Hand Rule.** Excalifont appears only in the wordmark, margin notes (the public site's `MarginNote`, the dashboard's "start here") and inside drawn illustrations. Never for titles, buttons or body text.
+**The Margin-Only Hand Rule.** Excalifont appears only in the wordmark, margin notes (the dashboard's "start here") and inside drawn illustrations. Never for titles, buttons or body text.
 
 **The No-Kicker Rule.** Headings stand alone: no eyebrow or kicker labels above them.
 
@@ -280,7 +268,7 @@ A near-achromatic graphite-and-paper pad with one warm cover colour and one cool
 
 Pages sit in a centred container up to 80rem (`max-w-7xl`) with 16px gutters on phones and 32px from `sm`; settings and account columns cap at 64rem (`max-w-5xl`). App pages run a slim sticky header bar (sidebar trigger plus crumbs), then a compact title row with actions on the right, a toolbar row, then content, separated by a 28px rhythm; there is no hero banner inside the app. Settings-style pages pair a 10rem jump-link rail with a column of section sheets 24px apart (48px column gap from `lg`).
 
-The public site uses two-column splits that stack on phones (the hero is about 0.85fr text to 1.15fr editor window), section padding of 80px rising to 112px at `lg`, and a sticky 64px nav on 95% paper with a backdrop blur; on phones the links move into a top sheet. The dotted canvas grid (20px pitch) appears only where a surface stands for a canvas: the auth scene panel, the hero editor window, the blank-canvas tile, illustration tiles and status pages; never behind ordinary app pages.
+The dotted canvas grid (20px pitch) appears only where a surface stands for a canvas: the auth scene panel, the blank-canvas tile, illustration tiles and status pages; never behind ordinary app pages.
 
 ## Elevation & Depth
 
@@ -341,11 +329,8 @@ A white sheet on a 25% ink backdrop with a 2px blur; 11.2px corners, 24px paddin
 ### Drawing Card
 The dashboard's signature sheet: thumbnail on top over a hairline, the title (14px semibold) and "You · 2 hours ago" meta inside. One link covers the whole card; hover rises 2px with the Lift shadow and a darker hairline over 200ms; the actions button appears on hover or focus (always visible on coarse pointers).
 
-### Editor Window and Margin Note
-On the public site, the product shows its real UI: an editor window with a toolbar island over the dotted canvas where the diagram draws itself in and named cursors drift. A margin note in Excalifont and Orange Ink, with a rough pen arrow, annotates it.
-
 ### Motion
-Interface motion is 150 to 220ms on an exponential ease-out (`cubic-bezier(0.16, 1, 0.3, 1)`). Strokes draw themselves in once (dash offset from 1 to 0, 0.7s), fills fade in, cursors drift and the hero bobs, all only under `prefers-reduced-motion: no-preference` or `motion-safe`.
+Interface motion is 150 to 220ms on an exponential ease-out (`cubic-bezier(0.16, 1, 0.3, 1)`). Strokes draw themselves in once (dash offset from 1 to 0, 0.7s), fills fade in, cursors drift, all only under `prefers-reduced-motion: no-preference` or `motion-safe`.
 
 ## Do's and Don'ts
 
